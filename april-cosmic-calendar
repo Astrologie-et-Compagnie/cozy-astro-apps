@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cozy Astro - April 2026 Cosmic Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0c0916;
+  --surface:#13102a;
+  --card:#1a1535;
+  --card-hover:#201a42;
+  --gold:#c9a84c;
+  --gold-dim:#8a7235;
+  --gold-glow:rgba(201,168,76,.15);
+  --cream:#e8dcc8;
+  --cream-dim:rgba(232,220,200,.5);
+  --purple:#7b5ea7;
+  --purple-dim:#5a4080;
+  --rose:#c77d8a;
+  --teal:#6aad9e;
+  --fire:#d4845a;
+  --water:#6a8fc7;
+  --earth:#8aad6a;
+  --air:#c7b86a;
+  --border:rgba(201,168,76,.12);
+  --border-active:rgba(201,168,76,.35);
+  --radius:8px;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--cream);
+  font-family:'Lora',serif;
+  min-height:100vh;
+  line-height:1.6;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(1px 1px at 8% 15%,rgba(255,255,255,.45) 50%,transparent 100%),
+    radial-gradient(1.2px 1.2px at 22% 68%,rgba(201,168,76,.5) 50%,transparent 100%),
+    radial-gradient(1px 1px at 45% 12%,rgba(255,255,255,.35) 50%,transparent 100%),
+    radial-gradient(1px 1px at 67% 45%,rgba(201,168,76,.35) 50%,transparent 100%),
+    radial-gradient(1px 1px at 88% 25%,rgba(255,255,255,.4) 50%,transparent 100%),
+    radial-gradient(1.3px 1.3px at 35% 82%,rgba(201,168,76,.4) 50%,transparent 100%),
+    radial-gradient(1px 1px at 72% 78%,rgba(255,255,255,.3) 50%,transparent 100%),
+    radial-gradient(1px 1px at 55% 55%,rgba(123,94,167,.4) 50%,transparent 100%);
+  animation:twinkle 10s ease-in-out infinite alternate;
+}
+@keyframes twinkle{0%{opacity:.5}50%{opacity:.9}100%{opacity:.6}}
+
+.container{
+  position:relative;z-index:1;
+  max-width:1060px;margin:0 auto;
+  padding:40px 16px 60px;
+}
+
+/* HEADER */
+header{text-align:center;margin-bottom:44px}
+header h1{
+  font-family:'Cormorant Garamond',serif;
+  font-weight:300;font-size:clamp(2rem,5vw,3.2rem);
+  color:var(--gold);letter-spacing:.12em;
+  text-transform:uppercase;margin-bottom:6px;
+}
+header .subtitle{
+  font-size:clamp(1rem,2.5vw,1.3rem);
+  font-family:'Cormorant Garamond',serif;
+  font-weight:500;font-style:italic;
+  color:var(--cream-dim);margin-bottom:20px;
+}
+.ornament{
+  width:140px;height:1px;margin:0 auto;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  position:relative;
+}
+.ornament::before{
+  content:'✦';position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  color:var(--gold);font-size:11px;
+  background:var(--bg);padding:0 10px;
+}
+
+/* MONTH OVERVIEW */
+.month-overview{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+  margin-bottom:36px;
+}
+.overview-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;
+  transition:border-color .3s;
+}
+.overview-card:hover{border-color:var(--border-active)}
+.overview-card h3{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.05rem;font-weight:600;
+  color:var(--gold);margin-bottom:8px;
+  letter-spacing:.04em;text-transform:uppercase;
+}
+.overview-card p{font-size:.85rem;color:var(--cream-dim);line-height:1.7}
+
+/* LEGEND */
+.legend{
+  display:flex;flex-wrap:wrap;gap:14px;
+  justify-content:center;margin-bottom:24px;
+  font-size:.7rem;color:var(--cream-dim);
+}
+.legend-item{display:flex;align-items:center;gap:5px}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+.legend-dot.phase{background:var(--gold)}
+.legend-dot.planet{background:var(--purple)}
+.legend-dot.sign{background:var(--teal)}
+.legend-dot.aspect{background:var(--rose)}
+
+/* FILTERS */
+.filters{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-bottom:28px;justify-content:center;
+}
+.filter-btn{
+  background:var(--card);border:1px solid var(--border);
+  color:var(--cream-dim);font-family:'Lora',serif;
+  font-size:.78rem;padding:6px 14px;
+  border-radius:20px;cursor:pointer;
+  transition:all .25s;
+}
+.filter-btn:hover,.filter-btn.active{
+  border-color:var(--gold);color:var(--gold);
+  background:var(--gold-glow);
+}
+
+/* CALENDAR GRID */
+.week-row{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:3px;margin-bottom:3px;
+}
+.day-header{
+  font-family:'Cormorant Garamond',serif;
+  font-size:.78rem;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--gold-dim);
+  text-align:center;padding:10px 0;
+}
+.day-cell{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:5px;
+  min-height:120px;
+  padding:8px 8px 6px;
+  cursor:pointer;
+  transition:all .25s;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+}
+.day-cell:hover{border-color:var(--border-active);background:var(--card-hover)}
+.day-cell.has-phase{border-color:rgba(201,168,76,.25)}
+.day-cell.has-planet{border-color:rgba(123,94,167,.3)}
+.day-cell.empty{background:transparent;border-color:transparent;cursor:default;min-height:0}
+.day-cell.empty:hover{background:transparent;border-color:transparent}
+
+.day-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.day-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.15rem;font-weight:600;color:var(--cream);
+}
+.day-moon-badge{
+  font-size:.55rem;
+  color:var(--purple);
+  background:rgba(123,94,167,.12);
+  padding:1px 6px;
+  border-radius:8px;
+  white-space:nowrap;
+  letter-spacing:.02em;
+}
+
+.day-events{flex:1;display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.day-event-mini{
+  font-size:.6rem;
+  line-height:1.35;
+  padding:2px 5px;
+  border-radius:3px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  letter-spacing:.01em;
+}
+.day-event-mini.phase{background:rgba(201,168,76,.12);color:var(--gold)}
+.day-event-mini.planet{background:rgba(123,94,167,.15);color:var(--purple)}
+.day-event-mini.sign{background:rgba(106,173,158,.12);color:var(--teal)}
+.day-event-mini.aspect{background:rgba(199,125,138,.1);color:var(--rose)}
+.day-more{
+  font-size:.55rem;color:var(--cream-dim);
+  text-align:right;margin-top:auto;
+  padding-top:2px;font-style:italic;
+}
+
+/* Tap hint on mobile */
+.tap-hint{
+  text-align:center;font-size:.72rem;
+  color:var(--cream-dim);opacity:.4;
+  margin-bottom:20px;font-style:italic;
+}
+
+/* DETAIL PANEL */
+.detail-overlay{
+  display:none;position:fixed;inset:0;z-index:100;
+  background:rgba(10,7,18,.88);
+  backdrop-filter:blur(6px);
+  overflow-y:auto;
+  padding:40px 20px;
+}
+.detail-overlay.open{display:flex;justify-content:center;align-items:flex-start}
+.detail-panel{
+  background:var(--surface);
+  border:1px solid var(--border-active);
+  border-radius:12px;
+  max-width:640px;width:100%;
+  padding:36px 32px;
+  position:relative;
+  animation:fadeUp .35s ease;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.detail-close{
+  position:absolute;top:16px;right:20px;
+  background:none;border:none;color:var(--cream-dim);
+  font-size:1.4rem;cursor:pointer;
+  transition:color .2s;
+}
+.detail-close:hover{color:var(--gold)}
+
+/* Nav arrows */
+.detail-nav{display:flex;justify-content:space-between;margin-bottom:16px}
+.nav-btn{
+  background:none;border:1px solid var(--border);
+  color:var(--cream-dim);font-family:'Cormorant Garamond',serif;
+  font-size:.8rem;padding:4px 14px;border-radius:16px;
+  cursor:pointer;transition:all .2s;
+}
+.nav-btn:hover{border-color:var(--gold);color:var(--gold)}
+.nav-btn:disabled{opacity:.2;cursor:default}
+.nav-btn:disabled:hover{border-color:var(--border);color:var(--cream-dim)}
+
+.detail-date{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.6rem;font-weight:300;
+  color:var(--gold);margin-bottom:4px;
+}
+.detail-moon-sign{
+  font-size:.9rem;color:var(--purple);
+  margin-bottom:20px;font-style:italic;
+}
+.detail-section{margin-bottom:20px}
+.detail-section h4{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1rem;font-weight:600;
+  color:var(--gold);margin-bottom:8px;
+  letter-spacing:.04em;text-transform:uppercase;
+}
+.event-item{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:14px 16px;
+  margin-bottom:8px;
+  transition:border-color .2s;
+}
+.event-item:hover{border-color:var(--border-active)}
+.event-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:.95rem;font-weight:600;
+  color:var(--cream);margin-bottom:4px;
+}
+.event-type{
+  display:inline-block;
+  font-size:.65rem;text-transform:uppercase;
+  letter-spacing:.08em;padding:2px 8px;
+  border-radius:10px;margin-bottom:6px;
+}
+.event-type.phase{background:rgba(201,168,76,.15);color:var(--gold)}
+.event-type.planet{background:rgba(123,94,167,.2);color:var(--purple)}
+.event-type.sign{background:rgba(106,173,158,.15);color:var(--teal)}
+.event-type.aspect{background:rgba(199,125,138,.15);color:var(--rose)}
+.event-desc{font-size:.82rem;color:var(--cream-dim);line-height:1.7}
+.event-ceo{
+  margin-top:10px;padding:10px 14px;
+  background:rgba(201,168,76,.06);
+  border-left:2px solid var(--gold-dim);
+  border-radius:0 6px 6px 0;
+}
+.event-ceo .label{
+  font-family:'Cormorant Garamond',serif;
+  font-size:.72rem;font-weight:600;
+  color:var(--gold);text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:4px;
+}
+.event-ceo p{font-size:.8rem;color:var(--cream);line-height:1.65}
+
+/* MOON GUIDE */
+.moon-guide{
+  margin-top:14px;
+  padding:14px 16px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:6px;
+}
+.moon-guide h5{
+  font-family:'Cormorant Garamond',serif;
+  font-size:.88rem;font-weight:600;
+  color:var(--purple);margin-bottom:6px;
+}
+.moon-guide .energy{font-size:.8rem;color:var(--cream-dim);line-height:1.65;margin-bottom:8px}
+.do-dont{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.do-col h6,.dont-col h6{
+  font-size:.7rem;text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:6px;
+}
+.do-col h6{color:var(--teal)}
+.dont-col h6{color:var(--rose)}
+.do-col li,.dont-col li{
+  font-size:.75rem;color:var(--cream-dim);
+  margin-bottom:4px;list-style:none;padding-left:14px;
+  position:relative;line-height:1.5;
+}
+.do-col li::before{content:'✦';position:absolute;left:0;color:var(--teal);font-size:.55rem;top:2px}
+.dont-col li::before{content:'✦';position:absolute;left:0;color:var(--rose);font-size:.55rem;top:2px}
+
+/* QUIET DAY */
+.quiet-day{
+  font-size:.82rem;color:var(--cream-dim);
+  font-style:italic;line-height:1.65;
+  padding:8px 0;
+}
+
+/* FOOTER */
+footer{
+  text-align:center;padding:40px 20px 20px;
+  font-size:.72rem;color:var(--cream-dim);
+  opacity:.4;letter-spacing:.04em;
+}
+
+/* RESPONSIVE */
+@media(max-width:800px){
+  .month-overview{grid-template-columns:1fr}
+  .day-cell{min-height:90px;padding:6px 5px 4px}
+  .day-num{font-size:1rem}
+  .day-event-mini{font-size:.55rem;padding:1px 4px}
+  .detail-panel{padding:24px 18px}
+  .do-dont{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .day-header{font-size:.6rem;letter-spacing:.05em}
+  .day-cell{min-height:72px;padding:4px 3px 3px}
+  .day-num{font-size:.88rem}
+  .day-moon-badge{font-size:.48rem;padding:1px 4px}
+  .day-event-mini{font-size:.5rem}
+  .day-more{font-size:.48rem}
+  .week-row{gap:2px;margin-bottom:2px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>April 2026</h1>
+    <div class="subtitle">Your Cosmic CEO Calendar</div>
+    <div class="ornament"></div>
+  </header>
+
+  <div class="month-overview">
+    <div class="overview-card">
+      <h3>The Big Picture</h3>
+      <p>April is where strategy meets fire. Saturn and Mars conjunct in Aries mid-month, demanding disciplined courage. This is not a month for passive dreaming. It is a month for building with backbone. Uranus leaves Taurus for Gemini on the 26th, shaking up how we communicate and sell. Stay grounded in your foundations while the ground shifts.</p>
+    </div>
+    <div class="overview-card">
+      <h3>CEO Power Moves</h3>
+      <p>Launch boldly during the New Moon in Aries (Apr 17). Use the Mars-Saturn conjunction (Apr 18-21) to commit to structures that will outlast the hype. Venus in Gemini from Apr 24 opens a window for playful, multi-channel marketing. The month rewards those who lead with clarity and follow through with grit.</p>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot phase"></div> Lunar Phase</div>
+    <div class="legend-item"><div class="legend-dot planet"></div> Planetary Shift</div>
+    <div class="legend-item"><div class="legend-dot sign"></div> Sign Change</div>
+    <div class="legend-item"><div class="legend-dot aspect"></div> Aspect</div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="phase">Lunar Phases</button>
+    <button class="filter-btn" data-filter="sign">Sign Changes</button>
+    <button class="filter-btn" data-filter="aspect">Aspects</button>
+    <button class="filter-btn" data-filter="planet">Planetary Shifts</button>
+  </div>
+
+  <div class="tap-hint">Tap any day for the full cosmic briefing</div>
+
+  <div id="calendar-grid"></div>
+
+  <div class="detail-overlay" id="detailOverlay">
+    <div class="detail-panel" id="detailPanel">
+      <button class="detail-close" id="detailClose">&times;</button>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+</div>
+
+<footer>The Cozy Cosmic Company &middot; Cozy Astro for Life & Business</footer>
+
+<script>
+const MOON_SIGNS={1:'Virgo',2:'Libra',3:'Libra',4:'Scorpio',5:'Scorpio',6:'Scorpio',7:'Sagittarius',8:'Sagittarius',9:'Capricorn',10:'Capricorn',11:'Capricorn',12:'Aquarius',13:'Aquarius',14:'Pisces',15:'Pisces',16:'Aries',17:'Aries',18:'Taurus',19:'Taurus',20:'Gemini',21:'Gemini',22:'Cancer',23:'Cancer',24:'Leo',25:'Leo',26:'Leo',27:'Virgo',28:'Virgo',29:'Libra',30:'Libra'};
+
+const MOON_GUIDE={
+  Aries:{energy:"A surge of passion and bold confidence. Your instinct to act first is strong. Use this window to initiate, pitch, and push stagnant projects forward.",dos:["Launch that offer or send the pitch","Trust your gut on business decisions","Move your body to channel the fire","Step into visible leadership"],donts:["Rush into commitments without structure","Turn every exchange into a battle","Start things you won't finish","Burn out chasing the adrenaline"]},
+  Taurus:{energy:"Slow, grounded, sensory. Emotions settle into a steady rhythm favoring comfort, beauty, and long-term security. Build what lasts.",dos:["Work on finances and long-term plans","Refine your brand aesthetics","Connect with nature to recharge","Create content that feels luxurious"],donts:["Resist necessary pivots out of comfort","Overindulge in retail therapy or procrastination","Cling to routines that no longer serve you","Suppress feelings because they're inconvenient"]},
+  Gemini:{energy:"Mentally buzzing, socially curious, ideas flying everywhere. Focus scatters easily but connections spark fast. Perfect for brainstorming and networking.",dos:["Engage your audience on social media","Brainstorm new offers or content angles","Write, journal, or record voice notes","Follow your curiosity into new territory"],donts:["Overthink every decision into paralysis","Skim the surface in important conversations","Juggle so much that nothing gets done","Avoid emotional depth under wit"]},
+  Cancer:{energy:"Emotionally heightened, nurturing, protective. The pull is inward, toward home, family, and what feels safe. Tend to your foundations.",dos:["Nurture your community and existing clients","Revisit your 'why' and core mission","Create from emotional authenticity","Rest and honor your need for softness"],donts:["Make business decisions from fear","People-please at the cost of your boundaries","Withdraw completely from visibility","Confuse comfort with stagnation"]},
+  Leo:{energy:"Magnetic, expressive, heart-centered. You want to be seen and celebrated. This is creative fire that demands authenticity and courage.",dos:["Show up visibly and unapologetically","Celebrate your wins publicly","Create bold, heart-led content","Encourage and uplift your community"],donts:["Chase validation instead of vision","Turn small setbacks into drama","Hog the spotlight at others' expense","Play small when the energy says shine"]},
+  Virgo:{energy:"Analytical, detail-oriented, service-driven. The urge to organize, refine, and improve is strong. Channel it into systems, not self-criticism.",dos:["Audit your systems and workflows","Focus on health and sustainable routines","Edit, refine, and polish existing content","Offer practical value to your audience"],donts:["Spiral into perfectionism","Nitpick yourself or your team","Overwork and call it productivity","Forget that done beats perfect"]},
+  Libra:{energy:"Harmony-seeking, beauty-conscious, relationship-focused. The desire to create balance and resolve tensions is powerful. Lead with grace.",dos:["Strengthen key partnerships and collabs","Beautify your visual branding","Handle difficult conversations with diplomacy","Seek feedback and outside perspectives"],donts:["Agree to things just to keep the peace","Outsource your self-worth to others' opinions","Avoid conflict until it explodes","Prioritize aesthetics over substance"]},
+  Scorpio:{energy:"Intense, transformative, deeply intuitive. Surface-level anything feels unbearable. This is shadow work and power reclamation territory.",dos:["Do deep inner work and journaling","Trust your gut, especially on red flags","Have honest conversations about money and power","Release what no longer serves your growth"],donts:["Suppress emotions until they detonate","Assume the worst about people's intentions","Try to control outcomes","Hold grudges that poison your energy"]},
+  Sagittarius:{energy:"Expansive, optimistic, freedom-hungry. The urge to explore, learn, and think big is irresistible. Dream wide but stay tethered.",dos:["Set ambitious long-term goals","Explore new learning or mentorship","Share your philosophy and big-picture vision","Say yes to spontaneous opportunities"],donts:["Overpromise and underdeliver","Run from serious conversations","Be so blunt you damage relationships","Let wanderlust distract from foundations"]},
+  Capricorn:{energy:"Disciplined, ambitious, emotionally reserved. The focus turns to career, structure, and legacy. Build the bones of something lasting.",dos:["Map out your quarterly strategy","Honor your commitments and deadlines","Take mature, calculated risks","Create structures that hold your growth"],donts:["Suppress your feelings as 'weakness'","Work yourself into the ground","Fear vulnerability","Resist adaptation when the plan needs updating"]},
+  Aquarius:{energy:"Independent, innovative, future-oriented. Detachment from drama allows brilliant objectivity. Think outside every box.",dos:["Innovate on your offer or delivery method","Connect with your wider community","Challenge assumptions about 'how things are done'","Experiment with new tech or platforms"],donts:["Detach so much you lose emotional connection","Rebel against structure just because","Ignore one-on-one relationships for the collective","Be so fixed in your vision you miss feedback"]},
+  Pisces:{energy:"Intuitive, dreamy, emotionally porous. The veil is thin. Creativity and spiritual connection are heightened, but so is overwhelm.",dos:["Create from intuition and emotion","Engage in spiritual practices and meditation","Show compassion in your leadership","Rest and protect your energy"],donts:["Ignore red flags because you want to believe","Escape into scrolling or avoidance","Absorb everyone else's emotional weather","Lose yourself in fantasy without grounding it"]}
+};
+
+const EVENTS=[
+  {day:2,title:"Full Moon in Libra",type:"phase",mini:"Full Moon in Libra",desc:"Illumination in relationships and partnerships. What needs rebalancing between giving and receiving?",ceo:"Review your collaborations. Is every partnership still aligned with where you're going? Full Moons reveal what's ripe and what's done. If a business relationship feels draining, this is your cosmic permission slip to release it with grace."},
+  {day:2,title:"Mercury trine Jupiter",type:"aspect",mini:"Mercury trine Jupiter",desc:"Optimism flows through communication. Big-picture thinking meets articulate expression.",ceo:"Pitch day. Your words land with more weight and warmth than usual. Send that proposal, record that podcast, post that long-form piece. Your message carries farther today."},
+  {day:3,title:"Venus square Pluto",type:"aspect",mini:"Venus square Pluto",desc:"Intensity surfaces in finances and relationships. Deep desires demand acknowledgment.",ceo:"Money stories rise to the surface. If pricing triggers you, lean into that discomfort. What are you undercharging for? This tension is the doorway to owning your value."},
+  {day:4,title:"Venus sextile North Node",type:"aspect",mini:"Venus sxt North Node",desc:"Positive people and opportunities flow toward you with surprising ease.",ceo:"Open every door that knocks today. Aligned connections find you effortlessly. Say yes to the coffee chat, the collab DM, the unexpected introduction."},
+  {day:4,title:"Sun square Jupiter",type:"aspect",mini:"Sun square Jupiter",desc:"Ambition expands but discipline wavers. The temptation to go too big, too fast.",ceo:"Dream big but execute small. This energy inflates confidence, which is great for vision-casting but dangerous for overcommitting. Write down the big idea. Sleep on the timeline."},
+  {day:7,title:"Mars sextile Uranus",type:"aspect",mini:"Mars sxt Uranus",desc:"Innovative action meets bold instinct. Breakthroughs in unconventional directions.",ceo:"Try the unconventional approach. That 'weird' marketing idea? That experimental format? This transit backs the bold and the different. Move fast on creative impulses."},
+  {day:9,title:"Mars enters Aries",type:"planet",mini:"Mars enters Aries",desc:"Mars comes home. Raw, unfiltered drive and initiative. Action energy is at maximum power.",ceo:"The engine roars. Mars in its domicile is pure entrepreneurial fire. Channel this into launching, not fighting. Start what you've been procrastinating on. Your courage is bankrolled by the cosmos right now."},
+  {day:9,title:"Mercury in Pisces (final degrees)",type:"sign",mini:"Mercury in Pisces (end)",desc:"Mercury retraces the last degrees of Pisces. Tying up loose communication threads before the shift to Aries clarity.",ceo:"Close the loop on any lingering conversations, contracts, or creative projects that got fuzzy during the retrograde shadow. Clarity is coming, but finish the Pisces work first."},
+  {day:10,title:"Last Quarter Moon in Capricorn",type:"phase",mini:"Last Quarter in Cap",desc:"Release and restructure. What systems or commitments need pruning?",ceo:"Audit time. What processes are you maintaining out of habit, not strategy? Cut the dead weight in your workflow so you're lean and ready for the New Moon launch window."},
+  {day:12,title:"Venus sextile Jupiter",type:"aspect",mini:"Venus sxt Jupiter",desc:"Flow in relationships, finances, and opportunities. Generosity attracts abundance.",ceo:"Invest in your audience today. Give generously: a surprise bonus, a heartfelt post, or a personal reply to a community member. What you give now comes back multiplied."},
+  {day:12,title:"Mars conjunct Neptune",type:"aspect",mini:"Mars conj Neptune",desc:"Action meets fog. Like driving full speed into mist. Frustrating if you're impatient, illuminating if you surrender.",ceo:"Do not force outcomes today. If a launch feels murky or a decision won't solidify, pause. Neptune asks you to trust the process. Use this energy for creative work, not spreadsheets."},
+  {day:14,title:"Mercury sextile Uranus",type:"aspect",mini:"Mercury sxt Uranus",desc:"Lightning-strike insights. Sudden clarity and creative breakthroughs arrive unannounced.",ceo:"Keep your notes app open. Brilliant ideas will drop in while you're doing something mundane. This is your innovation window. Capture everything, curate later."},
+  {day:15,title:"Mercury enters Aries",type:"sign",mini:"Mercury enters Aries",desc:"Communication sharpens. Thinking becomes bold, direct, and action-oriented.",ceo:"Your messaging gets teeth. This is the transit for writing sales copy, having direct conversations, and communicating your vision with zero apology. Say what you mean."},
+  {day:15,title:"Mars sextile Pluto",type:"aspect",mini:"Mars sxt Pluto",desc:"Intense focus and quiet power. Strategic action backed by deep conviction.",ceo:"This is your power-move window. Quiet intensity, not loud bravado. Negotiate, restructure, or make the decision you've been circling. Your follow-through has real force right now."},
+  {day:15,title:"Sun conjunct Chiron",type:"aspect",mini:"Sun conj Chiron",desc:"Your wound becomes your teaching. Vulnerability as strength.",ceo:"Share your story. The real one, with the scars. Chiron says your credibility lives in your healing journey, not in appearing flawless. This is the most magnetic content you can create today."},
+  {day:16,title:"Mercury conjunct Neptune",type:"aspect",mini:"Mercury conj Neptune",desc:"Mental focus drifts toward spirituality, creativity, and dreams. Logic takes a back seat to imagination.",ceo:"Not a contracts-and-numbers day. This is for channeling, creating, and letting your intuition lead your content. Write from the soul, not the strategy doc."},
+  {day:17,title:"New Moon in Aries",type:"phase",mini:"NEW MOON in Aries",desc:"The most potent initiation point of the month. Plant seeds of courageous new beginnings.",ceo:"LAUNCH WINDOW. Whatever you've been preparing, this is your green light. New offers, new programs, new visibility strategies. Aries New Moon energy favors the bold first mover. Set intentions that scare you a little."},
+  {day:18,title:"Mercury sextile Pluto",type:"aspect",mini:"Mercury sxt Pluto",desc:"Deep research and penetrating insight. Your inner detective is activated.",ceo:"Dig into your analytics, your client feedback, your market research. You'll see patterns others miss. Excellent for refining your positioning or uncovering hidden opportunities."},
+  {day:18,title:"Mars conjunct Saturn",type:"planet",mini:"Mars conj Saturn",desc:"Disciplined action meets fierce drive. Frustrating if you resist, foundational if you commit.",ceo:"THE structure transit of the month. Whatever you build or commit to under this conjunction will have staying power. This is not about speed. It's about building something that can hold the weight of your ambition. Frustration is part of the process. Push through."},
+  {day:19,title:"Mercury conjunct Mars",type:"aspect",mini:"Mercury conj Mars",desc:"Words and actions merge. Communication is direct, fast, and potentially sharp.",ceo:"Speak with conviction but watch the edges. This is power-pitch energy: direct, confident, compelling. Just proofread before you hit send."},
+  {day:19,title:"Mercury conjunct Saturn",type:"aspect",mini:"Mercury conj Saturn",desc:"Serious, intentional communication. Every word carries weight.",ceo:"Strategic communications only. Contracts, official announcements, pricing structures, boundaries. Your words have authority today. Use them wisely."},
+  {day:20,title:"Sun enters Taurus",type:"sign",mini:"Sun enters Taurus",desc:"The pace shifts from Aries fire to Taurus earth. Slow building, sensory pleasure, and steady progress.",ceo:"Transition from launching to nurturing. Taurus season is about making what you started sustainable. Focus on systems, client experience, and the details that make your brand feel luxurious and reliable."},
+  {day:23,title:"Venus conjunct Uranus",type:"aspect",mini:"Venus conj Uranus",desc:"Excitement and disruption in love, money, and aesthetics. Expect the unexpected.",ceo:"Shake up your offer or branding. Something fresh wants to come through. If you've been feeling stale, this transit cracks the shell. Try a new format, a surprise offer, or a visual rebrand."},
+  {day:24,title:"Venus enters Gemini",type:"sign",mini:"Venus enters Gemini",desc:"Social, curious, multi-faceted. Money and relationships become more playful and versatile.",ceo:"Multi-channel marketing lights up. Venus in Gemini loves variety: cross-post, repurpose, show up on a new platform. Your audience craves wit, charm, and intellectual stimulation."},
+  {day:24,title:"Sun square Pluto",type:"aspect",mini:"Sun square Pluto",desc:"Ego meets transformation. Power dynamics surface for reckoning.",ceo:"If something in your business model feels off, this transit will make it impossible to ignore. Don't fight the reckoning. Surrender what's not working so you can rebuild stronger."},
+  {day:24,title:"First Quarter Moon in Leo",type:"phase",mini:"First Quarter in Leo",desc:"Creative tension and the courage to act on what the New Moon seeded.",ceo:"Check in on your Aries New Moon intentions. What needs a bold push right now? Leo quarter moon says: show up, be seen, take action from the heart."},
+  {day:25,title:"Sun sextile North Node",type:"aspect",mini:"Sun sxt North Node",desc:"Alignment between your identity and your destiny path. Leadership feels natural.",ceo:"You're in the flow today. Leadership decisions, visibility moves, strategic pivots: they all feel aligned. Trust the direction you're being pulled toward."},
+  {day:25,title:"Venus sextile Neptune",type:"aspect",mini:"Venus sxt Neptune",desc:"Dreamy creativity and romantic idealism. Beautiful for branding and storytelling.",ceo:"Your brand voice is at its most enchanting. Create content that's beautiful, aspirational, and emotionally resonant. This is your storytelling superpower day."},
+  {day:26,title:"Uranus enters Gemini",type:"planet",mini:"URANUS enters Gemini",desc:"A generational shift. Uranus hasn't been in Gemini since 1942. Revolution in communication, ideas, and how we learn and sell.",ceo:"MAJOR SHIFT. How people consume information, buy, and connect is about to change radically over the next 7 years. As a cosmic CEO, start experimenting now with AI, new platforms, and unconventional communication. Early adapters win under Uranus in Gemini."},
+  {day:26,title:"Mercury square Jupiter",type:"aspect",mini:"Mercury sq Jupiter",desc:"Optimism in thinking, but risk of overextension. Big plans need grounding.",ceo:"Your ideas are huge today and that's the gift and the trap. Write them all down, then ruthlessly prioritize. Not everything brilliant needs to launch this week."},
+  {day:28,title:"Venus trine Pluto",type:"aspect",mini:"Venus trine Pluto",desc:"Deep attraction and magnetic charm. Intimacy and financial power align.",ceo:"Your offers feel irresistible today. Premium positioning, deep-value content, and authentic vulnerability are your superpowers. Price from your worth, not your fear."},
+  {day:28,title:"Venus square North Node",type:"aspect",mini:"Venus sq North Node",desc:"Tension between comfort and growth. What you want may conflict with where you need to go.",ceo:"That comfortable zone you keep retreating to? This transit says it's time to choose growth over safety. The path forward might not feel cozy yet, but it's yours."},
+  {day:30,title:"Venus sextile Saturn",type:"aspect",mini:"Venus sxt Saturn",desc:"Practical grace. Commitments made now have beauty and durability.",ceo:"Formalize the things that work. Sign the contract, commit to the partnership, lock in the pricing structure. Saturn gives Venus staying power. What you solidify today endures."}
+];
+
+// Short CEO one-liners for quiet days
+const QUIET_INSIGHTS={
+  1:"Virgo Moon opens the month. Organize your April game plan. Refine before you launch.",
+  5:"Deep Scorpio Moon. Journal on what's holding you back. The insight you need is underneath the discomfort.",
+  6:"Still in Scorpio waters. Let the intensity do its work. Not every day needs to be productive to be powerful.",
+  8:"Sagittarius Moon dreams big. Capture those visions. The details come later, the direction matters now.",
+  11:"Aquarius Moon. Innovation over convention. What assumption are you ready to challenge?",
+  13:"Pisces Moon. Rest is a strategy, not a weakness. Protect your energy for what's coming.",
+  21:"Gemini Moon meets Taurus season. Write, share, connect. Your ideas are ready to circulate.",
+  22:"Cancer Moon. Nurture what you've built. Check in on your community. A personal touch goes further than a broadcast.",
+  27:"Virgo Moon. Refine, edit, optimize. The details you polish now will shine when it matters.",
+  29:"Libra Moon. Review your partnerships and collaborations. Is the energy balanced?"
+};
+
+const grid=document.getElementById('calendar-grid');
+const overlay=document.getElementById('detailOverlay');
+const detailContent=document.getElementById('detailContent');
+const closeBtn=document.getElementById('detailClose');
+
+let currentFilter='all';
+const MAX_VISIBLE_EVENTS=4;
+
+function buildCalendar(filter){
+  currentFilter=filter;
+  grid.innerHTML='';
+  
+  const headerRow=document.createElement('div');
+  headerRow.className='week-row';
+  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d=>{
+    const h=document.createElement('div');
+    h.className='day-header';h.textContent=d;headerRow.appendChild(h);
+  });
+  grid.appendChild(headerRow);
+  
+  const startDay=2; // April 2026 starts Wednesday (0=Mon)
+  let row=document.createElement('div');
+  row.className='week-row';
+  
+  for(let i=0;i<startDay;i++){
+    const empty=document.createElement('div');
+    empty.className='day-cell empty';row.appendChild(empty);
+  }
+  
+  for(let day=1;day<=30;day++){
+    const cell=document.createElement('div');
+    cell.className='day-cell';
+    
+    const allDayEvents=EVENTS.filter(e=>e.day===day);
+    const filteredEvents=filter==='all'?allDayEvents:allDayEvents.filter(e=>e.type===filter);
+    
+    // Highlight special days
+    if(allDayEvents.some(e=>e.type==='phase'))cell.classList.add('has-phase');
+    if(allDayEvents.some(e=>e.type==='planet'))cell.classList.add('has-planet');
+    
+    if(filter!=='all'&&filteredEvents.length===0&&allDayEvents.length>0){
+      cell.style.opacity='.3';
+    }
+    
+    // Top row: number + moon badge
+    const top=document.createElement('div');
+    top.className='day-top';
+    const num=document.createElement('div');
+    num.className='day-num';num.textContent=day;
+    top.appendChild(num);
+    if(MOON_SIGNS[day]){
+      const badge=document.createElement('div');
+      badge.className='day-moon-badge';
+      badge.textContent='☽ '+MOON_SIGNS[day];
+      top.appendChild(badge);
+    }
+    cell.appendChild(top);
+    
+    // Event mini-labels
+    const evContainer=document.createElement('div');
+    evContainer.className='day-events';
+    
+    const displayEvents=filter==='all'?allDayEvents:filteredEvents;
+    const visible=displayEvents.slice(0,MAX_VISIBLE_EVENTS);
+    const overflow=displayEvents.length-MAX_VISIBLE_EVENTS;
+    
+    visible.forEach(ev=>{
+      const mini=document.createElement('div');
+      mini.className='day-event-mini '+ev.type;
+      mini.textContent=ev.mini;
+      evContainer.appendChild(mini);
+    });
+    
+    if(overflow>0){
+      const more=document.createElement('div');
+      more.className='day-more';
+      more.textContent='+'+overflow+' more';
+      evContainer.appendChild(more);
+    }
+    
+    // Quiet day hint
+    if(allDayEvents.length===0&&QUIET_INSIGHTS[day]){
+      const quiet=document.createElement('div');
+      quiet.className='day-event-mini sign';
+      quiet.style.opacity='.6';
+      quiet.textContent='☽ Daily insight';
+      evContainer.appendChild(quiet);
+    }
+    
+    cell.appendChild(evContainer);
+    cell.addEventListener('click',()=>openDetail(day));
+    row.appendChild(cell);
+    
+    if((startDay+day)%7===0){
+      grid.appendChild(row);
+      row=document.createElement('div');
+      row.className='week-row';
+    }
+  }
+  
+  const remaining=7-((startDay+30)%7);
+  if(remaining<7){
+    for(let i=0;i<remaining;i++){
+      const empty=document.createElement('div');
+      empty.className='day-cell empty';row.appendChild(empty);
+    }
+  }
+  grid.appendChild(row);
+}
+
+function openDetail(day){
+  const dayEvents=EVENTS.filter(e=>e.day===day);
+  const moonSign=MOON_SIGNS[day];
+  const guide=moonSign?MOON_GUIDE[moonSign]:null;
+  const weekdays=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const date=new Date(2026,3,day);
+  const weekday=weekdays[date.getDay()];
+  
+  // Find prev/next days with content
+  let prevDay=null,nextDay=null;
+  for(let d=day-1;d>=1;d--){if(EVENTS.some(e=>e.day===d)||QUIET_INSIGHTS[d]){prevDay=d;break;}}
+  for(let d=day+1;d<=30;d++){if(EVENTS.some(e=>e.day===d)||QUIET_INSIGHTS[d]){nextDay=d;break;}}
+  // Actually let's allow nav to any day
+  prevDay=day>1?day-1:null;
+  nextDay=day<30?day+1:null;
+  
+  let html=`<div class="detail-nav">
+    <button class="nav-btn" ${prevDay?`onclick="openDetail(${prevDay})"`:'disabled'}>&larr; Apr ${prevDay||''}</button>
+    <button class="nav-btn" ${nextDay?`onclick="openDetail(${nextDay})"`:'disabled'}>Apr ${nextDay||''} &rarr;</button>
+  </div>`;
+  
+  html+=`<div class="detail-date">${weekday}, April ${day}</div>`;
+  if(moonSign)html+=`<div class="detail-moon-sign">☽ Moon in ${moonSign}</div>`;
+  
+  if(guide){
+    html+=`<div class="moon-guide">
+      <h5>Moon in ${moonSign} Energy</h5>
+      <div class="energy">${guide.energy}</div>
+      <div class="do-dont">
+        <div class="do-col"><h6>CEO Do's</h6><ul>${guide.dos.map(d=>'<li>'+d+'</li>').join('')}</ul></div>
+        <div class="dont-col"><h6>Watch Out</h6><ul>${guide.donts.map(d=>'<li>'+d+'</li>').join('')}</ul></div>
+      </div>
+    </div>`;
+  }
+  
+  if(dayEvents.length>0){
+    html+=`<div class="detail-section"><h4>Transits & Events</h4>`;
+    dayEvents.forEach(ev=>{
+      html+=`<div class="event-item">
+        <span class="event-type ${ev.type}">${ev.type==='phase'?'Lunar Phase':ev.type==='planet'?'Planetary Shift':ev.type==='sign'?'Sign Change':'Aspect'}</span>
+        <div class="event-title">${ev.title}</div>
+        <div class="event-desc">${ev.desc}</div>
+        ${ev.ceo?`<div class="event-ceo"><div class="label">Cosmic CEO Insight</div><p>${ev.ceo}</p></div>`:''}
+      </div>`;
+    });
+    html+='</div>';
+  }
+  
+  if(dayEvents.length===0){
+    const quiet=QUIET_INSIGHTS[day];
+    html+=`<div class="detail-section"><div class="quiet-day">${quiet||'A quieter cosmic day. Use the lunar energy above to guide your focus. Sometimes the most powerful move is stillness with intention.'}</div></div>`;
+  }
+  
+  detailContent.innerHTML=html;
+  overlay.classList.add('open');
+  document.body.style.overflow='hidden';
+  // Scroll panel to top
+  document.getElementById('detailPanel').scrollTop=0;
+}
+
+// Make openDetail global for nav buttons
+window.openDetail=openDetail;
+
+function closeDetail(){
+  overlay.classList.remove('open');
+  document.body.style.overflow='';
+}
+
+closeBtn.addEventListener('click',closeDetail);
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeDetail();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail();});
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    buildCalendar(btn.dataset.filter);
+  });
+});
+
+buildCalendar('all');
+</script>
+</body>
+</html>

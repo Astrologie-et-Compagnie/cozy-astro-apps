@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cozy Astro - Cosmic Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+  :root{
+    --bg:#0e0b16;
+    --surface:#16112a;
+    --gold:#c9a84c;
+    --gold-dim:#8a7235;
+    --cream:#e8dcc8;
+    --border:rgba(201,168,76,.18);
+  }
+
+  body{
+    background:var(--bg);
+    color:var(--cream);
+    font-family:'Lora',serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    overflow-x:hidden;
+  }
+
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background:
+      radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.5) 50%, transparent 100%),
+      radial-gradient(1px 1px at 30% 70%, rgba(255,255,255,.35) 50%, transparent 100%),
+      radial-gradient(1.2px 1.2px at 55% 15%, rgba(201,168,76,.6) 50%, transparent 100%),
+      radial-gradient(1px 1px at 72% 55%, rgba(255,255,255,.4) 50%, transparent 100%),
+      radial-gradient(1px 1px at 85% 30%, rgba(201,168,76,.4) 50%, transparent 100%),
+      radial-gradient(1px 1px at 45% 85%, rgba(255,255,255,.3) 50%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 20% 50%, rgba(201,168,76,.5) 50%, transparent 100%),
+      radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,.35) 50%, transparent 100%);
+    pointer-events:none;
+    z-index:0;
+    animation:twinkle 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle{
+    0%{opacity:.6}
+    50%{opacity:1}
+    100%{opacity:.7}
+  }
+
+  .ornament{
+    width:120px;
+    height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    margin:0 auto;
+    position:relative;
+  }
+  .ornament::before{
+    content:'✦';
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    color:var(--gold);
+    font-size:10px;
+    background:var(--bg);
+    padding:0 8px;
+  }
+
+  header{
+    position:relative;
+    z-index:1;
+    text-align:center;
+    padding:48px 24px 24px;
+    max-width:860px;
+    width:100%;
+  }
+
+  header h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;
+    font-size:clamp(1.6rem,4vw,2.4rem);
+    color:var(--gold);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+
+  header p{
+    font-size:.92rem;
+    color:var(--cream);
+    opacity:.6;
+    font-style:italic;
+    margin-bottom:20px;
+  }
+
+  .calendar-wrapper{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:860px;
+    padding:0 16px 48px;
+  }
+
+  .calendar-frame{
+    border:1px solid var(--border);
+    border-radius:6px;
+    overflow:hidden;
+    background:var(--surface);
+    box-shadow:
+      0 0 40px rgba(107,76,154,.12),
+      0 2px 12px rgba(0,0,0,.4);
+    position:relative;
+  }
+
+  .calendar-frame::before,
+  .calendar-frame::after{
+    content:'';
+    position:absolute;
+    width:24px;
+    height:24px;
+    border-color:var(--gold-dim);
+    border-style:solid;
+    z-index:2;
+    pointer-events:none;
+    opacity:.5;
+  }
+  .calendar-frame::before{
+    top:6px;left:6px;
+    border-width:1px 0 0 1px;
+  }
+  .calendar-frame::after{
+    bottom:6px;right:6px;
+    border-width:0 1px 1px 0;
+  }
+
+  .calendar-frame iframe{
+    display:block;
+    width:100%;
+    height:600px;
+    border:none;
+  }
+
+  footer{
+    position:relative;
+    z-index:1;
+    text-align:center;
+    padding:0 24px 40px;
+    opacity:.35;
+    font-size:.75rem;
+    color:var(--cream);
+    letter-spacing:.04em;
+  }
+
+  @media(max-width:600px){
+    header{padding:32px 16px 16px}
+    .calendar-frame iframe{height:480px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Cosmic Calendar</h1>
+  <p>Transits, key dates & cosmic timing at a glance</p>
+  <div class="ornament"></div>
+</header>
+
+<div class="calendar-wrapper">
+  <div class="calendar-frame">
+    <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=Europe%2FParis&showPrint=0&showCalendars=0&src=ZDZxaGM5dGJxdTVnbWczaHE2cWRzb3Fnb2dAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&src=NnJoZGZkc2lxZXNmbDY0NGVqazVuZW1pZzRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&src=a2hndHFoZXB0czQ4NmgyZHEzNGc3cTBqaTFkN2EwZGxAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZTI5YjA4YjVhYzkxMjQ1OWRkZDkzMmYyZmRhY2M2YzEwYWVhMmViOWE1YjFiYTBhMTdmOWExMDFjMGJhMTFmNUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=ZnIuZnJlbmNoI2hvbGlkYXlAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&src=Y182OTZiMjNiYmM2MzkyMWM4Y2VhNTY2ZjYzYjE3ZmVlMWYxZWFkYjc5MDA0MTM2OWVjY2Y2OTI4MjI1YjIzYmM3QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZDZhZjkwNjg5NWM3MGU4Y2M2YzUyZGQ4MjNhNTEyMWE2NDkxY2NlZGJkNjUwMTY2YjE2MTcyYzhlOWI4N2ZkYUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=dW5mMmY3bTV0bmJlMjZnczcyZ281NGg1aGdoY2YwOTlAaW1wb3J0LmNhbGVuZGFyLmdvb2dsZS5jb20&src=Y2xhc3Nyb29tMTE4MzA1MjEzMjQ0MTQ5NDA2ODAxQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23795548&color=%23ad1457&color=%237986cb&color=%23c0ca33&color=%23009688&color=%23e67c73&color=%23795548&color=%23795548&color=%23202124" scrolling="no"></iframe>
+  </div>
+</div>
+
+<footer>The Cozy Cosmic Company</footer>
+
+</body>
+</html>

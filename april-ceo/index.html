@@ -1,86 +1,381 @@
-import { useState } from "react";
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guidance Cosmique – Avril 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-export default function AvrilApp() {
-  const [step, setStep] = useState("home");
-  const [feeling, setFeeling] = useState("");
-  const [input, setInput] = useState("");
-  const [fear, setFear] = useState("");
+    body {
+      background: #faf4ee;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
 
-  const reset = () => {
-    setStep("home");
-    setFeeling("");
-    setInput("");
-    setFear("");
-  };
+    .card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 44px 40px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 8px 40px rgba(160, 120, 90, 0.10);
+    }
 
-  return (
-    <div style={{ maxWidth: 500, margin: "40px auto", fontFamily: "sans-serif" }}>
-      {step === "home" && (
-        <>
-          <h2>Where are you today?</h2>
-          <button onClick={() => { setFeeling("fog"); setStep("flow"); }}>
-            I feel unclear
-          </button>
-          <button onClick={() => { setFeeling("hesitation"); setStep("flow"); }}>
-            I feel hesitant
-          </button>
-          <button onClick={() => { setFeeling("momentum"); setStep("flow"); }}>
-            I feel an urge to act
-          </button>
-        </>
-      )}
+    .moon-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
 
-      {step === "flow" && feeling === "fog" && (
-        <>
-          <h3>What’s been on your mind?</h3>
-          <textarea value={input} onChange={(e) => setInput(e.target.value)} />
-          <button onClick={() => setStep("anchor")}>Continue</button>
-        </>
-      )}
+    .moon-header .emoji { font-size: 2.2rem; display: block; margin-bottom: 10px; }
 
-      {step === "anchor" && feeling === "fog" && (
-        <>
-          <p>Your gentle anchor:</p>
-          <p><em>You don’t need to decide yet. Just notice what keeps returning.</em></p>
-          <button onClick={reset}>Start again</button>
-        </>
-      )}
+    .moon-header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: #3a2e28;
+      letter-spacing: 0.04em;
+    }
 
-      {step === "flow" && feeling === "hesitation" && (
-        <>
-          <h3>Where are you holding yourself back?</h3>
-          <textarea value={input} onChange={(e) => setInput(e.target.value)} />
-          <button onClick={() => setStep("reframe")}>Continue</button>
-        </>
-      )}
+    .moon-header p {
+      font-size: 0.78rem;
+      color: #b09080;
+      margin-top: 7px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
 
-      {step === "reframe" && feeling === "hesitation" && (
-        <>
-          <p>If you trusted yourself a little more, what would shift?</p>
-          <p><em>You are allowed to choose yourself, even gently.</em></p>
-          <button onClick={reset}>Start again</button>
-        </>
-      )}
+    .step-indicator {
+      font-size: 0.72rem;
+      color: #c9a98a;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
 
-      {step === "flow" && feeling === "momentum" && (
-        <>
-          <h3>What do you feel called to do?</h3>
-          <textarea value={input} onChange={(e) => setInput(e.target.value)} />
+    .question-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.22rem;
+      font-style: italic;
+      color: #3a2e28;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
 
-          <h3>What’s holding you back?</h3>
-          <textarea value={fear} onChange={(e) => setFear(e.target.value)} />
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-          <button onClick={() => setStep("action")}>Continue</button>
-        </>
-      )}
+    .choice-btn {
+      background: #faf4ee;
+      color: #3a2e28;
+      border: 1.5px solid #e8d5c4;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 0.92rem;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      line-height: 1.4;
+    }
 
-      {step === "action" && feeling === "momentum" && (
-        <>
-          <p>Your courageous step:</p>
-          <p><em>Take one small, honest action today — even if it’s imperfect.</em></p>
-          <button onClick={reset}>Start again</button>
-        </>
-      )}
+    .choice-btn:hover { background: #f5ede3; border-color: #c9a98a; }
+    .choice-btn.selected { background: #c9a98a; border-color: #c9a98a; color: #fff; }
+
+    .divider { border: none; border-top: 1px solid #f0e4d8; margin: 28px 0; }
+
+    .summary-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .chip {
+      background: #f5ede3;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 0.78rem;
+      color: #8a6050;
+      font-family: 'Lato', sans-serif;
+    }
+
+    .generate-btn {
+      width: 100%;
+      background: #3a2e28;
+      color: #faf4ee;
+      border: none;
+      border-radius: 14px;
+      padding: 17px 20px;
+      font-size: 1.05rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .generate-btn:hover { background: #5a4035; }
+
+    .reset-btn {
+      width: 100%;
+      background: transparent;
+      color: #b09080;
+      border: 1.5px solid #e8d5c4;
+      border-radius: 14px;
+      padding: 13px 20px;
+      font-size: 0.88rem;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: all 0.2s;
+    }
+
+    .reset-btn:hover { border-color: #c9a98a; color: #c9a98a; }
+
+    .loading {
+      text-align: center;
+      color: #b09080;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.12rem;
+      padding: 28px 0;
+    }
+
+    .loading span { animation: pulse 1.6s ease-in-out infinite; display: inline-block; }
+
+    @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+    .guidance-box {
+      background: #fdf7f2;
+      border-left: 3px solid #c9a98a;
+      border-radius: 0 16px 16px 0;
+      padding: 26px 24px;
+      color: #3a2e28;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.08rem;
+      line-height: 1.85;
+      white-space: pre-wrap;
+    }
+
+    .cta-box {
+      margin-top: 20px;
+      background: #f5ede3;
+      border-radius: 14px;
+      padding: 18px 20px;
+      font-size: 0.86rem;
+      color: #5a4035;
+      line-height: 1.65;
+      font-family: 'Lato', sans-serif;
+    }
+
+    .cta-box a { color: #c9a98a; text-decoration: none; }
+    .cta-box a:hover { text-decoration: underline; }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+<div class="card">
+
+  <div class="moon-header">
+    <span class="emoji">🌙</span>
+    <h1>Guidance Cosmique</h1>
+    <p>Avril 2026 · Astrologie & Compagnie</p>
+  </div>
+
+  <!-- ÉTAPE 1 -->
+  <div id="step-1">
+    <div class="step-indicator">Étape 1 · 3</div>
+    <div class="question-label">Comment vous sentez-vous en ce moment ?</div>
+    <div class="btn-group" id="group-1">
+      <button class="choice-btn" onclick="select(1, this, 'dans le brouillard — je ne vois pas clairement où je vais')">Dans le brouillard</button>
+      <button class="choice-btn" onclick="select(1, this, 'en hésitation — je sais ce que je veux mais je n\'ose pas')">En hésitation</button>
+      <button class="choice-btn" onclick="select(1, this, 'sous pression — j\'ai l\'impression de devoir agir vite')">Sous pression</button>
+      <button class="choice-btn" onclick="select(1, this, 'dans un élan — j\'ai envie de me lancer')">Dans un élan</button>
+      <button class="choice-btn" onclick="select(1, this, 'épuisé(e) — j\'ai besoin de ralentir')">Épuisé(e), besoin de ralentir</button>
     </div>
-  );
-}
+  </div>
+
+  <hr class="divider" id="div-1" style="display:none">
+
+  <!-- ÉTAPE 2 -->
+  <div id="step-2" class="hidden">
+    <div class="step-indicator">Étape 2 · 3</div>
+    <div class="question-label">Dans quel domaine ressentez-vous cela surtout ?</div>
+    <div class="btn-group" id="group-2">
+      <button class="choice-btn" onclick="select(2, this, 'ma vie professionnelle ou créative')">Vie pro / créative</button>
+      <button class="choice-btn" onclick="select(2, this, 'mes relations — amour, famille, amitié')">Relations</button>
+      <button class="choice-btn" onclick="select(2, this, 'mon rapport à moi-même, mon identité')">Moi-même / identité</button>
+      <button class="choice-btn" onclick="select(2, this, 'mon énergie, mon corps, ma santé')">Énergie / corps</button>
+      <button class="choice-btn" onclick="select(2, this, 'mes finances ou ma sécurité matérielle')">Finances / sécurité</button>
+    </div>
+  </div>
+
+  <hr class="divider" id="div-2" style="display:none">
+
+  <!-- ÉTAPE 3 -->
+  <div id="step-3" class="hidden">
+    <div class="step-indicator">Étape 3 · 3</div>
+    <div class="question-label">Ce que vous cherchez en ce moment, c'est plutôt…</div>
+    <div class="btn-group" id="group-3">
+      <button class="choice-btn" onclick="select(3, this, 'comprendre ce qui se passe')">Comprendre ce qui se passe</button>
+      <button class="choice-btn" onclick="select(3, this, 'une permission de ralentir ou de m\'arrêter')">Une permission de ralentir</button>
+      <button class="choice-btn" onclick="select(3, this, 'un signal clair pour passer à l\'action')">Un signal pour agir</button>
+      <button class="choice-btn" onclick="select(3, this, 'être reconnecté(e) à mon chemin profond')">Me reconnecter à mon chemin</button>
+    </div>
+  </div>
+
+  <hr class="divider" id="div-3" style="display:none">
+
+  <!-- BOUTON GÉNÉRER -->
+  <div id="step-generate" class="hidden">
+    <div class="summary-chips" id="summary-chips"></div>
+    <button class="generate-btn" onclick="generate()">✨ Recevoir ma guidance</button>
+  </div>
+
+  <!-- RÉSULTAT -->
+  <div id="step-result" class="hidden">
+    <div id="loading" class="loading"><span>Le ciel vous répond…</span></div>
+    <div id="guidance-text" class="guidance-box hidden"></div>
+    <div id="cta-block" class="cta-box hidden">
+      💫 Pour aller plus loin — <a href="https://www.ateliers-astrologieetcompagnie.com/trop-de-questions" target="_blank">la boutique Astrologie & Compagnie</a> propose des guides et workbooks pour construire votre autonomie cosmique. Vous pouvez aussi réserver un <strong>Flash Astro à 75€</strong> pour un éclairage précis sur votre thème natal en ce moment.
+    </div>
+    <button class="reset-btn" onclick="reset()">↩ Recommencer</button>
+  </div>
+
+</div>
+
+<script>
+  const answers = { 1: '', 2: '', 3: '' };
+
+  function select(step, btn, value) {
+    document.querySelectorAll(`#group-${step} .choice-btn`).forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answers[step] = value;
+
+    setTimeout(() => {
+      if (step < 3) {
+        document.getElementById(`div-${step}`).style.display = 'block';
+        const nextStep = document.getElementById(`step-${step + 1}`);
+        nextStep.classList.remove('hidden');
+        nextStep.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      if (step === 3) {
+        document.getElementById('div-3').style.display = 'block';
+        showGenerate();
+      }
+    }, 280);
+  }
+
+  function showGenerate() {
+    const block = document.getElementById('step-generate');
+    block.classList.remove('hidden');
+    const chips = document.getElementById('summary-chips');
+    chips.innerHTML = '';
+    [answers[1], answers[2], answers[3]].forEach(a => {
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.textContent = a;
+      chips.appendChild(chip);
+    });
+    block.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  async function generate() {
+    document.getElementById('step-generate').classList.add('hidden');
+    document.getElementById('step-result').classList.remove('hidden');
+    document.getElementById('loading').classList.remove('hidden');
+    document.getElementById('guidance-text').classList.add('hidden');
+    document.getElementById('cta-block').classList.add('hidden');
+
+    const systemPrompt = `Tu es l'oracle cosmique d'Astrologie & Compagnie, créé par Judith, astrologue fondatrice du Cozy Cosmic Circle.
+
+Ton rôle : offrir une guidance astrologique personnalisée, profonde et accessible. Tu vouvoies toujours l'utilisateur.
+
+CONTEXTE ASTROLOGIQUE D'AVRIL 2026 :
+- Début du mois : sortie progressive de l'ombre de Mercure rétrograde (clarté qui revient)
+- 2 avril : Pleine Lune en Balance — bilan sur les relations et l'équilibre
+- 9 avril : Mars entre en Bélier (son signe domicile) — élan, action directe, retour à l'essentiel
+- 10 avril : Dernier Quartier en Capricorne — lâcher prise sur les structures obsolètes
+- 11 avril : Mars conjoint Neptune en Bélier — vision rencontre l'action, confusion possible mais élan créatif rare
+- 16 avril : Mercure conjoint Neptune — intuition, inspiration, mots qui touchent juste
+- 17 avril : Nouvelle Lune en Bélier — vrai nouveau départ du printemps, graines de courage
+- 18 avril : Mars conjoint Saturne en Bélier — action disciplinée, construire dans la durée
+- 19 avril : Mercure conjoint Mars et Saturne — fenêtre de clarté rare, décisions solides
+- 23 avril : Vénus conjoint Uranus — étincelle créative, surprise agréable
+- 24 avril : Vénus entre en Gémeaux — légèreté, curiosité, nouvelles connexions
+- 25 avril : Uranus entre en Gémeaux — événement générationnel, nouvelle ère pour la communication et l'apprentissage
+
+PHILOSOPHIE DE LA MARQUE :
+- "Cozy" = haute performance par la régulation du système nerveux, pas la paresse
+- Agir depuis sa guidance intérieure plutôt que réagir aux pressions externes
+- L'astrologie comme outil stratégique d'autonomie
+- Ton : chaleureux, profond, accessible, poétique sans être vague, ancré dans le concret
+
+RÈGLES DE FORMAT :
+- 3 paragraphes maximum, texte fluide
+- Commence par nommer l'énergie du ciel qui résonne avec leur situation
+- Offre une perspective qui élargit leur regard sans les submerger
+- Termine par une invitation concrète et douce — pas un ordre, une proposition
+- Pas de bullet points, pas de titres, pas de superlatifs excessifs
+- Ne jamais mentionner le coaching`;
+
+    const userMessage = `L'utilisateur se sent : ${answers[1]}
+Domaine concerné : ${answers[2]}
+Ce qu'il cherche : ${answers[3]}
+
+Offre-lui une guidance cosmique personnalisée et bienveillante pour avril 2026.`;
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          system: systemPrompt,
+          messages: [{ role: "user", content: userMessage }]
+        })
+      });
+
+      const data = await response.json();
+      const text = data.content?.[0]?.text || "Une erreur s'est produite. Veuillez réessayer.";
+
+      document.getElementById('loading').classList.add('hidden');
+      const el = document.getElementById('guidance-text');
+      el.textContent = text;
+      el.classList.remove('hidden');
+      document.getElementById('cta-block').classList.remove('hidden');
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    } catch (err) {
+      document.getElementById('loading').classList.add('hidden');
+      const el = document.getElementById('guidance-text');
+      el.textContent = "Une erreur s'est produite. Vérifiez votre connexion et réessayez.";
+      el.classList.remove('hidden');
+    }
+  }
+
+  function reset() {
+    answers[1] = ''; answers[2] = ''; answers[3] = '';
+    document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+    ['step-2','step-3','step-generate','step-result'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    ['div-1','div-2','div-3'].forEach(id => document.getElementById(id).style.display = 'none');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

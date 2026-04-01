@@ -1,0 +1,86 @@
+import { useState } from "react";
+
+export default function AvrilApp() {
+  const [step, setStep] = useState("home");
+  const [feeling, setFeeling] = useState("");
+  const [input, setInput] = useState("");
+  const [fear, setFear] = useState("");
+
+  const reset = () => {
+    setStep("home");
+    setFeeling("");
+    setInput("");
+    setFear("");
+  };
+
+  return (
+    <div style={{ maxWidth: 500, margin: "40px auto", fontFamily: "sans-serif" }}>
+      {step === "home" && (
+        <>
+          <h2>Where are you today?</h2>
+          <button onClick={() => { setFeeling("fog"); setStep("flow"); }}>
+            I feel unclear
+          </button>
+          <button onClick={() => { setFeeling("hesitation"); setStep("flow"); }}>
+            I feel hesitant
+          </button>
+          <button onClick={() => { setFeeling("momentum"); setStep("flow"); }}>
+            I feel an urge to act
+          </button>
+        </>
+      )}
+
+      {step === "flow" && feeling === "fog" && (
+        <>
+          <h3>What’s been on your mind?</h3>
+          <textarea value={input} onChange={(e) => setInput(e.target.value)} />
+          <button onClick={() => setStep("anchor")}>Continue</button>
+        </>
+      )}
+
+      {step === "anchor" && feeling === "fog" && (
+        <>
+          <p>Your gentle anchor:</p>
+          <p><em>You don’t need to decide yet. Just notice what keeps returning.</em></p>
+          <button onClick={reset}>Start again</button>
+        </>
+      )}
+
+      {step === "flow" && feeling === "hesitation" && (
+        <>
+          <h3>Where are you holding yourself back?</h3>
+          <textarea value={input} onChange={(e) => setInput(e.target.value)} />
+          <button onClick={() => setStep("reframe")}>Continue</button>
+        </>
+      )}
+
+      {step === "reframe" && feeling === "hesitation" && (
+        <>
+          <p>If you trusted yourself a little more, what would shift?</p>
+          <p><em>You are allowed to choose yourself, even gently.</em></p>
+          <button onClick={reset}>Start again</button>
+        </>
+      )}
+
+      {step === "flow" && feeling === "momentum" && (
+        <>
+          <h3>What do you feel called to do?</h3>
+          <textarea value={input} onChange={(e) => setInput(e.target.value)} />
+
+          <h3>What’s holding you back?</h3>
+          <textarea value={fear} onChange={(e) => setFear(e.target.value)} />
+
+          <button onClick={() => setStep("action")}>Continue</button>
+        </>
+      )}
+
+      {step === "action" && feeling === "momentum" && (
+        <>
+          <p>Your courageous step:</p>
+          <p><em>Take one small, honest action today — even if it’s imperfect.</em></p>
+          <button onClick={reset}>Start again</button>
+        </>
+      )}
+    </div>
+  );
+}

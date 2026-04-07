@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Astro-CEO Cosmic Leadership Guide</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0d0a1a 0%, #1a1035 50%, #0d1a2a 100%);
+    font-family: Georgia, serif;
+    color: #e0d0ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 48px;
+  }
+
+  .header { text-align: center; margin-bottom: 32px; }
+  .header .star { font-size: 28px; margin-bottom: 8px; }
+  .header h1 { color: #e8d5ff; font-size: 22px; font-weight: normal; letter-spacing: 1px; }
+  .header p { color: #8a7aaa; font-size: 13px; margin-top: 6px; }
+
+  .card {
+    width: 100%;
+    max-width: 640px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(196,168,255,0.18);
+    border-radius: 20px;
+    padding: 36px 40px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  .step { display: none; }
+  .step.active { display: block; }
+
+  .step-label {
+    font-size: 11px;
+    color: #7c4fd4;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    color: #e8d5ff;
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  p, li {
+    color: #b0a0cc;
+    font-size: 14px;
+    line-height: 1.9;
+    margin-bottom: 12px;
+  }
+
+  .highlight { color: #c4a8ff; }
+
+  ul { padding-left: 20px; margin-bottom: 16px; }
+
+  .insight-box {
+    background: rgba(124,79,212,0.1);
+    border: 1px solid rgba(124,79,212,0.3);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 13px;
+    color: #c4a8ff;
+    line-height: 1.8;
+  }
+
+  .field-label {
+    font-size: 13px;
+    color: #c4a8ff;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  input[type="text"], textarea, select {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(196,168,255,0.25);
+    border-radius: 10px;
+    color: #e0d0ff;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-family: Georgia, serif;
+    margin-bottom: 20px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: rgba(124,79,212,0.6);
+  }
+  textarea { resize: vertical; min-height: 100px; line-height: 1.7; }
+  select option { background: #1a1035; }
+
+  .btn-row { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+
+  button {
+    font-family: Georgia, serif;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #7c4fd4, #4a6fa5);
+    color: #fff;
+    border-radius: 50px;
+    padding: 12px 28px;
+    font-size: 14px;
+    box-shadow: 0 4px 16px rgba(124,79,212,0.3);
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: transparent;
+    color: #6a5a8a;
+    border: 1px solid rgba(196,168,255,0.15);
+    border-radius: 50px;
+    padding: 12px 24px;
+    font-size: 13px;
+  }
+  .btn-secondary:hover { border-color: rgba(196,168,255,0.35); color: #c4a8ff; }
+
+  .btn-gold {
+    background: linear-gradient(135deg, #a68e45, #c4a845);
+    color: #0d0a1a;
+    border-radius: 50px;
+    padding: 14px 36px;
+    font-size: 15px;
+    font-weight: bold;
+    box-shadow: 0 4px 24px rgba(166,142,69,0.4);
+    letter-spacing: 0.5px;
+  }
+  .btn-gold:hover { opacity: 0.92; transform: translateY(-1px); }
+
+  .progress {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+  .progress-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(196,168,255,0.15);
+    transition: all 0.3s;
+  }
+  .progress-dot.done { background: #7c4fd4; }
+  .progress-dot.active { background: #c4a8ff; transform: scale(1.3); }
+
+  .summary-block { margin-bottom: 20px; }
+  .summary-block h3 { color: #c4a8ff; font-size: 13px; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .summary-block p { color: #e0d0ff; font-size: 14px; margin: 0; }
+
+  .divider { border: none; border-top: 1px solid rgba(196,168,255,0.12); margin: 24px 0; }
+
+  .footer-note { color: #3a2a5a; font-size: 11px; text-align: center; margin-top: 24px; line-height: 1.8; }
+
+  .link { color: #c4a8ff; text-decoration: underline; cursor: pointer; }
+
+  /* PRINT STYLES */
+  @media print {
+    body {
+      background: #0d0a1a !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      padding: 0;
+    }
+    .card { border: none; box-shadow: none; max-width: 100%; padding: 20px 32px; }
+    .no-print { display: none !important; }
+    .step { display: none !important; }
+    #print-view { display: block !important; }
+    .progress { display: none; }
+    .header { margin-bottom: 16px; }
+  }
+
+  #print-view { display: none; }
+  #print-view h2 { color: #e8d5ff; font-size: 20px; font-weight: normal; margin-bottom: 6px; }
+  #print-view .print-date { color: #8a7aaa; font-size: 12px; margin-bottom: 28px; }
+  #print-view .section-title {
+    color: #c4a8ff;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 24px 0 8px;
+  }
+  #print-view .placement-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  #print-view .placement-item {
+    background: rgba(124,79,212,0.08);
+    border: 1px solid rgba(124,79,212,0.25);
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  #print-view .placement-item span { color: #8a7aaa; font-size: 11px; display: block; margin-bottom: 2px; }
+  #print-view .placement-item p { color: #e0d0ff; font-size: 13px; margin: 0; }
+  #print-view .sentence-box {
+    background: rgba(124,79,212,0.1);
+    border-left: 3px solid #7c4fd4;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  #print-view .sentence-box .label { color: #7c4fd4; font-size: 11px; font-weight: bold; margin-bottom: 4px; }
+  #print-view .sentence-box p { color: #e0d0ff; font-size: 14px; margin: 0; line-height: 1.7; }
+  #print-view .print-footer { color: #4a3a6a; font-size: 11px; margin-top: 32px; padding-top: 16px; border-top: 1px solid #2a1a4a; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="star">✦</div>
+  <h1>Astro-CEO Cosmic Leadership Guide</h1>
+  <p>Your cosmic leadership, made practical</p>
+</div>
+
+<div class="progress no-print" id="progressBar"></div>
+
+<div class="card">
+
+  <!-- STEP 0 : INTRO -->
+  <div class="step active" id="step-0">
+    <p class="step-label">Welcome</p>
+    <h2>Discover your Cosmic Leadership Style</h2>
+    <p>This guided workbook helps you decode five key placements in your natal chart and turn them into a practical leadership tool for your life and business.</p>
+    <div class="insight-box">
+      You'll explore three modules — your <span class="highlight">Leadership Signature</span>, your <span class="highlight">Decision-Making Style</span>, and your <span class="highlight">Energy Budget</span> — and end with a personalized <span class="highlight">Cosmic Leadership Profile</span> you can download and keep.
+    </div>
+    <p><strong style="color:#c4a8ff">What you'll need:</strong> your natal chart. If you don't have one, you can generate it for free in 2 minutes on <a href="https://astro-seek.com" target="_blank" class="link">astro-seek.com</a> — you'll need your birth date, exact birth time, and birth location.</p>
+    <p style="color:#6a5a8a; font-size:13px">This is not a quiz — it's a reflection journey. Take your time with each step.</p>
+    <div class="btn-row" style="margin-top:24px">
+      <button class="btn-primary" onclick="goTo(1)">I have my chart — let's begin ✦</button>
+      <button class="btn-secondary" onclick="window.open('https://astro-seek.com','_blank')">Get my chart first</button>
+    </div>
+  </div>
+
+  <!-- STEP 1 : SUN -->
+  <div class="step" id="step-1">
+    <p class="step-label">Placement 1 of 5</p>
+    <h2>Your Sun sign & house</h2>
+    <p>Your <span class="highlight">Sun</span> represents your core identity, your life purpose, and what you're here to express in the world. In leadership, it's your natural drive — the "why" behind everything you build.</p>
+    <label class="field-label">Sun sign (e.g. Scorpio, Aries, Virgo...)</label>
+    <input type="text" id="sun-sign" placeholder="e.g. Scorpio"/>
+    <label class="field-label">Sun house (e.g. 1st, 5th, 10th...)</label>
+    <input type="text" id="sun-house" placeholder="e.g. 10th"/>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="saveAndGo('sun', 2)">Continue →</button>
+      <button class="btn-secondary" onclick="goTo(0)">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 : ASCENDANT -->
+  <div class="step" id="step-2">
+    <p class="step-label">Placement 2 of 5</p>
+    <h2>Your Ascendant (Rising sign)</h2>
+    <p>Your <span class="highlight">Ascendant</span> is how you show up in the world — your leadership presence, first impression, and natural style. Where your Sun is your inner driver, your Rising is your outer expression.</p>
+    <label class="field-label">Ascendant / Rising sign</label>
+    <input type="text" id="ascendant" placeholder="e.g. Capricorn"/>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="saveAndGo('ascendant', 3)">Continue →</button>
+      <button class="btn-secondary" onclick="goTo(1)">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 : MOON -->
+  <div class="step" id="step-3">
+    <p class="step-label">Placement 3 of 5</p>
+    <h2>Your Moon sign & house</h2>
+    <p>Your <span class="highlight">Moon</span> represents your emotional world, inner security, and how you process feelings. In leadership and business, emotions are not separate from decisions — they are the foundation of aligned decisions.</p>
+    <label class="field-label">Moon sign</label>
+    <input type="text" id="moon-sign" placeholder="e.g. Cancer"/>
+    <label class="field-label">Moon house</label>
+    <input type="text" id="moon-house" placeholder="e.g. 4th"/>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="saveAndGo('moon', 4)">Continue →</button>
+      <button class="btn-secondary" onclick="goTo(2)">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 : MERCURY -->
+  <div class="step" id="step-4">
+    <p class="step-label">Placement 4 of 5</p>
+    <h2>Your Mercury sign & house</h2>
+    <p>Your <span class="highlight">Mercury</span> governs how you think, communicate, and process information. It shapes your decision rhythm — how you gather data, form opinions, and express your ideas as a leader.</p>
+    <label class="field-label">Mercury sign</label>
+    <input type="text" id="mercury-sign" placeholder="e.g. Sagittarius"/>
+    <label class="field-label">Mercury house</label>
+    <input type="text" id="mercury-house" placeholder="e.g. 3rd"/>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="saveAndGo('mercury', 5)">Continue →</button>
+      <button class="btn-secondary" onclick="goTo(3)">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 5 : MARS -->
+  <div class="step" id="step-5">
+    <p class="step-label">Placement 5 of 5</p>
+    <h2>Your Mars sign & house</h2>
+    <p>Your <span class="highlight">Mars</span> is your action principle — your drive, motivation style, and energy signature. It reveals how you take initiative, what fuels you, and how you manage your energy as a leader and business owner.</p>
+    <label class="field-label">Mars sign</label>
+    <input type="text" id="mars-sign" placeholder="e.g. Taurus"/>
+    <label class="field-label">Mars house</label>
+    <input type="text" id="mars-house" placeholder="e.g. 2nd"/>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="saveAndGo('mars', 6)">Continue →</button>
+      <button class="btn-secondary" onclick="goTo(4)">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 6 : MODULE 1 -->
+  <div class="step" id="step-6">
+    <p class="step-label">Module 1 — Leadership Signature</p>
+    <h2>Sun + Ascendant: How do you lead?</h2>
+    <div class="insight-box" id="insight-module1"></div>
+    <p>Your Sun is <em>what</em> you're here to express. Your Ascendant is <em>how</em> you naturally show up. Together, they form your leadership signature — the unique way you step into rooms, inspire others, and build your brand.</p>
+    <p>Take a moment to reflect:</p>
+    <ul>
+      <li>What do people often say about your presence or energy?</li>
+      <li>When do you feel most like yourself as a leader?</li>
+      <li>What kind of authority feels natural — not forced — to you?</li>
+    </ul>
+    <p style="color:#6a5a8a; font-size:13px">Now, in your own words — even if it's short or imperfect — write your Leadership Signature sentence. This must come from you.</p>
+    <label class="field-label">My Leadership Signature</label>
+    <textarea id="sentence-leadership" placeholder="e.g. I lead by creating safe spaces where depth and action coexist..."></textarea>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="saveAndGo('leadership', 7)">Continue →</button>
+      <button class="btn-secondary" onclick="goTo(5)">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 7 : MODULE 2 -->
+  <div class="step" id="step-7">
+    <p class="step-label">Module 2 — Decision-Making Style</p>
+    <h2>Moon + Mercury: How do you decide?</h2>
+    <div class="insight-box" id="insight-module2"></div>
+    <p>Your Moon tells you <em>what you need to feel safe</em> before deciding. Your Mercury tells you <em>how you process information</em>. Aligned decisions happen when both are honored — not bypassed.</p>
+    <p>Take a moment to reflect:</p>
+    <ul>
+      <li>Do you decide better alone or after talking it through?</li>
+      <li>What happens in your body when a decision feels right?</li>
+      <li>What conditions help you think most clearly?</li>
+    </ul>
+    <p style="color:#6a5a8a; font-size:13px">Write your Decision-Making Style sentence in your own words.</p>
+    <label class="field-label">My Decision-Making Style</label>
+    <textarea id="sentence-decision" placeholder="e.g. I make my best decisions after sitting with an idea overnight and checking in with how it feels in my body..."></textarea>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="saveAndGo('decision', 8)">Continue →</button>
+      <button class="btn-secondary" onclick="goTo(6)">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 8 : MODULE 3 -->
+  <div class="step" id="step-8">
+    <p class="step-label">Module 3 — Energy Budget</p>
+    <h2>Mars: How do you take action?</h2>
+    <div class="insight-box" id="insight-module3"></div>
+    <p>Your Mars reveals your natural action style — not the productivity system you think you <em>should</em> follow, but the one that actually works for your energy. Cozy is not lazy. Aligned action is still action.</p>
+    <p>Take a moment to reflect:</p>
+    <ul>
+      <li>When do you feel most energized and in flow?</li>
+      <li>What kinds of tasks drain you faster than others?</li>
+      <li>How do you recharge between efforts?</li>
+    </ul>
+    <p style="color:#6a5a8a; font-size:13px">Write your Energy Budget sentence in your own words.</p>
+    <label class="field-label">My Energy Budget</label>
+    <textarea id="sentence-energy" placeholder="e.g. I work in focused bursts and need recovery time between big projects — I'm a sprinter, not a marathoner..."></textarea>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="saveAndGo('energy', 9)">Continue →</button>
+      <button class="btn-secondary" onclick="goTo(7)">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 9 : SUMMARY + DOWNLOAD -->
+  <div class="step" id="step-9">
+    <p class="step-label">Your Cosmic Leadership Profile</p>
+    <h2>You've done the work. ✦</h2>
+    <p>Here is everything you've discovered. Download your guide to keep it, print it, and return to it whenever you need to reconnect with your cosmic design.</p>
+    <hr class="divider"/>
+    <div id="summary-display"></div>
+    <hr class="divider"/>
+    <div class="btn-row" style="justify-content:center; margin-top:8px">
+      <button class="btn-gold no-print" onclick="downloadGuide()">✦ Download my Cosmic Leadership Guide</button>
+    </div>
+    <div class="btn-row" style="justify-content:center; margin-top:12px">
+      <button class="btn-secondary no-print" onclick="restart()">Start over</button>
+    </div>
+  </div>
+
+  <!-- PRINT VIEW -->
+  <div id="print-view">
+    <h2>✦ Astro-CEO Cosmic Leadership Guide</h2>
+    <p class="print-date" id="print-date"></p>
+
+    <p class="section-title">My Natal Placements</p>
+    <div class="placement-grid" id="print-placements"></div>
+
+    <p class="section-title">Module 1 — Leadership Signature</p>
+    <div class="insight-box" id="print-insight1" style="margin-bottom:12px"></div>
+    <div class="sentence-box"><div class="label">MY LEADERSHIP SIGNATURE</div><p id="print-s1"></p></div>
+
+    <p class="section-title">Module 2 — Decision-Making Style</p>
+    <div class="insight-box" id="print-insight2" style="margin-bottom:12px"></div>
+    <div class="sentence-box"><div class="label">MY DECISION-MAKING STYLE</div><p id="print-s2"></p></div>
+
+    <p class="section-title">Module 3 — Energy Budget</p>
+    <div class="insight-box" id="print-insight3" style="margin-bottom:12px"></div>
+    <div class="sentence-box"><div class="label">MY ENERGY BUDGET</div><p id="print-s3"></p></div>
+
+    <div class="print-footer">
+      Astrology describes the car you're driving. You are at the wheel. ✦<br/>
+      © <span id="print-year"></span> cozyastro.com — All rights reserved
+    </div>
+  </div>
+
+</div>
+
+<p class="footer-note no-print">
+  Astrology describes the car you're driving. You are at the wheel. ✦<br/>
+  © <span id="footer-year"></span> cozyastro.com — All rights reserved
+</p>
+
+<script>
+  document.getElementById("footer-year").textContent = new Date().getFullYear();
+  document.getElementById("print-year").textContent = new Date().getFullYear();
+
+  const TOTAL_STEPS = 10;
+  const data = {};
+
+  // Progress bar
+  const bar = document.getElementById("progressBar");
+  for (let i = 0; i < TOTAL_STEPS; i++) {
+    const dot = document.createElement("div");
+    dot.className = "progress-dot no-print";
+    dot.id = `dot-${i}`;
+    bar.appendChild(dot);
+  }
+
+  function updateProgress(step) {
+    for (let i = 0; i < TOTAL_STEPS; i++) {
+      const dot = document.getElementById(`dot-${i}`);
+      if (i < step) dot.className = "progress-dot done no-print";
+      else if (i === step) dot.className = "progress-dot active no-print";
+      else dot.className = "progress-dot no-print";
+    }
+  }
+
+  function goTo(n) {
+    document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+    document.getElementById(`step-${n}`).classList.add("active");
+    updateProgress(n);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function saveAndGo(field, next) {
+    // Collect fields
+    if (field === "sun") {
+      data.sunSign = document.getElementById("sun-sign").value.trim();
+      data.sunHouse = document.getElementById("sun-house").value.trim();
+    } else if (field === "ascendant") {
+      data.ascendant = document.getElementById("ascendant").value.trim();
+    } else if (field === "moon") {
+      data.moonSign = document.getElementById("moon-sign").value.trim();
+      data.moonHouse = document.getElementById("moon-house").value.trim();
+    } else if (field === "mercury") {
+      data.mercurySign = document.getElementById("mercury-sign").value.trim();
+      data.mercuryHouse = document.getElementById("mercury-house").value.trim();
+    } else if (field === "mars") {
+      data.marsSign = document.getElementById("mars-sign").value.trim();
+      data.marsHouse = document.getElementById("mars-house").value.trim();
+    } else if (field === "leadership") {
+      data.sentenceLeadership = document.getElementById("sentence-leadership").value.trim();
+    } else if (field === "decision") {
+      data.sentenceDecision = document.getElementById("sentence-decision").value.trim();
+    } else if (field === "energy") {
+      data.sentenceEnergy = document.getElementById("sentence-energy").value.trim();
+    }
+
+    // Populate insights before showing module steps
+    if (next === 6) populateInsights();
+    if (next === 9) populateSummary();
+
+    goTo(next);
+  }
+
+  function populateInsights() {
+    const s = data.sunSign || "your Sun sign";
+    const sh = data.sunHouse ? `(${data.sunHouse} house)` : "";
+    const asc = data.ascendant || "your Ascendant";
+    const m = data.moonSign || "your Moon sign";
+    const mh = data.moonHouse ? `(${data.moonHouse} house)` : "";
+    const merc = data.mercurySign || "your Mercury sign";
+    const merch = data.mercuryHouse ? `(${data.mercuryHouse} house)` : "";
+    const mars = data.marsSign || "your Mars sign";
+    const marsh = data.marsHouse ? `(${data.marsHouse} house)` : "";
+
+    document.getElementById("insight-module1").innerHTML =
+      `Your <strong>${s} Sun</strong> ${sh} meets your <strong>${asc} Ascendant</strong>. Your Sun drives your purpose from the inside; your Ascendant broadcasts it to the world.`;
+    document.getElementById("insight-module2").innerHTML =
+      `Your <strong>${m} Moon</strong> ${mh} and <strong>${merc} Mercury</strong> ${merch} shape how you feel your way through decisions and how you think them through.`;
+    document.getElementById("insight-module3").innerHTML =
+      `Your <strong>${mars} Mars</strong> ${marsh} is your action signature — the rhythm and fuel behind everything you do.`;
+  }
+
+  function populateSummary() {
+    // Summary display on screen
+    const summary = document.getElementById("summary-display");
+    summary.innerHTML = `
+      <div class="summary-block">
+        <h3>MY PLACEMENTS</h3>
+        <p>☀️ Sun: ${data.sunSign || "—"} ${data.sunHouse ? "· " + data.sunHouse + " house" : ""}<br/>
+        ↑ Ascendant: ${data.ascendant || "—"}<br/>
+        🌙 Moon: ${data.moonSign || "—"} ${data.moonHouse ? "· " + data.moonHouse + " house" : ""}<br/>
+        ☿ Mercury: ${data.mercurySign || "—"} ${data.mercuryHouse ? "· " + data.mercuryHouse + " house" : ""}<br/>
+        ♂ Mars: ${data.marsSign || "—"} ${data.marsHouse ? "· " + data.marsHouse + " house" : ""}</p>
+      </div>
+      <div class="summary-block">
+        <h3>MY LEADERSHIP SIGNATURE</h3>
+        <p>${data.sentenceLeadership || "—"}</p>
+      </div>
+      <div class="summary-block">
+        <h3>MY DECISION-MAKING STYLE</h3>
+        <p>${data.sentenceDecision || "—"}</p>
+      </div>
+      <div class="summary-block">
+        <h3>MY ENERGY BUDGET</h3>
+        <p>${data.sentenceEnergy || "—"}</p>
+      </div>`;
+
+    // Print view
+    document.getElementById("print-date").textContent =
+      "Generated on " + new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + " · The Cozy Cosmic Company";
+
+    document.getElementById("print-placements").innerHTML = `
+      <div class="placement-item"><span>☀️ Sun</span><p>${data.sunSign || "—"} ${data.sunHouse ? "· " + data.sunHouse + " house" : ""}</p></div>
+      <div class="placement-item"><span>↑ Ascendant</span><p>${data.ascendant || "—"}</p></div>
+      <div class="placement-item"><span>🌙 Moon</span><p>${data.moonSign || "—"} ${data.moonHouse ? "· " + data.moonHouse + " house" : ""}</p></div>
+      <div class="placement-item"><span>☿ Mercury</span><p>${data.mercurySign || "—"} ${data.mercuryHouse ? "· " + data.mercuryHouse + " house" : ""}</p></div>
+      <div class="placement-item"><span>♂ Mars</span><p>${data.marsSign || "—"} ${data.marsHouse ? "· " + data.marsHouse + " house" : ""}</p></div>`;
+
+    document.getElementById("print-insight1").innerHTML = document.getElementById("insight-module1").innerHTML;
+    document.getElementById("print-insight2").innerHTML = document.getElementById("insight-module2").innerHTML;
+    document.getElementById("print-insight3").innerHTML = document.getElementById("insight-module3").innerHTML;
+    document.getElementById("print-s1").textContent = data.sentenceLeadership || "—";
+    document.getElementById("print-s2").textContent = data.sentenceDecision || "—";
+    document.getElementById("print-s3").textContent = data.sentenceEnergy || "—";
+  }
+
+  function downloadGuide() {
+    document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+    window.print();
+    setTimeout(() => goTo(9), 500);
+  }
+
+  function restart() {
+    Object.keys(data).forEach(k => delete data[k]);
+    document.querySelectorAll("input, textarea").forEach(el => el.value = "");
+    goTo(0);
+  }
+
+  updateProgress(0);
+</script>
+</body>
+</html>

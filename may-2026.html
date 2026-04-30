@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AstroAssistant May 2026 | Cozy Astro</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d1b2a;--navy-mid:#162032;--navy-light:#1e2d42;
+  --gold:#c9a84c;--gold-light:#e8c97a;--gold-pale:#f5e9c9;
+  --teal:#2a7f8a;--teal-light:#3fa8b5;
+  --white:#fff;--text-light:rgba(255,255,255,.85);--text-muted:rgba(255,255,255,.5);
+  --glass:rgba(255,255,255,.05);--gb:rgba(201,168,76,.2);
+  --red-soft:rgba(200,80,80,.15);--red-border:rgba(200,80,80,.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Josefin Sans",sans-serif;background:var(--navy);color:var(--white);min-height:100vh;overflow-x:hidden;}
+#sf{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.star{position:absolute;border-radius:50%;background:#fff;animation:tw var(--d,4s) ease-in-out infinite alternate;animation-delay:var(--dl,0s);}
+@keyframes tw{from{opacity:.03;transform:scale(.8);}to{opacity:var(--op,.25);transform:scale(1.2);}}
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 18px 80px;}
+
+/* HEADER */
+.hdr{text-align:center;padding:44px 20px 28px;}
+.brand-lbl{font-weight:200;font-size:10px;letter-spacing:.4em;color:var(--teal-light);text-transform:uppercase;margin-bottom:14px;}
+.main-title{font-family:"Cormorant Garamond",serif;font-size:clamp(34px,7vw,58px);font-weight:300;color:var(--gold-light);line-height:1.1;}
+.main-title em{font-style:italic;color:#fff;}
+.sub{font-weight:300;font-size:10px;letter-spacing:.32em;color:var(--text-muted);text-transform:uppercase;margin-top:10px;}
+.rule{width:70px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:16px auto 0;}
+
+/* RISING SELECTOR SCREEN */
+#rising-screen{padding:20px 0;}
+.rs-intro{font-family:"Cormorant Garamond",serif;font-size:18px;font-style:italic;color:var(--text-light);line-height:1.7;text-align:center;margin-bottom:24px;padding:0 10px;}
+.rs-label{font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:var(--teal-light);text-align:center;margin-bottom:14px;display:block;}
+.sign-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.sign-btn{background:var(--glass);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 8px;cursor:pointer;transition:all .25s;text-align:center;}
+.sign-btn:hover{border-color:var(--gold);background:rgba(201,168,76,.1);transform:translateY(-2px);}
+.sign-btn .sign-name{font-family:"Cormorant Garamond",serif;font-size:15px;color:var(--gold-light);display:block;margin-bottom:2px;}
+.sign-btn .sign-dates{font-size:8px;letter-spacing:.1em;color:var(--text-muted);display:block;}
+.sign-btn.active{border-color:var(--gold);background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(42,127,138,.12));box-shadow:0 0 16px rgba(201,168,76,.2);}
+
+/* MAIN APP (hidden until sign selected) */
+#main-app{display:none;}
+.selected-rising-bar{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(42,127,138,.08));border:1px solid var(--gb);border-radius:12px;padding:12px 18px;margin-bottom:18px;}
+.srb-left{font-family:"Cormorant Garamond",serif;font-size:18px;color:var(--gold-light);}
+.srb-left span{font-style:italic;}
+.srb-change{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal-light);cursor:pointer;border:1px solid rgba(63,168,181,.3);border-radius:20px;padding:5px 12px;background:transparent;transition:all .2s;}
+.srb-change:hover{background:rgba(63,168,181,.1);color:var(--teal-light);}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:20px;background:rgba(0,0,0,.3);border-radius:12px;padding:4px;border:1px solid var(--gb);flex-wrap:wrap;}
+.tb{flex:1;min-width:70px;padding:10px 6px;background:transparent;border:none;color:var(--text-muted);font-family:"Josefin Sans",sans-serif;font-size:9px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;border-radius:8px;transition:all .3s;}
+.tb:hover{color:var(--gold-light);}
+.tb.on{background:linear-gradient(135deg,var(--navy-light),rgba(201,168,76,.14));color:var(--gold-light);border:1px solid var(--gb);}
+
+/* PANELS */
+.panel{display:none;}
+.panel.on{display:block;animation:fi .4s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* CARD */
+.card{background:var(--glass);border:1px solid var(--gb);border-radius:14px;padding:20px;margin-bottom:14px;}
+.card-title{font-family:"Cormorant Garamond",serif;font-size:21px;font-weight:400;color:var(--gold-light);margin-bottom:4px;}
+.card-sub{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--teal-light);margin-bottom:14px;}
+
+/* EVENT CARDS in Daily Guide */
+.event-card{border-radius:12px;margin-bottom:12px;overflow:hidden;border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:border-color .25s;}
+.event-card:hover{border-color:rgba(201,168,76,.4);}
+.event-card.open{border-color:var(--teal-light);}
+.ec-header{padding:14px 16px;display:flex;align-items:flex-start;gap:12px;}
+.ec-type{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px;}
+.type-lunar{background:var(--gold);}
+.type-flow{background:var(--teal-light);}
+.type-tension{background:#e07070;}
+.type-power{background:#c090e0;}
+.type-ingress{background:#80a8e0;}
+.type-caution{background:#e09040;}
+.ec-main{flex:1;}
+.ec-dates{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px;}
+.ec-name{font-family:"Cormorant Garamond",serif;font-size:17px;color:var(--gold-light);line-height:1.2;margin-bottom:4px;}
+.ec-house{font-size:10px;color:var(--teal-light);letter-spacing:.08em;}
+.ec-tag{font-size:8px;letter-spacing:.18em;text-transform:uppercase;padding:3px 9px;border-radius:10px;flex-shrink:0;margin-top:2px;}
+.tag-lunar{background:rgba(201,168,76,.2);color:var(--gold);border:1px solid rgba(201,168,76,.4);}
+.tag-flow{background:rgba(42,127,138,.18);color:var(--teal-light);border:1px solid rgba(42,127,138,.35);}
+.tag-tension{background:rgba(200,80,80,.18);color:#e08080;border:1px solid rgba(200,80,80,.3);}
+.tag-power{background:rgba(160,80,200,.18);color:#c090e0;border:1px solid rgba(160,80,200,.3);}
+.tag-ingress{background:rgba(80,120,220,.18);color:#90b0f0;border:1px solid rgba(80,120,220,.3);}
+.tag-caution{background:rgba(200,120,40,.18);color:#e09040;border:1px solid rgba(200,120,40,.3);}
+.ec-body{display:none;padding:0 16px 16px;}
+.event-card.open .ec-body{display:block;animation:fi .3s ease;}
+.ec-context{font-family:"Cormorant Garamond",serif;font-size:15px;font-style:italic;color:var(--text-light);line-height:1.7;margin-bottom:12px;padding:10px 14px;background:rgba(255,255,255,.04);border-left:2px solid var(--gold);border-radius:0 8px 8px 0;}
+.ec-personal{font-size:11px;color:var(--teal-light);margin-bottom:12px;padding:8px 12px;background:rgba(42,127,138,.1);border-radius:8px;line-height:1.6;}
+.ec-personal strong{color:var(--teal-light);}
+.da-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.do-box,.av-box{border-radius:8px;padding:11px 13px;}
+.do-box{background:rgba(42,127,138,.1);border:1px solid rgba(42,127,138,.25);}
+.av-box{background:var(--red-soft);border:1px solid var(--red-border);}
+.box-lbl{font-size:8px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:8px;font-weight:600;}
+.do-box .box-lbl{color:var(--teal-light);}
+.av-box .box-lbl{color:#e08080;}
+.da-list{list-style:none;font-size:10px;color:var(--text-light);line-height:1.6;}
+.da-list li{padding-left:12px;position:relative;padding-bottom:2px;}
+.do-box .da-list li::before{content:"Go";position:absolute;left:0;color:var(--teal-light);font-size:7px;top:3px;letter-spacing:.05em;}
+.av-box .da-list li::before{content:"No";position:absolute;left:0;color:#e08080;font-size:7px;top:3px;letter-spacing:.05em;}
+
+/* WEEK CARDS (CEO Plan) */
+.week-card{border:1px solid var(--gb);border-radius:14px;margin-bottom:14px;overflow:hidden;}
+.wk-header{padding:16px 18px;display:flex;justify-content:space-between;align-items:flex-start;cursor:pointer;user-select:none;transition:background .25s;}
+.wk-header:hover{background:rgba(255,255,255,.03);}
+.wk-label{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--teal-light);margin-bottom:3px;}
+.wk-theme{font-family:"Cormorant Garamond",serif;font-size:18px;color:var(--gold-light);line-height:1.2;}
+.wk-moon{font-size:10px;color:var(--text-muted);margin-top:3px;font-style:italic;}
+.wk-badge{font-size:8px;letter-spacing:.16em;text-transform:uppercase;padding:3px 9px;border-radius:16px;flex-shrink:0;margin-left:9px;}
+.badge-high{background:rgba(201,168,76,.2);color:var(--gold-light);border:1px solid rgba(201,168,76,.4);}
+.badge-vhigh{background:rgba(201,168,76,.35);color:var(--gold);border:1px solid var(--gold);box-shadow:0 0 10px rgba(201,168,76,.2);}
+.badge-med{background:rgba(42,127,138,.2);color:var(--teal-light);border:1px solid rgba(42,127,138,.4);}
+.wk-chevron{color:var(--text-muted);font-size:12px;margin-left:6px;transition:transform .3s;flex-shrink:0;align-self:center;}
+.week-card.open .wk-chevron{transform:rotate(180deg);}
+.wk-body{display:none;padding:0 18px 18px;border-top:1px solid var(--gb);}
+.week-card.open .wk-body{display:block;animation:fi .3s ease;}
+.wk-personal-house{margin-top:14px;padding:12px 14px;background:rgba(42,127,138,.08);border:1px solid rgba(42,127,138,.2);border-radius:10px;font-size:11px;color:var(--teal-light);line-height:1.6;}
+.wk-personal-house strong{color:var(--gold-light);}
+.wk-da{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px;}
+.wk-do,.wk-av{border-radius:9px;padding:12px;}
+.wk-do{background:rgba(42,127,138,.1);border:1px solid rgba(42,127,138,.25);}
+.wk-av{background:var(--red-soft);border:1px solid var(--red-border);}
+.wk-box-lbl{font-size:8px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:8px;font-weight:600;}
+.wk-do .wk-box-lbl{color:var(--teal-light);}
+.wk-av .wk-box-lbl{color:#e08080;}
+.wk-list{list-style:none;font-size:10.5px;color:var(--text-light);line-height:1.6;}
+.wk-list li{padding-left:13px;position:relative;padding-bottom:2px;}
+.wk-do .wk-list li::before{content:"Go";position:absolute;left:0;color:var(--teal-light);font-size:7px;top:3px;letter-spacing:.05em;}
+.wk-av .wk-list li::before{content:"No";position:absolute;left:0;color:#e08080;font-size:7px;top:3px;letter-spacing:.05em;}
+.wk-ceo{margin-top:12px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.28);border-radius:9px;padding:12px;}
+.wk-ceo-lbl{font-size:8px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.wk-ceo-txt{font-family:"Cormorant Garamond",serif;font-size:14px;font-style:italic;color:var(--gold-pale);line-height:1.5;}
+.wk-perm{margin-top:10px;text-align:center;font-family:"Cormorant Garamond",serif;font-size:14px;font-style:italic;color:var(--text-muted);padding:10px;border-top:1px solid var(--gb);}
+.wk-perm span{color:var(--gold-pale);}
+.active-events{margin-top:12px;background:rgba(63,168,181,.06);border:1px solid rgba(63,168,181,.2);border-radius:9px;padding:11px;}
+.ae-lbl{font-size:8px;letter-spacing:.26em;text-transform:uppercase;color:var(--teal-light);margin-bottom:7px;}
+.ae-chips{display:flex;flex-wrap:wrap;gap:4px;}
+.ae-chip{font-size:9.5px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:2px 9px;color:var(--text-light);}
+
+/* LUNAR MAP */
+.phase-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.phase-pill{background:var(--glass);border:1px solid var(--gb);border-radius:40px;padding:10px 14px;display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;min-width:120px;}
+.phase-pill .pp-date{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);}
+.phase-pill .pp-name{font-family:"Cormorant Garamond",serif;font-size:13px;color:var(--gold-light);text-align:center;line-height:1.3;}
+.phase-pill .pp-house{font-size:10px;color:var(--teal-light);text-align:center;}
+.phase-pill.super{box-shadow:0 0 18px rgba(201,168,76,.28);border-color:var(--gold);}
+.moon-list{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;}
+.moon-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-light);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.moon-dates{color:var(--gold-light);font-size:10px;min-width:72px;}
+.void-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;}
+.void-chip{background:rgba(170,50,50,.14);border:1px solid rgba(170,50,50,.28);border-radius:17px;padding:3px 10px;font-size:10px;color:#e08080;}
+
+/* FOOTER */
+.foot{text-align:center;padding:28px 0 0;border-top:1px solid var(--gb);margin-top:22px;}
+.foot-brand{font-family:"Cormorant Garamond",serif;font-size:16px;font-style:italic;color:var(--gold-light);margin-bottom:4px;}
+.foot-note{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);}
+
+@media(max-width:600px){
+  .sign-grid{grid-template-columns:repeat(3,1fr);}
+  .da-grid,.wk-da{grid-template-columns:1fr;}
+  .moon-list{grid-template-columns:1fr;}
+  .tabs{gap:3px;} .tb{font-size:8px;padding:8px 3px;}
+}
+</style>
+</head>
+<body>
+<div id="sf"></div>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="brand-lbl">Cozy Astro for Life &amp; Business &middot; Architect Tier</div>
+  <h1 class="main-title">AstroAssistant<br><em>May 2026</em></h1>
+  <div class="sub">Your personalised cosmic guide for the month</div>
+  <div class="rule"></div>
+</div>
+
+<!-- RISING SIGN SELECTOR -->
+<div id="rising-screen">
+  <p class="rs-intro">Every planet, every lunar phase, every piece of guidance in this tool is personalised to your Rising Sign. Select yours to begin.</p>
+  <span class="rs-label">What is your Rising Sign?</span>
+  <div class="sign-grid">
+    <div class="sign-btn" data-sign="Aries" onclick="selectRising('Aries')"><span class="sign-name">Aries</span><span class="sign-dates">Mar 21 &ndash; Apr 19</span></div>
+    <div class="sign-btn" data-sign="Taurus" onclick="selectRising('Taurus')"><span class="sign-name">Taurus</span><span class="sign-dates">Apr 20 &ndash; May 20</span></div>
+    <div class="sign-btn" data-sign="Gemini" onclick="selectRising('Gemini')"><span class="sign-name">Gemini</span><span class="sign-dates">May 21 &ndash; Jun 20</span></div>
+    <div class="sign-btn" data-sign="Cancer" onclick="selectRising('Cancer')"><span class="sign-name">Cancer</span><span class="sign-dates">Jun 21 &ndash; Jul 22</span></div>
+    <div class="sign-btn" data-sign="Leo" onclick="selectRising('Leo')"><span class="sign-name">Leo</span><span class="sign-dates">Jul 23 &ndash; Aug 22</span></div>
+    <div class="sign-btn" data-sign="Virgo" onclick="selectRising('Virgo')"><span class="sign-name">Virgo</span><span class="sign-dates">Aug 23 &ndash; Sep 22</span></div>
+    <div class="sign-btn" data-sign="Libra" onclick="selectRising('Libra')"><span class="sign-name">Libra</span><span class="sign-dates">Sep 23 &ndash; Oct 22</span></div>
+    <div class="sign-btn" data-sign="Scorpio" onclick="selectRising('Scorpio')"><span class="sign-name">Scorpio</span><span class="sign-dates">Oct 23 &ndash; Nov 21</span></div>
+    <div class="sign-btn" data-sign="Sagittarius" onclick="selectRising('Sagittarius')"><span class="sign-name">Sagittarius</span><span class="sign-dates">Nov 22 &ndash; Dec 21</span></div>
+    <div class="sign-btn" data-sign="Capricorn" onclick="selectRising('Capricorn')"><span class="sign-name">Capricorn</span><span class="sign-dates">Dec 22 &ndash; Jan 19</span></div>
+    <div class="sign-btn" data-sign="Aquarius" onclick="selectRising('Aquarius')"><span class="sign-name">Aquarius</span><span class="sign-dates">Jan 20 &ndash; Feb 18</span></div>
+    <div class="sign-btn" data-sign="Pisces" onclick="selectRising('Pisces')"><span class="sign-name">Pisces</span><span class="sign-dates">Feb 19 &ndash; Mar 20</span></div>
+  </div>
+  <p style="font-size:10px;color:var(--text-muted);text-align:center;margin-top:10px;">Your Rising Sign (Ascendant) is not your Sun sign. It is determined by the time of your birth and sets your house structure for the whole year.</p>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app">
+  <div class="selected-rising-bar">
+    <div class="srb-left">Reading for: <span id="display-rising"></span> Rising</div>
+    <button class="srb-change" onclick="resetRising()">Change sign</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tb on" onclick="showTab('guide')">Daily Guide</button>
+    <button class="tb" onclick="showTab('ceo')">CEO Plan</button>
+    <button class="tb" onclick="showTab('lunar')">Lunar Map</button>
+  </div>
+
+  <!-- TAB: DAILY GUIDE -->
+  <div id="tab-guide" class="panel on">
+    <div class="card">
+      <div class="card-title">May 2026 &mdash; Your Event Sequence</div>
+      <div class="card-sub" id="guide-sub">All events personalised to your Rising Sign</div>
+      <p style="font-size:11px;color:var(--text-muted);line-height:1.65;margin-bottom:4px;">Every lunar phase and planetary transit below is translated into the specific area of life it activates for you. Click any event to see your personalised guidance.</p>
+    </div>
+    <div id="events-list"></div>
+  </div>
+
+  <!-- TAB: CEO PLAN -->
+  <div id="tab-ceo" class="panel">
+    <div class="card">
+      <div class="card-title">CEO Week by Week</div>
+      <div class="card-sub">Lunar + planetary transits &middot; personalised to your Rising Sign</div>
+      <p style="font-size:11px;color:var(--text-muted);line-height:1.65;">Each week integrates the lunar phase and all active transits into one strategic view, translated into the areas of life they activate for you specifically.</p>
+    </div>
+    <div id="weeks-list"></div>
+  </div>
+
+  <!-- TAB: LUNAR MAP -->
+  <div id="tab-lunar" class="panel">
+    <div class="card">
+      <div class="card-title">May Lunar Story</div>
+      <div class="card-sub">5 phases &middot; 2 Full Moons &middot; 1 Supermoon &middot; sourced from ICS</div>
+      <div class="phase-strip" id="phase-strip"></div>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--text-light);line-height:1.7;">May opens with a confrontation and closes with a celebration. The Scorpio Full Moon on May 1 demands honesty about what is costing you. The Taurus Supermoon on May 16 is the most powerful intention portal of the month. The Sagittarius Full Moon on May 31 closes the cycle with expansion and celebration.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Moon Sign Journey</div>
+      <div class="card-sub">How the moon moves through May</div>
+      <div class="moon-list">
+        <div class="moon-item"><span class="moon-dates">May 1</span> Scorpio &mdash; depth, truth</div>
+        <div class="moon-item"><span class="moon-dates">May 2&ndash;4</span> Sagittarius &mdash; expansion</div>
+        <div class="moon-item"><span class="moon-dates">May 5&ndash;7</span> Capricorn &mdash; structure</div>
+        <div class="moon-item"><span class="moon-dates">May 8&ndash;9</span> Aquarius &mdash; community</div>
+        <div class="moon-item"><span class="moon-dates">May 10&ndash;11</span> Pisces &mdash; intuition</div>
+        <div class="moon-item"><span class="moon-dates">May 13</span> Aries &mdash; initiative</div>
+        <div class="moon-item"><span class="moon-dates">May 15&ndash;16</span> Taurus &mdash; grounding</div>
+        <div class="moon-item"><span class="moon-dates">May 17</span> Gemini &mdash; ideas</div>
+        <div class="moon-item"><span class="moon-dates">May 19&ndash;20</span> Cancer &mdash; nurturing</div>
+        <div class="moon-item"><span class="moon-dates">May 21&ndash;22</span> Leo &mdash; creativity</div>
+        <div class="moon-item"><span class="moon-dates">May 23&ndash;25</span> Virgo &mdash; precision</div>
+        <div class="moon-item"><span class="moon-dates">May 25&ndash;27</span> Libra &mdash; balance</div>
+        <div class="moon-item"><span class="moon-dates">May 28&ndash;30</span> Scorpio &mdash; depth again</div>
+        <div class="moon-item"><span class="moon-dates">May 30&ndash;31</span> Sagittarius &mdash; Full Moon close</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Void of Course Moon</div>
+      <div class="card-sub">Pause before launching, signing, or deciding on these dates</div>
+      <p style="font-size:11px;color:var(--text-muted);margin-bottom:11px;line-height:1.6;">The Moon is between signs during these windows. Decisions made here tend not to go as planned. Use them for rest, reflection, and inner work rather than outward action.</p>
+      <div class="void-chips">
+        <span class="void-chip">May 2&ndash;3</span><span class="void-chip">May 4</span><span class="void-chip">May 7&ndash;8</span>
+        <span class="void-chip">May 10</span><span class="void-chip">May 12&ndash;13</span><span class="void-chip">May 14&ndash;15</span>
+        <span class="void-chip">May 17</span><span class="void-chip">May 17&ndash;19</span><span class="void-chip">May 20&ndash;21</span>
+        <span class="void-chip">May 21&ndash;23</span><span class="void-chip">May 25</span><span class="void-chip">May 27&ndash;28</span>
+        <span class="void-chip">May 30</span><span class="void-chip">May 31</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main-app -->
+
+<div class="foot">
+  <div class="foot-brand">Cozy Astro for Life &amp; Business</div>
+  <div class="foot-note">Architect Tier &middot; May 2026 &middot; All events sourced from ICS calendar</div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// STARS
+var sf=document.getElementById('sf');
+for(var i=0;i<120;i++){
+  var s=document.createElement('div');
+  s.className='star';
+  var z=Math.random()*2+0.4;
+  s.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;width:'+z+'px;height:'+z+'px;--d:'+(3+Math.random()*5)+'s;--dl:'+Math.random()*5+'s;--op:'+(0.05+Math.random()*0.25)+';';
+  sf.appendChild(s);
+}
+
+// HOUSE CALCULATION
+var SIGNS=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+function houseFor(rising,sign){return((SIGNS.indexOf(sign)-SIGNS.indexOf(rising)+12)%12)+1;}
+var HOUSE_SHORT={1:'Identity',2:'Money & Worth',3:'Communication',4:'Home & Roots',5:'Creativity & Joy',6:'Work & Health',7:'Partnerships',8:'Transformation',9:'Vision & Expansion',10:'Career & Visibility',11:'Community & Goals',12:'Inner Life & Rest'};
+var HOUSE_NAMES={1:'your identity and how you show up',2:'your money, self-worth and values',3:'your communication, writing and learning',4:'your home, roots and emotional foundation',5:'your creativity, joy and self-expression',6:'your daily work rhythms, health and systems',7:'your partnerships, contracts and key relationships',8:'your transformation, shared finances and depth',9:'your expansion, vision, teaching and publishing',10:'your career, public visibility and authority',11:'your community, audience and long-term goals',12:'your inner life, rest and hidden patterns'};
+var HOUSE_CTX={1:'This is deeply personal. It touches how you are seen, how you feel in your body, and the version of yourself you are actively becoming.',2:'Pay attention to the financial and self-worth dimensions of this energy. What you believe you deserve is being directly addressed.',3:'Your communication, writing, and the way you share your thinking are in the spotlight. What you say and how you say it carries special weight.',4:'The foundation matters right now: your emotional baseline, your sense of safety, and what feels like home in the deepest sense.',5:'Creativity, joy, and authentic self-expression are the themes. Where are you allowing yourself to create and play without justification?',6:'Your day-to-day systems, work habits, and physical wellbeing are the focus. Sustainable rhythm matters more than any single breakthrough.',7:'Your key relationships, business partners, clients, and significant collaborators are directly involved. How are you showing up in 1:1 dynamics?',8:'Deep transformation, shared finances, and what you hold in common with others are activated. This goes beneath the surface of how things appear.',9:'Your vision, your sense of possibility, and your ability to teach and reach further are in focus. What is the bigger horizon you are moving toward?',10:'Your public role, career direction, and the authority you carry in your professional world are highlighted. How are you being seen?',11:'Your community, your audience, and the long-term goals you hold for collective impact are the territory being activated.',12:'The inner work, the unseen preparation, and the rest and restoration your system needs are what this energy is asking you to honour.'};
+
+// HELPER FUNCTIONS
+function li(arr){var out='';for(var i=0;i<arr.length;i++){out+='<li>'+arr[i]+'</li>';}return out;}
+function ch(arr){var out='';for(var i=0;i<arr.length;i++){out+='<span class="ae-chip">'+arr[i]+'</span>';}return out;}
+function housePhrase(rising,sign){var h=houseFor(rising,sign);return{house:h,area:HOUSE_SHORT[h],desc:HOUSE_NAMES[h]};}
+
+// STATE
+var currentRising=null;
+
+function selectRising(sign){
+  currentRising=sign;
+  var btns=document.querySelectorAll('.sign-btn');
+  for(var i=0;i<btns.length;i++){
+    btns[i].classList.remove('active');
+    if(btns[i].getAttribute('data-sign')===sign){btns[i].classList.add('active');}
+  }
+  document.getElementById('rising-screen').style.display='none';
+  document.getElementById('main-app').style.display='block';
+  document.getElementById('display-rising').textContent=sign;
+  document.getElementById('guide-sub').textContent='All events personalised to '+sign+' Rising';
+  renderEvents();
+  renderWeeks();
+  renderPhases();
+  showTab('guide');
+}
+
+function resetRising(){
+  currentRising=null;
+  document.getElementById('rising-screen').style.display='block';
+  document.getElementById('main-app').style.display='none';
+  var btns=document.querySelectorAll('.sign-btn');
+  for(var i=0;i<btns.length;i++){btns[i].classList.remove('active');}
+}
+
+function showTab(id){
+  var panels=document.querySelectorAll('.panel');
+  for(var i=0;i<panels.length;i++){panels[i].classList.remove('on');}
+  var tbs=document.querySelectorAll('.tb');
+  for(var i=0;i<tbs.length;i++){tbs[i].classList.remove('on');}
+  document.getElementById('tab-'+id).classList.add('on');
+  var tbs2=document.querySelectorAll('.tb');
+  for(var i=0;i<tbs2.length;i++){
+    var oc=tbs2[i].getAttribute('onclick')||'';
+    if(oc.indexOf("'"+id+"'")!==-1){tbs2[i].classList.add('on');}
+  }
+}
+
+function toggleEvent(card){card.classList.toggle('open');}
+function toggleWeek(id){document.getElementById(id).classList.toggle('open');}
+
+// ALL EVENTS (sourced from ICS, May 2026 only)
+var EVENTS=[
+{id:'e1',dates:'May 1',sign:'Scorpio',type:'lunar',tag:'Full Moon',
+name:'Full Moon in Scorpio',
+what:'The Full Moon illuminates the Scorpio area of your chart, bringing completions, revelations, and emotional peak moments. What has been building since November 2025 now reaches its culmination. Truths surface whether you invite them or not.',
+doItems:['Name what has completed or reached its limit in this area of your life','Have the honest conversation you have been avoiding','Release a commitment, dynamic, or pattern that is no longer serving you'],
+avoidItems:['Launching new initiatives - Full Moons mark endings, not beginnings','Suppressing what rises to the surface today','Impulsive decisions fuelled by the emotional intensity']},
+
+{id:'e2',dates:'May 1-2',sign:'Aries',type:'tension',tag:'Sensitive',
+name:'Mercury Conjunct Chiron',
+what:'The planet of communication aligns with the asteroid of wounding. Words carry extra weight in both directions - they can wound or they can heal. You may feel more sensitive to how things are said, or find that old stories about your voice and worth are being stirred.',
+doItems:['Write the message that acknowledges a wound or opens a real conversation','Speak your truth with care rather than suppression','Use heightened sensitivity as information about what genuinely matters to you'],
+avoidItems:['Sending reactive or defensive responses to clients or collaborators','Cold outreach or pitching - the energy is too raw for that today','Dismissing your own emotional signals as weakness']},
+
+{id:'e3',dates:'May 3-6',sign:'Aries',type:'caution',tag:'Watch energy',
+name:'Mars Square Jupiter',
+what:'A surge of ambition and motivation arrives, but the square creates friction between action and expansion. The temptation is to start everything at once. The invitation is to direct all that energy into one clear priority and go further with it than you usually would.',
+doItems:['Channel the drive into one focused priority and give it everything','Take a bold step you have been hesitating on','Use the burst of courage to have a conversation or make a move that normally feels too big'],
+avoidItems:['Starting multiple new projects simultaneously','Making large financial commitments on impulse','Saying yes to everything just because the energy feels good']},
+
+{id:'e4',dates:'May 3-17',sign:'Taurus',type:'ingress',tag:'Ingress',
+name:'Mercury in Taurus',
+what:'The planet of communication moves through Taurus for two weeks, slowing thinking down and focusing it on practical results. This is not the time for innovative leaps - it is the time to use what you know, refine what exists, and communicate with deliberateness and weight.',
+doItems:['Refine your core messaging and offer language','Write in a slow, grounded way - less is more','Review existing content and systems for quality and clarity'],
+avoidItems:['Expecting fast decisions from others or yourself','Rushing proposals and pitches','Skipping practical details in pursuit of the exciting idea']},
+
+{id:'e5',dates:'May 5-6',sign:'Aries',type:'flow',tag:'Flow',
+name:'Mercury Sextile North Node',
+what:'A brief window where communication and your life direction come into easy alignment. The right teachers, conversations, and pieces of information have a way of finding you today. Pay attention to what crosses your path - it may be more relevant than it appears.',
+doItems:['Follow up on conversations that feel alive and purposeful','Share your ideas - the right people are listening today','Notice what you read or hear and let it inform your next step'],
+avoidItems:['Dismissing chance conversations or unexpected messages','Information overload - focus on what resonates, not everything available']},
+
+{id:'e6',dates:'May 5-6',sign:'Aries',type:'tension',tag:'Intense',
+name:'Mercury Square Pluto',
+what:'The thinking mind meets the planet of power in a tense square. Obsessive thinking, power dynamics in conversation, and the urge to control the narrative are heightened. The gift within this tension is the ability to see straight to the core of a situation.',
+doItems:['Do deep strategic research and analysis','Address a power imbalance in a business relationship with honesty','Write for genuine transformation - content that goes beneath the surface'],
+avoidItems:['Spiralling into obsessive thinking about one conversation or outcome','Using manipulative language in marketing or proposals','Trying to control how others respond to you']},
+
+{id:'e7',dates:'May 6 to Oct 15',sign:'Aquarius',type:'power',tag:'Retrograde',
+name:'Pluto Retrograde in Aquarius',
+what:'Pluto turns retrograde in Aquarius for five months. This is a long, slow review of the structures and power dynamics you operate within - particularly in relation to community, collective identity, and what feels like external authority over your choices. Where have you outsourced your power?',
+doItems:['Reflect on where your business decisions are driven by external pressure rather than inner values','Notice the difference between genuine alignment and performance of alignment','Do inner work on your relationship with power, visibility, and authority'],
+avoidItems:['Forcing radical external restructuring before the inner work is done','Ignoring the subtle, slower shifts happening beneath the surface of your business']},
+
+{id:'e8',dates:'May 9',sign:'Aquarius',type:'lunar',tag:'Last Quarter',
+name:'Last Quarter Moon in Aquarius',
+what:'The Last Quarter Moon signals a natural pause and release before the New Moon reset on May 16. This is consolidation and editing time - systems, processes, and commitments that no longer serve are ready to be let go.',
+doItems:['Review your systems and workflows - what can be simplified or released?','Consolidate rather than expand this week','Rest and restore in preparation for the New Moon portal ahead'],
+avoidItems:['Launching or starting significant new projects before the New Moon','Forcing momentum when the energy naturally wants to slow','Making major decisions without the clarity the New Moon will bring']},
+
+{id:'e9',dates:'May 9-12',sign:'Capricorn',type:'flow',tag:'Opportunity',
+name:'Sun Sextile Jupiter',
+what:'One of the strongest windows for visibility and expansion in May. The Sun makes a supportive angle to Jupiter, meaning that outward effort is amplified and rewarded. If you have been wondering when to put yourself out there, this is the window.',
+doItems:['Make a bold brand visibility move - publish, pitch, or appear somewhere new','Reach out to a mentor, collaborator, or strategic partner','Propose the collaboration or opportunity you have been waiting to bring forward'],
+avoidItems:['Playing small out of habit when conditions are genuinely supportive','Over-preparing instead of acting']},
+
+{id:'e10',dates:'May 12-14',sign:'Capricorn',type:'flow',tag:'Expansion',
+name:'Mercury Sextile Jupiter',
+what:'Expansive, articulate, and optimistic thinking. Your ability to communicate the scale of your vision is heightened, and people are unusually receptive to big ideas. Use this to write, teach, propose, or pitch - your words carry extra persuasive reach.',
+doItems:['Write your most ambitious content, proposal, or pitch','Record content that shares your broader vision','Have strategic conversations - your ideas land well right now'],
+avoidItems:['Getting so absorbed in generating ideas that you forget to take action','Overpromising in the excitement of the energy']},
+
+{id:'e11',dates:'May 13-15',sign:'Taurus',type:'power',tag:'Clarity',
+name:'Sun Conjunct Mercury',
+what:'Mercury catches up with the Sun after its retrograde period. This conjunction brings a moment of mental purification - a clearing of noise and a crystallisation of what actually matters. Decisions that have felt unclear may suddenly feel obvious.',
+doItems:['Make the decision you have been circling - the clarity is here now','Write the communication that distils your core mission or offer','Act on the insight that arrives - do not let it pass'],
+avoidItems:['Second-guessing a clear instinct just because it feels too simple','Waiting for more information when the answer has already arrived']},
+
+{id:'e12',dates:'May 15-18',sign:'Aries',type:'tension',tag:'Tender',
+name:'Mars Conjunct Chiron',
+what:'The planet of action meets the asteroid of wounding in Aries. You may feel an unusual resistance to acting, as though old fears about your capability are surfacing right when you want to move forward. This is not a sign to stop - it is a sign to act anyway, with compassion for yourself.',
+doItems:['Take one small courageous action in the direction of your goal - that act is the healing','Be honest with yourself about what is fear versus genuine discernment','Allow yourself to work at a slower pace if your energy genuinely requires it'],
+avoidItems:['Forcing yourself to perform heroic effort through genuine exhaustion','Letting the inner critic rewrite your goals','Abandoning things that matter just because they feel uncomfortable']},
+
+{id:'e13',dates:'May 16',sign:'Taurus',type:'lunar',tag:'Supermoon',
+name:'New Moon Supermoon in Taurus',
+what:'The most powerful intention portal of May. A Supermoon New Moon in Taurus amplifies grounded, embodied intentions around what you are building for the long term. Taurus is the sign of sustainability, real-world results, and claiming your actual worth. What you plant here grows slowly and solidly for months.',
+doItems:['Set your most important intention for this area of life - make it specific and embodied','Write your New Moon declaration: what you are building, releasing, and claiming','Create a physical anchor for your intention - something you can touch or see daily'],
+avoidItems:['Void Moon May 14-15: do not sign contracts or make major launches just before the New Moon','Rushing the intention - Taurus rewards patience, not speed','Overextending financially in the excitement of the Supermoon energy']},
+
+{id:'e14',dates:'May 16-18',sign:'Aries',type:'flow',tag:'Healing',
+name:'Venus Sextile Chiron',
+what:'In the days around the Supermoon, Venus makes a healing angle to Chiron. This creates a naturally supportive environment for nurturing relationships, offering and receiving care, and creating spaces where vulnerability is welcome.',
+doItems:['Reach out to nurture key relationships - the energy supports genuine connection','Create a safe and generous space in your community or with clients','Be honest about what you need from others right now'],
+avoidItems:['Over-giving from a place of people-pleasing rather than genuine care','Bypassing your own emotional experience with forced positivity']},
+
+{id:'e15',dates:'May 16-21',sign:'Libra',type:'flow',tag:'Magnetism',
+name:'Venus Sextile Mars',
+what:'The best window of the month for sales, attraction, and collaboration. Receptivity and action come into natural balance - you are magnetic without forcing it. Conversations flow toward you, opportunities appear with less effort, and the energy for connecting with aligned clients is at its monthly peak.',
+doItems:['Open sales conversations, make offers, or reach out to potential collaborators','Show up publicly and let yourself be seen - you are genuinely magnetic right now','Follow up on relationships that have been left to simmer'],
+avoidItems:['Staying invisible when conditions actively support you being found','Forcing or pushing rather than attracting - this energy wants ease']},
+
+{id:'e16',dates:'May 17-19',sign:'Taurus',type:'power',tag:'Breakthrough',
+name:'Mercury Conjunct Uranus',
+what:'A flash of genius transit. Mercury meets Uranus in Taurus, bringing sudden insights, unexpected mental breakthroughs, and the urge to approach familiar problems in completely new ways. The idea that arrives during this window may be the one you have been waiting for.',
+doItems:['Keep a notebook close - capture every idea without filtering or editing','Follow the unconventional instinct even if it does not yet make full sense','Experiment with a new format, approach, or strategy you would not normally try'],
+avoidItems:['Dismissing ideas because they are unfamiliar or seem too out there','Mental overstimulation without pausing to ground and integrate']},
+
+{id:'e17',dates:'May 17-31',sign:'Gemini',type:'ingress',tag:'Ingress',
+name:'Mercury in Gemini',
+what:'Mercury moves into its home sign of Gemini, activating communication, networking, and the generation of new ideas. The pace picks up, curiosity multiplies, and there is a strong pull toward connecting with new people and consuming diverse information.',
+doItems:['Increase your content output and vary your formats','Network actively - reach out, connect, start conversations','Write or teach in shorter formats that match the Gemini energy'],
+avoidItems:['Shiny-object syndrome pulling you away from your main priorities','Starting more projects than you can realistically complete']},
+
+{id:'e18',dates:'May 18-20',sign:'Virgo',type:'flow',tag:'Intuitive',
+name:'Mercury Sextile Neptune',
+what:'A rare window where logic and imagination flow together easily. Your intuitive tools are more reliable than usual, and writing that comes from a soul-led place carries unusual resonance. Excellent for creative writing, content that tells an emotional truth, and anything bridging the practical and the mystical.',
+doItems:['Write from intuition - allow the soul-led voice, not just the strategic one','Create content that speaks to the emotional experience your clients are living through','Use your spiritual or intuitive tools for planning and reflection'],
+avoidItems:['Getting so immersed in imagination that you lose touch with practical requirements','Making hard logic-based decisions in the middle of this dreamy energy']},
+
+{id:'e19',dates:'May 18-20',sign:'Taurus',type:'tension',tag:'Friction',
+name:'Mercury Square North Node',
+what:'A brief moment of tension between how you are thinking and where your deeper purpose is pulling you. The analytical mind may find reasons to resist, delay, or doubt. This friction is useful information - it often signals that you are close to a step that actually matters.',
+doItems:['Notice where logic is being used to avoid something that genuinely scares you','Journal on this: where am I overthinking rather than trusting?'],
+avoidItems:['Letting self-doubt rewrite your direction at a critical moment','Making permanent decisions from what may be temporary frustration or fear']},
+
+{id:'e20',dates:'May 18 to Jun 28',sign:'Taurus',type:'ingress',tag:'Ingress',
+name:'Mars in Taurus',
+what:'Mars moves into Taurus for six weeks, shifting the quality of action from fast and reactive to slow, determined, and unstoppable. Taurus Mars is the builder, not the sprinter. Effort is steady, results are cumulative, and the focus is on constructing something tangible and lasting.',
+doItems:['Commit to one project or goal and give it consistent daily effort over six weeks','Measure progress in terms of compound growth, not instant results','Do the work that is unglamorous but necessary - Taurus Mars rewards thoroughness'],
+avoidItems:['Expecting the breakthrough before the foundation is built','Giving up before the cumulative effort has time to show results','Stubbornness when genuine flexibility is needed']},
+
+{id:'e21',dates:'May 19-21',sign:'Taurus',type:'power',tag:'Persuasion',
+name:'Mercury Trine Pluto',
+what:'A rare and powerful transit for communication. Your ability to articulate what genuinely matters, persuade with depth, and cut through noise is at a monthly peak. This is the window for your most important writing - proposals, sales pages, pitches, or any communication that needs to land with real weight.',
+doItems:['Write your most significant copy, pitch, or proposal - the words carry unusual power now','Have the negotiation or high-stakes conversation you have been preparing for','Research deeply in this area of your chart - you will find exactly what you need'],
+avoidItems:['Using this persuasive power manipulatively rather than in genuine service of clarity']},
+
+{id:'e22',dates:'May 19 to Jun 13',sign:'Cancer',type:'ingress',tag:'Ingress',
+name:'Venus in Cancer',
+what:'Venus moves into Cancer, shifting the energy of attraction and connection toward themes of safety, belonging, and emotional care. Your clients and community want to feel genuinely held and seen right now - not just sold to. Leading with warmth deepens connection more powerfully than any pitch.',
+doItems:['Nurture your existing community and clients with genuine, unhurried attention','Create content that speaks to emotional safety, belonging, and being understood','Make your brand feel warm and trustworthy rather than transactional'],
+avoidItems:['Purely transactional communication that skips the human relationship','Neglecting the relational side of your business in favour of pure strategy']},
+
+{id:'e23',dates:'May 21-23',sign:'Taurus',type:'power',tag:'Breakthrough',
+name:'Sun Conjunct Uranus',
+what:'A jolt of liberation. The Sun meets Uranus in Taurus, bringing unexpected events, sudden clarity about what needs to change, and a strong impulse to break free of patterns that have been limiting you. Trust what wants to shift. The change that presents itself now may be exactly what you needed.',
+doItems:['Follow the unconventional creative or strategic impulse that arrives','Try a completely different approach to something you have been stuck on','Make the change you have quietly known was coming'],
+avoidItems:['Burning things down impulsively without sitting with the impulse for at least one day','Resisting all change just because it disrupts your comfort']},
+
+{id:'e24',dates:'May 21-23',sign:'Pisces',type:'caution',tag:'Watch',
+name:'Venus Square Neptune',
+what:'Heightened creative intuition and genuine inspiration exist alongside a risk of idealising situations or blurring financial boundaries. Wonderful for art, writing, and visioning. Not the moment for financial decisions or signing agreements.',
+doItems:['Create freely - write, make art, vision without editing','Generate ideas and inspiration you will evaluate with fresh eyes next week'],
+avoidItems:['Signing financial agreements or contracts during this window','Making major money decisions from an emotionally elevated or foggy state','Taking people at face value without verification in important matters']},
+
+{id:'e25',dates:'May 21 to Jun 21',sign:'Gemini',type:'ingress',tag:'Ingress',
+name:'Sun in Gemini',
+what:'The Sun moves into Gemini for a month, shifting the solar energy toward networking, learning, communicating, and reaching new audiences. The next four weeks favour those who show up in multiple formats, connect across communities, and share their knowledge freely.',
+doItems:['Expand your content output and experiment with new formats or platforms','Build new connections - reach out, introduce yourself, start conversations','Teach, write, and share what you know generously'],
+avoidItems:['Information overload that prevents you from actually implementing anything','Spreading focus across so many directions that nothing gets your full attention']},
+
+{id:'e26',dates:'May 22-23',sign:'Aquarius',type:'flow',tag:'Structure',
+name:'Mercury Sextile Saturn',
+what:'Sharp, disciplined, and organised thinking. The combination of Mercury and Saturn in a supportive angle creates ideal conditions for strategic planning, detailed writing, and making practical decisions with full clarity. Plans made during this brief window tend to be thorough and built to last.',
+doItems:['Write your strategic plan, project timeline, or detailed proposal','Review contracts and agreements with a clear, precise mind','Make the practical administrative decision you have been postponing'],
+avoidItems:['Letting perfectionism delay execution once the plan is in place']},
+
+{id:'e27',dates:'May 22-23',sign:'Libra',type:'flow',tag:'Alignment',
+name:'Venus Trine North Node',
+what:'When you follow your genuine passion and purpose, abundance follows. This transit brings aligned opportunities, the right people, and a sense that what you love and what sustains you are moving in the same direction. Say yes to what lights you up today.',
+doItems:['Follow what genuinely excites you rather than what just pays','Be open to new connections and opportunities that arrive with a feeling of rightness','Create content that reflects your actual passions - it will attract aligned people'],
+avoidItems:['Chasing money over meaning - today specifically, that approach tends to fall flat']},
+
+{id:'e28',dates:'May 23',sign:'Virgo',type:'lunar',tag:'First Quarter',
+name:'First Quarter Moon in Virgo',
+what:'The First Quarter Moon marks the moment of action after the New Moon intention. This is not the time for more planning - it is the time to take the first concrete step. Virgo brings precision and attention to detail. The invitation is to act with craft and care rather than perfectionism or paralysis.',
+doItems:['Take the first concrete action on your New Moon intention - even one step matters','Apply Virgo attention to the detail and craft of whatever you are building','Organise, refine, and perfect one key deliverable this week'],
+avoidItems:['Perfectionism that prevents you from moving at all','Skipping important details in the rush to show results','Neglecting your health and physical rhythms']},
+
+{id:'e29',dates:'May 23-26',sign:'Gemini',type:'flow',tag:'Purpose',
+name:'Mars Sextile North Node',
+what:'A window where real-world action is directly supported by your sense of direction and purpose. This transit makes it easier to feel that effort is meaningful and that the work you are doing connects to something larger. Take the step toward your most important goal.',
+doItems:['Take one significant concrete action toward your biggest current goal','Let your sense of purpose fuel the effort rather than pure discipline','Build rather than plan - tangible action is what this transit wants'],
+avoidItems:['Staying in busy-work that keeps you from the genuinely meaningful task']},
+
+{id:'e30',dates:'May 24-26',sign:'Pisces',type:'flow',tag:'Creative vision',
+name:'Sun Sextile Neptune',
+what:'Access to creative genius and inspired knowing. Your intuitive tools are working well, and writing or creating from a place of genuine soul-connection produces something unusually resonant. An excellent window for inspired strategy, creative content, and anything requiring the deeper why behind what you do.',
+doItems:['Create from inspiration rather than formula - let the soul-led work come through','Use your spiritual or intuitive tools for reflection and planning','Write content that speaks to emotional and spiritual truth, not just practical strategy'],
+avoidItems:['Pure logic-based decision-making - this transit invites you beyond the spreadsheet']},
+
+{id:'e31',dates:'May 24-26',sign:'Gemini',type:'tension',tag:'Identity friction',
+name:'Sun Square North Node',
+what:'A moment of friction between where you are comfortable and where your deeper purpose is calling you. You may feel blocked or frustrated. This friction is not a sign to stop - it is often a signal that a genuinely important step is right in front of you.',
+doItems:['Move toward your purpose even when the discomfort is real','Notice the difference between fear and genuine discernment'],
+avoidItems:['Shrinking from the next step because it feels too large','Letting ego comfort override the soul direction']},
+
+{id:'e32',dates:'May 24-27',sign:'Scorpio',type:'tension',tag:'High stakes',
+name:'Mars Square Pluto',
+what:'One of the most intense transits of the month. The planet of action meets the planet of power in a tense square, activating control dynamics, power struggles, and high-stakes friction. The instruction is clear: do not force outcomes. The pressure to push harder than is wise is at its peak.',
+doItems:['Channel the intensity into deep focused solo work rather than conflict','Face an uncomfortable truth about a power dynamic with honesty and courage','Release your grip on an outcome you have been trying to control'],
+avoidItems:['Power struggles with clients, collaborators, or partners','Forcing outcomes through sheer willpower when the situation calls for release','Making irreversible decisions from a place of anger or frustration']},
+
+{id:'e33',dates:'May 25-27',sign:'Scorpio',type:'power',tag:'Deep power',
+name:'Sun Trine Pluto',
+what:'A harmonious channel to your deepest willpower and most authentic desires. This trine makes it easier to step into genuine authority without force or performance. What do you truly want? Act from that place specifically.',
+doItems:['Step into full ownership of your vision, your voice, and your authority','Make the bold move that aligns with your actual deepest desire','Embody your expertise with confidence - not performance, but genuine presence'],
+avoidItems:['Performing power or authority rather than genuinely inhabiting it']},
+
+{id:'e34',dates:'May 28-30',sign:'Aquarius',type:'tension',tag:'Reality check',
+name:'Venus Square Saturn',
+what:'A reality-check transit for relationships and finances. Emotions feel more muted or contracted than usual. This is not failure - it is an invitation to honestly evaluate what your relationships and financial arrangements are actually delivering, and to set the boundaries that are overdue.',
+doItems:['Audit your key relationships and financial arrangements with honest eyes','Set a boundary that needs to be set - the energy supports directness','Review your pricing and energy exchanges: are they genuinely reciprocal?'],
+avoidItems:['Launching emotionally-driven content or making emotional financial decisions in this contracted state','Forcing warmth or generosity that you do not genuinely feel right now','Ignoring what the restriction or friction is trying to show you']},
+
+{id:'e35',dates:'May 31',sign:'Sagittarius',type:'lunar',tag:'Full Moon',
+name:'Full Moon in Sagittarius',
+what:'The month closes with a Full Moon in Sagittarius - the sign of expansion, truth, and bold vision. This is a celebration moment and a completion moment simultaneously. What did you build this month? What arc did you travel? The Sagittarius Full Moon asks you to stand back, look at the whole picture, and name where you are going next.',
+doItems:['Celebrate what was built this month - do not skip this step','Share your vision publicly - Sagittarius rules bold, expansive declarations','Review your entire May: what is now clear that was not clear on May 1?'],
+avoidItems:['Sagittarius shadow: overpromising or overcommitting in the excitement of the energy','Void Moon May 31: let the Full Moon fully land before taking the next action','Starting a new major project - honour the completion this Full Moon represents']},
+
+{id:'e36',dates:'May 31',sign:'Aries',type:'flow',tag:'Healing close',
+name:'Mercury Sextile Chiron',
+what:'The month closes on a healing note. Mercury makes a supportive angle to Chiron, creating a window where vulnerability in communication is possible and where genuine truth-telling has a healing effect.',
+doItems:['Write your Full Moon reflection honestly and vulnerably','Share what you have learned, healed, or understood this month','Acknowledge the full arc of May before you turn toward June'],
+avoidItems:['Rushing past the emotional close of the month without acknowledging it']}
+];
+
+// WEEK DATA
+var WEEKS=[
+{id:'w1',label:'Week 1 - May 1 to 4',theme:'Scorpio Full Moon and the truth you have been avoiding',moon:'Full Moon in Scorpio (May 1) then waning toward Sagittarius',intensity:'High',badge:'badge-high',
+personalSigns:['Scorpio','Aries','Aries'],
+doItems:['Do a full revenue and energy audit - what is paying you AND costing you?','Have the conversation you have been putting off - the Full Moon energy supports truth','Channel Mars Square Jupiter into one focused bold move rather than ten new ideas','Write with care: Mercury Conjunct Chiron means words wound or heal this week'],
+avoidItems:['Launching new offers - Full Moons mark culminations, not beginnings','Starting multiple new initiatives simultaneously','Reactive or defensive communication while Mercury is conjunct Chiron','Major decisions or signing during Void Moon May 2 to 3'],
+ceoMove:'Audit what you are actually building and why. What is profitable in soul AND bank account? Release whatever is neither.',
+permission:'I give myself permission to let go of what is complete, even if it feels scary.',
+chips:['Full Moon Scorpio May 1','Mercury Conjunct Chiron May 1-2','Mars Square Jupiter May 3-6','Mercury in Taurus May 3-17']},
+
+{id:'w2',label:'Week 2 - May 5 to 11',theme:'Pluto turns retrograde and Jupiter opens a visibility window',moon:'Waning Gibbous then Last Quarter in Aquarius (May 9)',intensity:'Medium',badge:'badge-med',
+personalSigns:['Aquarius','Capricorn','Aquarius'],
+doItems:['Use Sun Sextile Jupiter (May 9-12) to make a bold visibility move - publish, pitch, appear somewhere new','Review your systems and workflows before the New Moon resets the cycle','Begin the Pluto Retrograde question: where is my business shaped by external pressure rather than inner truth?','Pay close attention to what conversations or information finds you this week'],
+avoidItems:['Major financial decisions during Void Moon May 7-8','Do not obsess over one email or conversation during Mercury Square Pluto (May 5-6)','Forcing creative momentum - this is consolidation and editing season','Ignoring what Pluto Retrograde is starting to surface about power dynamics'],
+ceoMove:'Review your last 30 days honestly. Then use Sun Sextile Jupiter to make one bold visibility move.',
+permission:'I give myself permission to slow down and let the work breathe.',
+chips:['Mercury Sextile North Node May 5-6','Mercury Square Pluto May 5-6','Pluto Retrograde begins May 6','Last Quarter Aquarius May 9','Sun Sextile Jupiter May 9-12']},
+
+{id:'w3',label:'Week 3 - May 12 to 18',theme:'Taurus Supermoon - the most powerful portal of the month',moon:'Waning Crescent then New Moon Supermoon in Taurus (May 16)',intensity:'Very High',badge:'badge-vhigh',
+personalSigns:['Taurus','Taurus','Aries'],
+doItems:['Set your most grounded embodied New Moon intentions on May 16 - make them specific and real','Use Mercury Sextile Jupiter (May 12-14) to articulate your vision compellingly before the New Moon','Use Sun Conjunct Mercury (May 13-15) to make the decision you have been circling','Open sales conversations May 16-21: Venus Sextile Mars makes you magnetically supported'],
+avoidItems:['Void Moon May 14-15: do not sign contracts or make major launches','Do not force heroic action through genuine exhaustion during Mars Conjunct Chiron (May 15-18)','Rushing the Supermoon energy - Taurus rewards patience','Overextending financially right after the New Moon'],
+ceoMove:'Write your New Moon CEO declaration: one thing building, one releasing, one claiming. Then open one sales conversation.',
+permission:'I give myself permission to want what I want - without apologizing for it.',
+chips:['Mercury Sextile Jupiter May 12-14','Sun Conjunct Mercury May 13-15','Mars Conjunct Chiron May 15-18','New Moon Supermoon Taurus May 16','Venus Sextile Chiron May 16-18','Venus Sextile Mars May 16-21']},
+
+{id:'w4',label:'Week 4 - May 19 to 25',theme:'First Quarter Virgo - take decisive crafted action',moon:'Waxing Crescent and Waxing Gibbous then First Quarter in Virgo (May 23)',intensity:'High',badge:'badge-high',
+personalSigns:['Taurus','Gemini','Cancer','Gemini'],
+doItems:['Mercury Trine Pluto (May 19-21): write your most important copy, pitch, or proposal of the month','Venus in Cancer: lead with warmth and safety in all client communications','Sun Conjunct Uranus: follow the unconventional approach or breakthrough idea that arrives','Mars Sextile North Node (May 23-26): take the single most important action toward your biggest goal'],
+avoidItems:['Venus Square Neptune (May 21-23): do not sign financial agreements or contracts','Hold major decisions during Void Moon May 20-23 - this is an extended window','Perfectionism that becomes paralysis rather than craft - Virgo shadow','Do not force during Mars Square Pluto (May 24-27) - hold steady'],
+ceoMove:'Use Mercury Trine Pluto to write the communication that needs to land with full weight. Then take the single action that matters most.',
+permission:'I give myself permission to take imperfect action and trust the momentum.',
+chips:['Mercury Trine Pluto May 19-21','Venus in Cancer May 19 onward','Mars in Taurus May 18 onward','Sun Conjunct Uranus May 21-23','Sun in Gemini May 21 onward','Venus Trine North Node May 22-23','First Quarter Virgo May 23','Mars Sextile North Node May 23-26']},
+
+{id:'w5',label:'Week 5 - May 26 to 31',theme:'Sagittarius Full Moon - celebrate what was built',moon:'Waxing Gibbous then Full Moon in Sagittarius (May 31)',intensity:'High',badge:'badge-high',
+personalSigns:['Scorpio','Aquarius','Sagittarius'],
+doItems:['Sun Trine Pluto (May 25-27): step into full ownership of your vision and authority','Celebrate concretely - the Full Moon is specifically for witnessing wins, not minimising them','Share your expanded vision publicly: Sagittarius energy rewards bold declarations','Write your Full Moon CEO check-in: what arc did you travel in May?'],
+avoidItems:['Venus Square Saturn (May 28-30): do not launch emotionally-driven content from a contracted state','Sagittarius shadow: overpromising or overcommitting in the excitement','Void Moon May 31: let the Full Moon fully land before taking your next action','Avoid power conflicts through May 27 while Mars Square Pluto is still active'],
+ceoMove:'Write your Full Moon check-in: What did you build this month? What surprised you? What bold direction is now undeniable?',
+permission:'I give myself permission to be proud of how far I have come - right now, exactly as I am.',
+chips:['Sun Sextile Neptune May 24-26','Sun Trine Pluto May 25-27','Venus Square Saturn May 28-30','Full Moon Sagittarius May 31','Mercury Sextile Chiron May 31']}
+];
+
+// RENDER EVENTS
+function renderEvents(){
+  var container=document.getElementById('events-list');
+  container.innerHTML='';
+  for(var i=0;i<EVENTS.length;i++){
+    var ev=EVENTS[i];
+    var hp=housePhrase(currentRising,ev.sign);
+    var div=document.createElement('div');
+    div.className='event-card';
+    div.setAttribute('data-id',ev.id);
+    var tagClass='tag-'+ev.type;
+    var dotClass='type-'+ev.type;
+    var ctx=HOUSE_CTX[hp.house]||'';
+    var personalTxt='For '+currentRising+' Rising, this energy moves through House '+hp.house+' - '+hp.desc+'. '+ctx;
+    var doHTML='<ul class="da-list">'+li(ev.doItems)+'</ul>';
+    var avHTML='<ul class="da-list">'+li(ev.avoidItems)+'</ul>';
+    div.innerHTML='<div class="ec-header"><div class="ec-type '+dotClass+'"></div><div class="ec-main"><div class="ec-dates">'+ev.dates+'</div><div class="ec-name">'+ev.name+'</div><div class="ec-house">Activating House '+hp.house+' - '+hp.area+'</div></div><div class="ec-tag '+tagClass+'">'+ev.tag+'</div></div><div class="ec-body"><div class="ec-context">'+ev.what+'</div><div class="ec-personal">'+personalTxt+'</div><div class="da-grid"><div class="do-box"><div class="box-lbl">Do</div>'+doHTML+'</div><div class="av-box"><div class="box-lbl">Avoid</div>'+avHTML+'</div></div></div>';
+    div.querySelector('.ec-header').addEventListener('click',function(){this.parentElement.classList.toggle('open');});
+    container.appendChild(div);
+  }
+}
+
+// RENDER WEEKS
+function renderWeeks(){
+  var container=document.getElementById('weeks-list');
+  container.innerHTML='';
+  for(var i=0;i<WEEKS.length;i++){
+    var wk=WEEKS[i];
+    var houses=[];
+    for(var j=0;j<wk.personalSigns.length;j++){
+      var h=houseFor(currentRising,wk.personalSigns[j]);
+      var found=false;
+      for(var k=0;k<houses.length;k++){if(houses[k]===h){found=true;break;}}
+      if(!found){houses.push(h);}
+    }
+    var houseNames=[];
+    for(var j=0;j<houses.length;j++){houseNames.push('House '+houses[j]+' ('+HOUSE_SHORT[houses[j]]+')');}
+    var houseNarrative='';
+    if(houseNames.length===1){houseNarrative='Focus this week: '+houseNames[0]+'.';}
+    else if(houseNames.length===2){houseNarrative='Energy moves between '+houseNames[0]+' and '+houseNames[1]+'.';}
+    else{
+      var last=houseNames[houseNames.length-1];
+      var rest=houseNames.slice(0,houseNames.length-1).join(', ');
+      houseNarrative='Energy touches '+rest+' and '+last+'.';
+    }
+
+    // Build the card using createElement - no inline onclick needed
+    var card=document.createElement('div');
+    card.className='week-card';
+    card.id=wk.id;
+
+    var header=document.createElement('div');
+    header.className='wk-header';
+    header.innerHTML='<div><div class="wk-label">'+wk.label+'</div><div class="wk-theme">'+wk.theme+'</div><div class="wk-moon">'+wk.moon+'</div></div><div style="display:flex;align-items:center;"><span class="wk-badge '+wk.badge+'">'+wk.intensity+'</span><span class="wk-chevron">v</span></div>';
+    header.addEventListener('click',function(){ this.parentElement.classList.toggle('open'); });
+
+    var body=document.createElement('div');
+    body.className='wk-body';
+    var doHTML='<ul class="wk-list">'+li(wk.doItems)+'</ul>';
+    var avHTML='<ul class="wk-list">'+li(wk.avoidItems)+'</ul>';
+    var chipsHTML=ch(wk.chips);
+    body.innerHTML='<div class="wk-personal-house"><strong>'+currentRising+' Rising this week:</strong> '+houseNarrative+'</div><div class="wk-da"><div class="wk-do"><div class="wk-box-lbl">Do</div>'+doHTML+'</div><div class="wk-av"><div class="wk-box-lbl">Avoid</div>'+avHTML+'</div></div><div class="wk-ceo"><div class="wk-ceo-lbl">CEO Move</div><div class="wk-ceo-txt">'+wk.ceoMove+'</div></div><div class="active-events"><div class="ae-lbl">Active Events</div><div class="ae-chips">'+chipsHTML+'</div></div><div class="wk-perm"><em>"'+wk.permission+'"</em></div>';
+
+    card.appendChild(header);
+    card.appendChild(body);
+    container.appendChild(card);
+  }
+}
+
+// RENDER PHASES
+function renderPhases(){
+  var container=document.getElementById('phase-strip');
+  var phases=[
+    {date:'May 1',name:'Full Moon in Scorpio',sign:'Scorpio',isSuper:false},
+    {date:'May 9',name:'Last Quarter in Aquarius',sign:'Aquarius',isSuper:false},
+    {date:'May 16',name:'New Moon Supermoon in Taurus',sign:'Taurus',isSuper:true},
+    {date:'May 23',name:'First Quarter in Virgo',sign:'Virgo',isSuper:false},
+    {date:'May 31',name:'Full Moon in Sagittarius',sign:'Sagittarius',isSuper:false}
+  ];
+  var html='';
+  for(var i=0;i<phases.length;i++){
+    var p=phases[i];
+    var hp=housePhrase(currentRising,p.sign);
+    var cls='phase-pill'+(p.isSuper?' super':'');
+    html+='<div class="'+cls+'"><div class="pp-date">'+p.date+'</div><div class="pp-name">'+p.name+'</div><div class="pp-house">House '+hp.house+' - '+hp.area+'</div></div>';
+  }
+  container.innerHTML=html;
+}
+</script>
+</body>
+</html>

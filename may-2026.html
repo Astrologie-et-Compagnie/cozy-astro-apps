@@ -37,7 +37,7 @@ body{font-family:"Josefin Sans",sans-serif;background:var(--navy);color:var(--wh
 .sign-btn{background:var(--glass);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 8px;cursor:pointer;transition:all .25s;text-align:center;}
 .sign-btn:hover{border-color:var(--gold);background:rgba(201,168,76,.1);transform:translateY(-2px);}
 .sign-btn .sign-name{font-family:"Cormorant Garamond",serif;font-size:15px;color:var(--gold-light);display:block;margin-bottom:2px;}
-.sign-btn .sign-dates{font-size:8px;letter-spacing:.1em;color:var(--text-muted);display:block;}
+.sign-btn 
 .sign-btn.active{border-color:var(--gold);background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(42,127,138,.12));box-shadow:0 0 16px rgba(201,168,76,.2);}
 
 /* MAIN APP (hidden until sign selected) */
@@ -174,7 +174,7 @@ body{font-family:"Josefin Sans",sans-serif;background:var(--navy);color:var(--wh
 
 <!-- HEADER -->
 <div class="hdr">
-  <div class="brand-lbl">Cozy Astro for Life &amp; Business &middot; Architect Tier</div>
+  <div class="brand-lbl">Cozy Astro for Life &amp; Business &middot; </div>
   <h1 class="main-title">AstroAssistant<br><em>May 2026</em></h1>
   <div class="sub">Your personalised cosmic guide for the month</div>
   <div class="rule"></div>
@@ -185,18 +185,18 @@ body{font-family:"Josefin Sans",sans-serif;background:var(--navy);color:var(--wh
   <p class="rs-intro">Every planet, every lunar phase, every piece of guidance in this tool is personalised to your Rising Sign. Select yours to begin.</p>
   <span class="rs-label">What is your Rising Sign?</span>
   <div class="sign-grid">
-    <div class="sign-btn" data-sign="Aries" onclick="selectRising('Aries')"><span class="sign-name">Aries</span><span class="sign-dates">Mar 21 &ndash; Apr 19</span></div>
-    <div class="sign-btn" data-sign="Taurus" onclick="selectRising('Taurus')"><span class="sign-name">Taurus</span><span class="sign-dates">Apr 20 &ndash; May 20</span></div>
-    <div class="sign-btn" data-sign="Gemini" onclick="selectRising('Gemini')"><span class="sign-name">Gemini</span><span class="sign-dates">May 21 &ndash; Jun 20</span></div>
-    <div class="sign-btn" data-sign="Cancer" onclick="selectRising('Cancer')"><span class="sign-name">Cancer</span><span class="sign-dates">Jun 21 &ndash; Jul 22</span></div>
-    <div class="sign-btn" data-sign="Leo" onclick="selectRising('Leo')"><span class="sign-name">Leo</span><span class="sign-dates">Jul 23 &ndash; Aug 22</span></div>
-    <div class="sign-btn" data-sign="Virgo" onclick="selectRising('Virgo')"><span class="sign-name">Virgo</span><span class="sign-dates">Aug 23 &ndash; Sep 22</span></div>
-    <div class="sign-btn" data-sign="Libra" onclick="selectRising('Libra')"><span class="sign-name">Libra</span><span class="sign-dates">Sep 23 &ndash; Oct 22</span></div>
-    <div class="sign-btn" data-sign="Scorpio" onclick="selectRising('Scorpio')"><span class="sign-name">Scorpio</span><span class="sign-dates">Oct 23 &ndash; Nov 21</span></div>
-    <div class="sign-btn" data-sign="Sagittarius" onclick="selectRising('Sagittarius')"><span class="sign-name">Sagittarius</span><span class="sign-dates">Nov 22 &ndash; Dec 21</span></div>
-    <div class="sign-btn" data-sign="Capricorn" onclick="selectRising('Capricorn')"><span class="sign-name">Capricorn</span><span class="sign-dates">Dec 22 &ndash; Jan 19</span></div>
-    <div class="sign-btn" data-sign="Aquarius" onclick="selectRising('Aquarius')"><span class="sign-name">Aquarius</span><span class="sign-dates">Jan 20 &ndash; Feb 18</span></div>
-    <div class="sign-btn" data-sign="Pisces" onclick="selectRising('Pisces')"><span class="sign-name">Pisces</span><span class="sign-dates">Feb 19 &ndash; Mar 20</span></div>
+    <div class="sign-btn" data-sign="Aries" onclick="selectRising('Aries')"><span class="sign-name">Aries</span></div>
+    <div class="sign-btn" data-sign="Taurus" onclick="selectRising('Taurus')"><span class="sign-name">Taurus</span></div>
+    <div class="sign-btn" data-sign="Gemini" onclick="selectRising('Gemini')"><span class="sign-name">Gemini</span></div>
+    <div class="sign-btn" data-sign="Cancer" onclick="selectRising('Cancer')"><span class="sign-name">Cancer</span></div>
+    <div class="sign-btn" data-sign="Leo" onclick="selectRising('Leo')"><span class="sign-name">Leo</span></div>
+    <div class="sign-btn" data-sign="Virgo" onclick="selectRising('Virgo')"><span class="sign-name">Virgo</span></div>
+    <div class="sign-btn" data-sign="Libra" onclick="selectRising('Libra')"><span class="sign-name">Libra</span></div>
+    <div class="sign-btn" data-sign="Scorpio" onclick="selectRising('Scorpio')"><span class="sign-name">Scorpio</span></div>
+    <div class="sign-btn" data-sign="Sagittarius" onclick="selectRising('Sagittarius')"><span class="sign-name">Sagittarius</span></div>
+    <div class="sign-btn" data-sign="Capricorn" onclick="selectRising('Capricorn')"><span class="sign-name">Capricorn</span></div>
+    <div class="sign-btn" data-sign="Aquarius" onclick="selectRising('Aquarius')"><span class="sign-name">Aquarius</span></div>
+    <div class="sign-btn" data-sign="Pisces" onclick="selectRising('Pisces')"><span class="sign-name">Pisces</span></div>
   </div>
   <p style="font-size:10px;color:var(--text-muted);text-align:center;margin-top:10px;">Your Rising Sign (Ascendant) is not your Sun sign. It is determined by the time of your birth and sets your house structure for the whole year.</p>
 </div>
@@ -238,7 +238,7 @@ body{font-family:"Josefin Sans",sans-serif;background:var(--navy);color:var(--wh
   <div id="tab-lunar" class="panel">
     <div class="card">
       <div class="card-title">May Lunar Story</div>
-      <div class="card-sub">5 phases &middot; 2 Full Moons &middot; 1 Supermoon &middot; sourced from ICS</div>
+      <div class="card-sub">5 phases &middot; 2 Full Moons &middot; 1 Supermoon</div>
       <div class="phase-strip" id="phase-strip"></div>
       <p style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--text-light);line-height:1.7;">May opens with a confrontation and closes with a celebration. The Scorpio Full Moon on May 1 demands honesty about what is costing you. The Taurus Supermoon on May 16 is the most powerful intention portal of the month. The Sagittarius Full Moon on May 31 closes the cycle with expansion and celebration.</p>
     </div>
@@ -280,7 +280,7 @@ body{font-family:"Josefin Sans",sans-serif;background:var(--navy);color:var(--wh
 
 <div class="foot">
   <div class="foot-brand">Cozy Astro for Life &amp; Business</div>
-  <div class="foot-note">Architect Tier &middot; May 2026 &middot; All events sourced from ICS calendar</div>
+  <div class="foot-note">May 2026</div>
 </div>
 
 </div><!-- /wrap -->
@@ -352,7 +352,7 @@ function showTab(id){
 function toggleEvent(card){card.classList.toggle('open');}
 function toggleWeek(id){document.getElementById(id).classList.toggle('open');}
 
-// ALL EVENTS (sourced from ICS, May 2026 only)
+// ALL EVENTS (, May 2026 only)
 var EVENTS=[
 {id:'e1',dates:'May 1',sign:'Scorpio',type:'lunar',tag:'Full Moon',
 name:'Full Moon in Scorpio',

@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Lunar Ritual — Cozy Astro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Lato', sans-serif;
+  background: #1A2744;
+  color: #F5F0EA;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; }
+
+/* ── Stars ── */
+#stars-layer {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+}
+.star {
+  position: absolute; border-radius: 50%; background: #F5F0EA;
+  animation: twinkle var(--dur, 3s) ease-in-out infinite;
+  animation-delay: var(--del, 0s);
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50%       { opacity: 0.85; transform: scale(1.4); }
+}
+
+/* ── Layout ── */
+#app {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 2rem 1rem 1rem;
+}
+
+footer {
+  position: relative; z-index: 1;
+  text-align: center; padding: 1.25rem;
+  color: rgba(245,240,234,.3);
+  font-family: 'Lato', sans-serif;
+  font-size: .7rem; letter-spacing: .15em; text-transform: uppercase;
+}
+
+/* ── Screens ── */
+.screen { display: none; width: 100%; max-width: 580px; margin: 0 auto; }
+.screen.active { display: block; animation: fadeUp .45s ease forwards; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Gold line ── */
+.gold-line {
+  width: 60px; height: 1px;
+  background: linear-gradient(90deg, transparent, #A68E45, transparent);
+  margin: 0 auto;
+}
+.gold-line-sm {
+  width: 40px; height: 1px;
+  background: linear-gradient(90deg, transparent, #A68E45, transparent);
+  margin: 1.25rem auto;
+}
+
+/* ── Welcome ── */
+#screen-welcome { text-align: center; }
+.welcome-moon { font-size: 3rem; margin-bottom: 1.25rem; }
+.welcome-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 300; color: #F5F0EA;
+  line-height: 1.15; margin-bottom: .9rem; letter-spacing: .02em;
+}
+.welcome-date {
+  font-family: 'Lato', sans-serif;
+  color: rgba(245,240,234,.5); font-size: .7rem;
+  letter-spacing: .18em; text-transform: uppercase;
+  margin: .9rem 0 .6rem;
+}
+.welcome-tagline {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  color: rgba(245,240,234,.65); font-size: 1.15rem;
+  margin-bottom: 2.25rem; line-height: 1.5;
+}
+
+/* ── Step indicator ── */
+.step-indicator {
+  display: flex; align-items: center; justify-content: center;
+  gap: .5rem; margin-bottom: 1.5rem;
+}
+.step-dot {
+  height: .25rem; border-radius: 1rem;
+  background: rgba(166,142,69,.22);
+  transition: all .3s;
+}
+.step-dot.active { background: #A68E45; width: 2rem; }
+.step-dot:not(.active) { width: .5rem; }
+
+/* ── Step headings ── */
+.step-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem,5vw,2.2rem); font-weight: 400;
+  color: #F5F0EA; margin-bottom: .4rem; text-align: center;
+}
+.step-sub {
+  font-family: 'Lato', sans-serif;
+  color: rgba(245,240,234,.4); font-size: .75rem;
+  letter-spacing: .1em; text-align: center; margin-bottom: 1.6rem;
+}
+
+/* ── Select ── */
+.lunar-select {
+  background: rgba(26,39,68,.85);
+  border: 1px solid rgba(166,142,69,.4);
+  color: #F5F0EA; border-radius: .5rem;
+  padding: .75rem 2.5rem .75rem 1rem;
+  font-family: 'Lato', sans-serif; font-size: 1rem;
+  width: 100%; cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23A68E45' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 1rem center;
+  margin-bottom: 1.75rem; transition: border-color .2s;
+}
+.lunar-select:focus { outline: none; border-color: #A68E45; box-shadow: 0 0 0 3px rgba(166,142,69,.2); }
+.lunar-select option { background: #1A2744; color: #F5F0EA; }
+
+/* ── Moon grid ── */
+.moon-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: .55rem; margin-bottom: 1.75rem;
+}
+.moon-btn {
+  border: 1px solid rgba(166,142,69,.28);
+  background: rgba(166,142,69,.05);
+  border-radius: .75rem; padding: .7rem .4rem;
+  cursor: pointer; transition: all .2s;
+  display: flex; flex-direction: column;
+  align-items: center; gap: .35rem;
+  color: #F5F0EA;
+}
+.moon-btn:hover { border-color: rgba(166,142,69,.65); background: rgba(166,142,69,.1); }
+.moon-btn.selected {
+  border-color: #A68E45; background: rgba(166,142,69,.18);
+  box-shadow: 0 0 14px rgba(166,142,69,.22);
+}
+.moon-emoji { font-size: 1.6rem; line-height: 1; }
+.moon-label {
+  font-family: 'Lato', sans-serif; font-size: .62rem;
+  letter-spacing: .02em; line-height: 1.3;
+  color: rgba(245,240,234,.6); text-align: center;
+}
+.moon-btn.selected .moon-label { color: #F5F0EA; }
+
+/* ── Buttons ── */
+.btn-row { display: flex; gap: .7rem; justify-content: center; flex-wrap: wrap; }
+.lunar-btn {
+  background: linear-gradient(135deg,#A68E45,#C9A84C);
+  color: #1A2744; font-family: 'Lato', sans-serif;
+  font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  font-size: .78rem; padding: .85rem 2.25rem;
+  border-radius: 3rem; border: none; cursor: pointer;
+  transition: all .2s; box-shadow: 0 4px 18px rgba(166,142,69,.28);
+}
+.lunar-btn:hover { box-shadow: 0 6px 26px rgba(166,142,69,.42); transform: translateY(-1px); }
+.lunar-btn:active { transform: translateY(0); }
+.lunar-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.lunar-btn-ghost {
+  background: transparent; border: 1px solid rgba(166,142,69,.45);
+  color: #A68E45; font-family: 'Lato', sans-serif;
+  font-weight: 400; letter-spacing: .05em; font-size: .78rem;
+  padding: .75rem 1.5rem; border-radius: 3rem; cursor: pointer;
+  transition: all .2s;
+}
+.lunar-btn-ghost:hover { background: rgba(166,142,69,.1); border-color: #A68E45; }
+
+/* ── Ritual card ── */
+.ritual-card {
+  border: 1px solid #A68E45;
+  background: rgba(20,31,56,.88);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 40px rgba(166,142,69,.13), inset 0 0 40px rgba(166,142,69,.04);
+  border-radius: 1rem;
+  padding: clamp(1.5rem,5vw,2.5rem);
+  margin-bottom: 1.5rem;
+}
+.card-header { text-align: center; margin-bottom: 1.5rem; }
+.card-phase-emoji { font-size: 2.5rem; margin-bottom: .4rem; }
+.card-phase-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem,5vw,2.2rem); font-weight: 400;
+  color: #F5F0EA; margin-bottom: .25rem;
+}
+.card-sign-label {
+  font-family: 'Lato', sans-serif; color: #A68E45;
+  font-size: .7rem; letter-spacing: .2em; text-transform: uppercase;
+  margin-bottom: 1.1rem;
+}
+.card-meaning {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  color: rgba(245,240,234,.68); font-size: 1rem;
+  line-height: 1.7; text-align: center; margin-bottom: .25rem;
+}
+.section-label {
+  font-family: 'Lato', sans-serif; color: #A68E45;
+  font-size: .63rem; letter-spacing: .2em; text-transform: uppercase;
+  margin-bottom: .65rem;
+}
+.section-body {
+  font-family: 'Cormorant Garamond', serif; color: #F5F0EA;
+  font-size: 1.05rem; line-height: 1.7;
+}
+.ritual-steps { display: flex; flex-direction: column; gap: .9rem; }
+.ritual-step { display: flex; gap: .9rem; align-items: flex-start; }
+.step-icon {
+  width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  border: 1px solid rgba(166,142,69,.45);
+  background: rgba(166,142,69,.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.05rem; flex-shrink: 0;
+}
+.step-content { flex: 1; }
+.step-content-label {
+  font-family: 'Lato', sans-serif; color: #A68E45;
+  font-size: .62rem; letter-spacing: .15em; text-transform: uppercase;
+  margin-bottom: .25rem;
+}
+.step-content-text {
+  font-family: 'Lato', sans-serif; color: rgba(245,240,234,.82);
+  font-size: .87rem; line-height: 1.65;
+}
+.affirmation-block {
+  border-left: 2px solid #A68E45; padding-left: 1.1rem;
+}
+.affirmation-text {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  color: #F5F0EA; font-size: 1.05rem; line-height: 1.65;
+}
+.card-footer-text {
+  text-align: center;
+  font-family: 'Lato', sans-serif; color: rgba(245,240,234,.28);
+  font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
+  margin-top: 1rem; padding-top: .9rem;
+  border-top: 1px solid rgba(166,142,69,.18);
+}
+
+/* ── Copy flash ── */
+@keyframes fadeout { 0%,80%{opacity:1} 100%{opacity:0} }
+.copy-flash { animation: fadeout 2s ease forwards; }
+
+@media (max-width: 420px) {
+  .moon-grid { grid-template-columns: repeat(4,1fr); gap: .35rem; }
+  .moon-emoji { font-size: 1.3rem; }
+  .moon-label { font-size: .55rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="stars-layer"></div>
+
+<div id="app">
+
+  <!-- Welcome -->
+  <div id="screen-welcome" class="screen active" style="text-align:center; max-width:520px;">
+    <div class="welcome-moon">🌙</div>
+    <h1 class="welcome-title">My Daily Lunar Ritual</h1>
+    <div class="gold-line"></div>
+    <p class="welcome-date" id="today-date"></p>
+    <p class="welcome-tagline">A ritual aligned with your unique energy</p>
+    <button class="lunar-btn" onclick="goTo('sign')">Generate my ritual</button>
+  </div>
+
+  <!-- Sign -->
+  <div id="screen-sign" class="screen" style="text-align:center; max-width:480px;">
+    <div class="step-indicator">
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+    </div>
+    <h2 class="step-title">What is your moon sign?</h2>
+    <p class="step-sub">Select your moon sign</p>
+    <select class="lunar-select" id="sign-select" onchange="onSignChange()">
+      <option value="" disabled selected>Choose your sign...</option>
+      <option value="aries">♈ Aries</option>
+      <option value="taurus">♉ Taurus</option>
+      <option value="gemini">♊ Gemini</option>
+      <option value="cancer">♋ Cancer</option>
+      <option value="leo">♌ Leo</option>
+      <option value="virgo">♍ Virgo</option>
+      <option value="libra">♎ Libra</option>
+      <option value="scorpio">♏ Scorpio</option>
+      <option value="sagittarius">♐ Sagittarius</option>
+      <option value="capricorn">♑ Capricorn</option>
+      <option value="aquarius">♒ Aquarius</option>
+      <option value="pisces">♓ Pisces</option>
+    </select>
+    <div class="btn-row">
+      <button id="sign-next-btn" class="lunar-btn" disabled onclick="goTo('moon')">Continue</button>
+    </div>
+  </div>
+
+  <!-- Moon phase -->
+  <div id="screen-moon" class="screen" style="text-align:center; max-width:560px;">
+    <div class="step-indicator">
+      <div class="step-dot"></div>
+      <div class="step-dot active"></div>
+    </div>
+    <h2 class="step-title">What is today's moon phase?</h2>
+    <p class="step-sub">Select the current lunar phase</p>
+    <div class="moon-grid" id="moon-grid"></div>
+    <div class="btn-row">
+      <button class="lunar-btn-ghost" onclick="goTo('sign')">Back</button>
+      <button id="moon-next-btn" class="lunar-btn" disabled onclick="revealRitual()">Reveal my ritual</button>
+    </div>
+  </div>
+
+  <!-- Ritual -->
+  <div id="screen-ritual" class="screen" style="max-width:620px;">
+    <div class="ritual-card" id="ritual-card"></div>
+    <div class="btn-row">
+      <button class="lunar-btn" id="copy-btn" onclick="copyRitual()">Copy my ritual</button>
+      <button class="lunar-btn-ghost" onclick="resetAll()">Start over</button>
+    </div>
+  </div>
+
+</div>
+
+<footer>Cozy Astro</footer>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────────
+const MOON_PHASES = {
+  "new-moon":        { name:"New Moon",        emoji:"🌑", meaning:"The New Moon is a sacred threshold — a moment of pure potential before anything has taken form. It is the cosmos breathing in, inviting you to plant seeds in the fertile dark." },
+  "waxing-crescent": { name:"Waxing Crescent", emoji:"🌒", meaning:"The Waxing Crescent carries the tender energy of new beginnings finding their first breath. This is a time of intention, of coaxing what you desire into the light." },
+  "first-quarter":   { name:"First Quarter",   emoji:"🌓", meaning:"The First Quarter Moon brings the electric energy of decision and forward momentum. Obstacles arise not to stop you, but to test the clarity of your intention." },
+  "waxing-gibbous":  { name:"Waxing Gibbous",  emoji:"🌔", meaning:"The Waxing Gibbous hums with anticipatory energy — you are almost there, and the moon knows it. This is the time to refine, align, and prepare for the fullness approaching." },
+  "full-moon":       { name:"Full Moon",        emoji:"🌕", meaning:"The Full Moon is the peak of the lunar cycle — a luminous mirror held up to your innermost truth. What has been hidden now rises to the surface, asking to be seen and released." },
+  "waning-gibbous":  { name:"Waning Gibbous",  emoji:"🌖", meaning:"The Waning Gibbous carries the wisdom of gratitude and reflection after the peak. This is the time to share what you have received and begin integrating your journey." },
+  "last-quarter":    { name:"Last Quarter",     emoji:"🌗", meaning:"The Last Quarter Moon calls you to release what no longer serves with grace and intention. It is the art of conscious letting go — clearing space for what is yet to come." },
+  "waning-crescent": { name:"Waning Crescent",  emoji:"🌘", meaning:"The Waning Crescent is the moon's sacred rest, a liminal space between endings and beginnings. In this tender darkness, restoration and deep surrender are your greatest gifts." }
+};
+
+const SIGN_NAMES = {
+  aries:"Aries", taurus:"Taurus", gemini:"Gemini", cancer:"Cancer",
+  leo:"Leo", virgo:"Virgo", libra:"Libra", scorpio:"Scorpio",
+  sagittarius:"Sagittarius", capricorn:"Capricorn", aquarius:"Aquarius", pisces:"Pisces"
+};
+const SIGN_SYMBOLS = {
+  aries:"♈", taurus:"♉", gemini:"♊", cancer:"♋", leo:"♌", virgo:"♍",
+  libra:"♎", scorpio:"♏", sagittarius:"♐", capricorn:"♑", aquarius:"♒", pisces:"♓"
+};
+
+const R = {
+  aries:{
+    "new-moon":{intention:"Your bold Aries spirit aligns with the New Moon's seedling energy to ignite a vision that only you can bring to life.",journaling:"What brave beginning have you been circling around? Describe it in full, without holding back.",meditation:"Visualize a single red ember glowing in the dark — feel its warmth and limitless potential radiating outward.",action:"Write one bold goal on paper and place it somewhere you will see every morning this week.",affirmation:"I am a force of nature. My courage lights every path I choose."},
+    "waxing-crescent":{intention:"Your Aries fire catches the Waxing Crescent's gentle momentum, urging you to take the first courageous step today.",journaling:"What small but meaningful action could you take today that frightens you just a little?",meditation:"Feel your breath as bellows fanning a flame — each inhale deepens your courage, each exhale clears your doubt.",action:"Make one phone call or send one message you have been putting off for too long.",affirmation:"Every step I take with courage opens a door I didn't know existed."},
+    "first-quarter":{intention:"The First Quarter Moon meets your Aries drive at the crossroads — trust your instincts and charge forward without apology.",journaling:"Describe a moment you pushed through fear and it was worth it. How does that memory feel in your body right now?",meditation:"Visualize a ram cresting a mountain peak — steady, sure, unstoppable in its quiet determination.",action:"Tackle the one task on your list you have been avoiding most — begin it today, not tomorrow.",affirmation:"Obstacles are my training ground. I grow stronger with every challenge."},
+    "waxing-gibbous":{intention:"Your Aries intensity sharpens under the Waxing Gibbous, refining raw ambition into precision and living purpose.",journaling:"What needs adjusting in your current pursuit so it truly reflects what you most deeply want?",meditation:"Picture a spear being honed to a fine point — feel your own focus narrowing with perfect clarity into your center.",action:"Revise one plan, habit, or approach that isn't working as powerfully as it could be.",affirmation:"I pursue excellence not from fear, but from devotion to my own fire."},
+    "full-moon":{intention:"The Full Moon amplifies your Aries passion to a roar, illuminating exactly what you are fighting for and why.",journaling:"What desire burns so brightly in you that it feels almost too honest to admit? Write it all down.",meditation:"Stand in an open field under a blazing sky — breathe in fire, breathe out every doubt that has collected in you.",action:"Do one thing today that is entirely, unapologetically for you and no one else.",affirmation:"I am seen. I am powerful. My passion is a gift to this world."},
+    "waning-gibbous":{intention:"Your Aries spirit learns the art of gratitude under the Waning Gibbous, honoring how far your courage has carried you.",journaling:"List three victories from this lunar cycle — big or small — and write what each one taught you about yourself.",meditation:"A torch flame burning steady in still air — feel warmth spreading outward like a gift to everyone around you.",action:"Share a lesson or recent win with someone who is just beginning a journey you have already traveled.",affirmation:"What I have built with courage becomes a beacon for those who follow."},
+    "last-quarter":{intention:"The Last Quarter Moon calls your Aries warrior energy inward to release battles that are no longer worth your fire.",journaling:"What conflict, competition, or chase is draining your energy without genuinely feeding your soul?",meditation:"Picture yourself laying down a heavy weapon — feel the weight leave your hands, your shoulders drop, your chest open.",action:"Consciously decline one obligation or battle this week that no longer serves the life you are building.",affirmation:"True strength knows when to rest and when to release what no longer serves."},
+    "waning-crescent":{intention:"Your Aries energy softens into sacred rest under the Waning Crescent, gathering tremendous power in stillness.",journaling:"What does restoration truly look like for someone as fierce as you? When did you last genuinely, fully rest?",meditation:"A coal buried deep under warm ash, still glowing — feel how deep rest holds deep, undiminished power.",action:"Block off unstructured, screen-free time today and protect that space fiercely as if it were a battle worth winning.",affirmation:"Rest is not surrender — it is the strategy of a warrior who knows their worth."}
+  },
+  taurus:{
+    "new-moon":{intention:"Your Taurus groundedness and the New Moon's fertile darkness combine to plant seeds in the richest soil of your life.",journaling:"What long-term desire have you been gently tending in your heart? Give it full, beautiful words today.",meditation:"Feel your spine pressing into the earth — heavy, rooted, utterly belonging to this moment and this ground.",action:"Plant something physical today — a seed, a bulb, a potted herb — as a living anchor for your intention.",affirmation:"I am rooted, abundant, and worthy of everything I desire and more."},
+    "waxing-crescent":{intention:"The Waxing Crescent asks your Taurus steadiness to take one nourishing, sensory step toward what you are lovingly building.",journaling:"What small, sensory pleasure could you weave into your daily ritual to sustain your momentum this cycle?",meditation:"Feel sunlight moving slowly and warmly across your skin — patient, certain, as inevitable as your own growth.",action:"Prepare one nourishing meal entirely from scratch and eat it without distraction, phone, or hurry.",affirmation:"I build beautiful things with patient hands and a steady, devoted heart."},
+    "first-quarter":{intention:"Your Taurus determination meets the First Quarter's call to action — steady, consistent movement is more powerful than rushing.",journaling:"What obstacle in your path actually contains a hidden gift or an unexpected teaching within it?",meditation:"A boulder holding its ground effortlessly in a rushing stream — feel that same quiet, immovable steadiness in your core.",action:"Take one concrete, practical step today toward a goal you have been patiently and lovingly tending.",affirmation:"I move at my own pace, and my pace is perfectly, beautifully aligned."},
+    "waxing-gibbous":{intention:"Your Taurus eye for beauty and quality refines your work under the Waxing Gibbous — excellence and elegance are your standards.",journaling:"What would make your current creation truly, deeply beautiful and not merely functional?",meditation:"Sculpt something in your mind — feel every texture, the weight, the satisfying rightness of a thing made with love.",action:"Beautify one corner of your space in a way that fills you with quiet, lasting satisfaction.",affirmation:"I have an eye for beauty that transforms everything I touch into something meaningful."},
+    "full-moon":{intention:"The Full Moon illuminates your Taurus values, showing you clearly what is truly precious and what can be lovingly released.",journaling:"What do you own, hold, or cling to that no longer reflects who you are genuinely becoming?",meditation:"Stand barefoot on cool earth under an open sky — feel abundance moving up through the ground and into every cell.",action:"Give away, donate, or repurpose one possession that has outlasted its meaning in your life.",affirmation:"I release freely because I trust that everything I need will always find me."},
+    "waning-gibbous":{intention:"Your Taurus generosity flows beautifully under the Waning Gibbous, sharing the abundance you have so carefully cultivated.",journaling:"What gifts — skills, beauty, resources, time, wisdom — do you have to offer that you tend to keep quietly to yourself?",meditation:"A tree heavy and golden with fruit — feel the fullness within you and the uncomplicated joy of giving it freely.",action:"Cook for someone, share resources generously, or offer a practical skill to someone who could truly use it.",affirmation:"My abundance is meant to be shared. Giving flows as naturally as breathing."},
+    "last-quarter":{intention:"The Last Quarter Moon gently helps your Taurus nature loosen its grip on what has quietly been outgrown.",journaling:"What comfort zone, possession, or old way of being is keeping you smaller than you truly deserve to be?",meditation:"Soil releasing a root — not with force or grief, but with the quiet, complete readiness of natural completion.",action:"Clear one area of physical clutter today — a drawer, a closet shelf, a stack of old digital files.",affirmation:"I release the old with gratitude. Space opens where something better will bloom."},
+    "waning-crescent":{intention:"Your Taurus body and soul seek deep, luxurious restoration under the Waning Crescent — you have more than earned this rest.",journaling:"What would a truly luxurious, soul-nourishing rest day look like for you? Plan it in warm, delicious detail.",meditation:"A seed perfectly dormant in winter earth — completely still, profoundly full of future, needing nothing right now.",action:"Draw yourself a slow, fragrant bath or take a long, purposeless walk in nature with no agenda at all.",affirmation:"I honor my body as sacred ground. Rest is how I prepare for my next blooming."}
+  },
+  gemini:{
+    "new-moon":{intention:"Your Gemini curiosity and the New Moon's wide-open potential align perfectly to begin a story only your particular mind can tell.",journaling:"If you could learn absolutely anything right now with no limitations, what would it be and why does it excite you so deeply?",meditation:"Two paths diverging in a starlit wood — feel pure delight at possibility, not the anxiety of having to choose just one.",action:"Sign up for a class, workshop, or begin the very first page of a book you have been meaning to read.",affirmation:"My mind is a gift. My curiosity opens doors that lead to extraordinary places."},
+    "waxing-crescent":{intention:"The Waxing Crescent sparks your Gemini mind with fresh, crackling ideas that are eager to be spoken aloud and shared.",journaling:"What idea keeps returning to your mind like a recurring melody? Write it out in every direction you can imagine.",meditation:"A silver thread stretching from your mind to the stars — feel new ideas moving through you like a clean, bright current.",action:"Reach out to someone whose mind genuinely excites you and start a conversation about something that matters.",affirmation:"I speak and my ideas take on a life of their own. My voice creates connections."},
+    "first-quarter":{intention:"Your Gemini adaptability finds its sharpest edge at the First Quarter Moon — choose one direction and commit to it with conviction.",journaling:"Where are you currently spreading yourself across too many possibilities instead of going beautifully deep into one?",meditation:"A compass needle finally, unmistakably finding true north — feel the profound relief of alignment settling over you.",action:"Choose one idea or project to focus on exclusively this week and write out three clear, specific next steps.",affirmation:"When I focus, I become unstoppable. Depth is my superpower as much as breadth."},
+    "waxing-gibbous":{intention:"Your Gemini skill with words and ideas reaches its most polished expression under the Waxing Gibbous — refine and communicate.",journaling:"How could you communicate your current vision more clearly and compellingly to someone who needs to hear it?",meditation:"Feel your voice as a perfectly tuned instrument — resonating at precisely the right frequency to reach the right ears.",action:"Rewrite, refine, or rehearse something important you need to express, present, or share with the world.",affirmation:"I communicate with clarity and charm. My words land exactly where they are meant to."},
+    "full-moon":{intention:"The Full Moon floods your Gemini mind with crystalline clarity, revealing which conversations have carried the most truth.",journaling:"What truth have you been skillfully dancing around in your conversations? Write it plainly and completely today.",meditation:"Two mirrors angled perfectly toward each other — watch the infinite reflections of honest connection deepen endlessly.",action:"Have one fully present, genuinely honest conversation that you have been subtly, cleverly avoiding.",affirmation:"I speak my truth with grace, and truth always draws my right people closer."},
+    "waning-gibbous":{intention:"Your Gemini gift for teaching and connecting shines under the Waning Gibbous — the world needs what you know and how you say it.",journaling:"What have you learned this lunar cycle that someone you love could genuinely benefit from hearing from you?",meditation:"A living library of voices — feel yourself as both enthusiastic student and generous, natural teacher at once.",action:"Write, post, or speak one specific insight from your recent experience that could shift someone else's perspective.",affirmation:"I share what I know freely. My ideas are seeds that grow in unexpected, beautiful ways."},
+    "last-quarter":{intention:"The Last Quarter Moon helps your brilliant Gemini mind quiet the chatter and release what is mentally cluttering your forward path.",journaling:"What worries, what-ifs, or circular thought patterns are you genuinely ready to release and step free of today?",meditation:"Soft clouds gently dissolving in a wide blue sky — watch each anxious thought simply drift through and disappear.",action:"Write your loudest worries on paper and then ceremonially tear, burn, or bury the page with intention.",affirmation:"I release what I cannot control and trust my mind to find the answers I need."},
+    "waning-crescent":{intention:"Your Gemini spirit finds its deepest restoration in rare silence under the Waning Crescent — in stillness, the best ideas will arrive.",journaling:"When did you last sit in truly comfortable silence? What does your mind naturally do when it finally has space to wander?",meditation:"A hummingbird resting perfectly still on a branch — wings finally folded, heart wide open and receiving.",action:"Spend at least 20 minutes today in true silence — no phone, no music, no podcast, no input of any kind.",affirmation:"In silence, I hear what matters most. Stillness is where my deepest wisdom lives."}
+  },
+  cancer:{
+    "new-moon":{intention:"As the Moon's own child, your Cancer heart is especially potent at the New Moon — your intentions take root in the very deepest soil.",journaling:"What do you most want to nurture into being this cycle? Describe it tenderly, as though you are already gently tending it.",meditation:"The sea at low tide — vast, patient, holding everything in its quiet, boundless, luminous dark.",action:"Create or gently refresh a small altar or sacred corner in your home as a living symbol of your intention.",affirmation:"I am safe. I am loved. My sensitivity is not my weakness — it is my sacred gift."},
+    "waxing-crescent":{intention:"Your Cancer intuition leads the way under the Waxing Crescent — trust completely the feelings that are beginning to rise and guide you.",journaling:"What does your gut know right now that your logical mind hasn't fully caught up to yet?",meditation:"A moonflower opening slowly in the dark — unhurried, certain, perfectly and beautifully timed by its own inner knowing.",action:"Follow one clear intuitive nudge today without second-guessing it or waiting for permission — simply take that step.",affirmation:"My intuition is a compass that never lies. I trust the wisdom of my inner tides."},
+    "first-quarter":{intention:"The First Quarter Moon asks your Cancer soul to take one protective, loving action for what matters most deeply to you.",journaling:"What or who are you trying to protect right now, and what would genuinely protective love actually look like in practice?",meditation:"A shell carefully holding something tender and irreplaceable — feel the real, quiet strength that grows from what you safeguard.",action:"Take one concrete, devoted action to care for someone or something you love with your whole heart.",affirmation:"My love is a shelter. What I protect with care grows stronger and more beautiful."},
+    "waxing-gibbous":{intention:"Your Cancer devotion deepens under the Waxing Gibbous — you are nearly ready to bring your care fully and beautifully into form.",journaling:"How have your relationships or home life been shifting and growing this lunar cycle? What feels close to blooming?",meditation:"A tide coming in slowly, steadily — feel your love as an unstoppable, nourishing, irresistible force of nature.",action:"Write a heartfelt, specific note or message to someone whose support has quietly meant everything to you.",affirmation:"My love ripples outward and returns to me tenfold. I am a source of genuine comfort."},
+    "full-moon":{intention:"The Full Moon moves the tides within you, Cancer — emotions that have been quietly building finally crest and ask to be released.",journaling:"What feelings have you been carrying quietly within you that need to be expressed and finally released tonight?",meditation:"Imagine yourself fully submerged in warm, still water — feel every emotion dissolving slowly into the deep.",action:"Allow yourself to cry, sing, or move your body through an emotion you have been gently but persistently holding.",affirmation:"My emotions are sacred messengers. I feel everything and remain standing, whole and free."},
+    "waning-gibbous":{intention:"Your Cancer heart overflows with gratitude under the Waning Gibbous — let love pour freely and warmly outward to your people.",journaling:"Write a love letter to your home, your family, or your inner child — what do you most want them to know right now?",meditation:"A warm hearthfire — steady, golden, calling loved ones close without effort or announcement.",action:"Cook a nourishing meal or create something made with love to share generously with those closest to you.",affirmation:"I pour love into the world and the world pours love back. I am endlessly, abundantly nourished."},
+    "last-quarter":{intention:"The Last Quarter Moon gently helps your Cancer nature release old emotional wounds that have kept you playing carefully small.",journaling:"What old hurt or resentment are you genuinely ready to lay down with tenderness? What would become possible without it?",meditation:"A shell releasing its hold on the shore — feel the profound relief of being carried gently and safely out to open sea.",action:"Write what you are releasing on paper, fold it with intention, place it somewhere symbolic, and then quietly let it go.",affirmation:"I release the past with love. What I let go of makes room for what I truly deserve."},
+    "waning-crescent":{intention:"The Waning Crescent calls your Cancer spirit into the sacred, warm cocoon of rest and deep inner nourishment.",journaling:"What does your inner child need from you right now? Write what you would say to comfort them with complete tenderness.",meditation:"A child sleeping peacefully in safe, loving arms — feel completely what it means to be perfectly, unconditionally held.",action:"Spend this evening at home doing something that made you feel safe, warm, and utterly cared for as a child.",affirmation:"I am my own safe harbor. I hold myself with the same love I freely give to others."}
+  },
+  leo:{
+    "new-moon":{intention:"Your Leo heart and the New Moon's velvet darkness create the perfect stage for your most radiant vision to take its very first breath.",journaling:"If the whole world were watching and you could create anything, what would you boldly and joyfully bring to life?",meditation:"A solar eclipse — the sun held just behind the moon, gathering its full, magnificent power before its luminous return.",action:"Begin one creative project today that lets you express yourself with absolutely nothing held back.",affirmation:"I am radiant. My creativity is a force that the world has been waiting for."},
+    "waxing-crescent":{intention:"Your Leo light begins to shine through the Waxing Crescent — let yourself be seen in small, completely authentic, joyful moments.",journaling:"Where have you been dimming your light to make others comfortable? What would it genuinely feel like to simply shine?",meditation:"A sunrise warming the horizon — gentle, quiet at first, and then utterly and beautifully undeniable.",action:"Wear, say, or create something today that feels truly, freely, and joyfully like you.",affirmation:"I allow myself to be seen. My authentic presence is a gift I no longer withhold."},
+    "first-quarter":{intention:"The First Quarter Moon fans your Leo fire into confident, visible action — lead with your whole heart and your unmistakable presence.",journaling:"What leadership role or creative decision have you been hesitating to claim as rightfully, fully yours?",meditation:"A lion pausing at the edge of a leap — feel the coiled readiness and the absolute, unshakeable confidence in your body.",action:"Step forward today and take full, proud ownership of something you have been waiting for permission to lead.",affirmation:"I lead from love and strength. My confidence inspires others to step into their own light."},
+    "waxing-gibbous":{intention:"Your Leo creativity and the Waxing Gibbous energy combine to polish your vision into something that will genuinely take breath away.",journaling:"What would make your current creative work feel truly great to you — not just acceptable, but magnificent?",meditation:"Gold being refined slowly in fire — each pass through the flame making it purer, more luminous, more completely itself.",action:"Put the final, loving, perfecting touches on something creative you have been working on this cycle.",affirmation:"I pursue greatness not from ego, but from devotion to the beauty I know I can create."},
+    "full-moon":{intention:"The Full Moon is your sun, Leo — tonight, you are fully seen, celebrated, illuminated, and completely magnificent.",journaling:"What accomplishment or quality in yourself have you been underselling, minimizing, or hiding? Name it, claim it, celebrate it now.",meditation:"Stand in a warm, golden spotlight — feel the warmth, the recognition, not as judgment but as pure, deserved celebration.",action:"Celebrate yourself in one tangible, unapologetic way today — dinner out, a beautiful treat, a toast, a wild dance.",affirmation:"I am worthy of celebration exactly as I am. My joy lights the world around me."},
+    "waning-gibbous":{intention:"Your Leo generosity shines most brilliantly after the peak — this is your time to let your light actively lift those around you.",journaling:"Whose potential do you see so clearly it almost aches? What would happen if you told them specifically what you see today?",meditation:"The sun warming every rooftop, every face, every garden equally and freely — feel that same boundless radiance as yours to give.",action:"Give someone a specific, heartfelt, detailed compliment today that names a real gift you genuinely see in them.",affirmation:"My light is not diminished by sharing. The more I give, the more brightly I shine."},
+    "last-quarter":{intention:"The Last Quarter Moon asks your Leo spirit to release the need for applause and rest deeply in your inherent, unconditional worth.",journaling:"When do you perform for approval? What would it feel like to exist fully without needing external validation today?",meditation:"A fire burning beautifully in an empty forest — perfect, complete, radiant, needing no audience whatsoever.",action:"Do something today that brings you pure, private joy with zero intention of sharing, posting, or being seen.",affirmation:"My worth is not earned by performance. I am enough in my own quiet, powerful light."},
+    "waning-crescent":{intention:"Your Leo heart rests under the Waning Crescent, gathering the deep inner joy that fuels your remarkable radiance.",journaling:"What makes you feel genuinely, quietly alive — not impressive to others, but truly, privately alive to yourself?",meditation:"A single ember glowing softly in the dark — small, enduring, patient with its own steady, faithful glow.",action:"Spend time today doing something purely playful and light — something your child-self would have absolutely loved.",affirmation:"I rest and I am restored. My joy renews itself in stillness and play."}
+  },
+  virgo:{
+    "new-moon":{intention:"Your Virgo precision and the New Moon's blank slate combine to set the most thoughtful, purposeful, refined intention of your cycle.",journaling:"What do you want to improve, refine, or offer in devoted service? What is your very first specific, honest step?",meditation:"A field perfectly, freshly plowed — rich, dark, quiet, ready for the most intentional and careful planting.",action:"Create a clear, honest plan for one meaningful goal today, breaking it into your first three practical steps.",affirmation:"I am enough. My care and my devotion are sacred, irreplaceable offerings to this world."},
+    "waxing-crescent":{intention:"Your Virgo attention to detail catches the Waxing Crescent's gentle momentum — one careful, well-considered step at a time.",journaling:"What small, consistent daily habit, if practiced with devotion, would have the greatest positive impact on your life?",meditation:"A craftsperson's hands at careful, loving work — feel the deep, quiet satisfaction of making something extraordinarily well.",action:"Begin or thoughtfully strengthen one small daily ritual that genuinely supports your health, craft, or wellbeing.",affirmation:"Small, consistent actions are my superpower. I build extraordinary things one careful day at a time."},
+    "first-quarter":{intention:"The First Quarter Moon meets your Virgo work ethic at the turning point — your diligence now determines the quality of the harvest.",journaling:"What challenge are you currently navigating, and what is the most practical, grounded, useful response available to you?",meditation:"A river finding its most efficient path through ancient stone — patient, purposeful, precisely adapted.",action:"Spend 30 minutes on the most important task you have been avoiding, specifically because of perfectionism.",affirmation:"I act despite imperfection, knowing that done well enough is more powerful than not done at all."},
+    "waxing-gibbous":{intention:"Your Virgo drive for excellence reaches its most useful form under the Waxing Gibbous — refine and improve without over-correcting.",journaling:"Where is perfectionism genuinely helping you right now, and where is it quietly, subtly getting in the way?",meditation:"A lens bringing one single point into perfect, clear focus — feel the clarity arrive without any accompanying strain.",action:"Review your progress on a current goal and make one meaningful, well-targeted, honest improvement today.",affirmation:"Excellence is my practice, not my prison. I refine with love, not with fear."},
+    "full-moon":{intention:"The Full Moon illuminates your Virgo service — what you offer the world is truly seen, deeply valuable, and profoundly needed.",journaling:"What do people consistently and genuinely thank you for? What service or skill do you give that you often quietly undervalue?",meditation:"A healer's steady, practiced hands — feel the quiet, real power that lives in your ability to restore and carefully refine.",action:"Offer your practical skills in meaningful service to someone today in a way that costs you only your time and care.",affirmation:"My devotion to service is sacred. The world is genuinely better for the care I bring to it."},
+    "waning-gibbous":{intention:"Your Virgo analytical mind becomes an instrument of pure gratitude under the Waning Gibbous — carefully notice what is truly working.",journaling:"What specific choices, habits, or devoted efforts from this cycle are genuinely paying off? Name them precisely and honestly.",meditation:"A harvest table laden with the fruits of careful, devoted labor — feel the deep satisfaction of work completed with love.",action:"Write a precise, honest list of what went well this cycle and exactly why, being specific about what you did beautifully right.",affirmation:"I acknowledge my wins with the same care I give my improvements. I am worthy of my own recognition."},
+    "last-quarter":{intention:"The Last Quarter Moon asks your Virgo perfectionism to release with grace what you cannot fix, improve, or make perfect further.",journaling:"Where are you holding yourself to an impossible, exhausting standard? What would genuinely, honestly 'enough' look like?",meditation:"A field after a full harvest — not empty but complete, resting beautifully in its own quiet sufficiency.",action:"Let one task, project, or worry be officially declared complete today and gently release it from your mental list.",affirmation:"I release what is beyond my control. I trust that enough is, in fact, truly enough."},
+    "waning-crescent":{intention:"Your Virgo spirit learns the deepest healing practice of rest under the Waning Crescent — the body is not a machine, and neither are you.",journaling:"What does your body genuinely need from you right now? What signals have you been overriding in your commitment to keep going?",meditation:"A garden in deep winter — perfectly dormant, doing the invisible, essential work of restoration under the snow.",action:"Take a full, screen-free afternoon to rest your analytical, devoted mind and fully, tenderly honor your body's honest needs.",affirmation:"Rest is productive. My body is sacred ground that deserves care, not just constant use."}
+  },
+  libra:{
+    "new-moon":{intention:"Your Libra sense of beauty and justice calls you to set an intention under the New Moon that will genuinely restore harmony to your life.",journaling:"Where do you feel most out of balance right now? What would genuine, sustainable equilibrium actually feel like in your daily life?",meditation:"Scales finding their perfect center — not straining, not forcing, simply settling with grace into natural balance.",action:"Identify one relationship or area of life that needs more of your care and take one real, loving step toward it today.",affirmation:"I create beauty and harmony wherever I go. I am naturally, gracefully in balance."},
+    "waxing-crescent":{intention:"The Waxing Crescent gently asks your Libra heart to begin thoughtfully tending the connections that matter most deeply to you.",journaling:"Which relationship in your life deserves more of your intentional time, attention, and genuine presence this cycle?",meditation:"Two hands reaching slowly toward each other across a starlit, infinite sky — feel the beautiful space between them gently closing.",action:"Reach out to someone you have been genuinely meaning to connect with and make a specific, real plan together.",affirmation:"I invest in my relationships with the same care I invest in beauty. Connection is my art."},
+    "first-quarter":{intention:"The First Quarter Moon gently challenges your Libra tendency to weigh endlessly — decide today and act with characteristic grace.",journaling:"What decision have you been avoiding by continuing to see all sides beautifully? What does your heart actually already know?",meditation:"A compass finding true north despite the wind — feel the quiet, undeniable certainty that lives beneath your indecision.",action:"Make one decision you have been postponing and take the very first step toward it immediately, without looking back.",affirmation:"I decide with clarity and grace. My choices reflect the beauty of my own discernment."},
+    "waxing-gibbous":{intention:"Your Libra eye for beauty and your Waxing Gibbous refinement combine to create something of rare harmony and quiet elegance.",journaling:"What creative or relational project would benefit most from more beauty, elegance, or a thoughtful, loving finishing touch?",meditation:"A symphony approaching its final, most resonant movement — feel every instrument finding its perfectly balanced place.",action:"Add one beautiful, intentional touch to your home, your creative work, or a cherished relationship today.",affirmation:"I bring beauty into everything I touch. Harmony is not a goal — it is who I am."},
+    "full-moon":{intention:"The Full Moon illuminates your Libra relationships with brilliant clarity — which partnerships carry your truest reflection back to you?",journaling:"What does your most important relationship teach you about yourself that nothing and no one else possibly could?",meditation:"Two mirrors angled gently toward each other — see the infinite, beautiful reflections of authentic connection deepen.",action:"Have a conversation that genuinely deepens a partnership — ask something meaningful you have never asked before.",affirmation:"My relationships are mirrors of my highest self. I show up fully and I am met with love."},
+    "waning-gibbous":{intention:"Your Libra gift for seeing beauty in others shines most brilliantly under the Waning Gibbous — genuine appreciation is its own form of love.",journaling:"What beauty have you received from others this cycle that you have not yet fully, specifically acknowledged out loud?",meditation:"A garden at soft dusk — every flower truly seen, every fragrance deeply noticed, every gift honestly recognized.",action:"Express sincere, specific, personal appreciation to three people in your life in a way that genuinely touches them.",affirmation:"Gratitude is my superpower. What I appreciate grows more beautiful in the light of my attention."},
+    "last-quarter":{intention:"The Last Quarter Moon asks your Libra nature to release relationships or agreements that have lost their essential balance.",journaling:"What dynamic in your life no longer feels fair, reciprocal, or truly aligned with your deepest values?",meditation:"A scale tipping gently back toward center — not with drama, but with the quiet, honest relief of returning to truth.",action:"Set one gentle, clear boundary or consciously shift one dynamic that has been draining your sense of fairness.",affirmation:"I honor my own needs as beautifully as I honor others'. My balance is sacred and non-negotiable."},
+    "waning-crescent":{intention:"Your Libra spirit finds its deepest restoration in beauty, peace, and aesthetic pleasure under the Waning Crescent — create sanctuary.",journaling:"What does your perfect, peaceful sanctuary look, sound, smell, and feel like? Describe it in every luxurious detail.",meditation:"A still pond perfectly reflecting the last silver sliver of moon — undisturbed, harmonious, completely and beautifully whole.",action:"Create one deliberate act of beauty in your space today: fresh flowers, soft music, candlelight, a perfect cup of tea in silence.",affirmation:"I am at home in beauty. Peace is not something I seek — it is something I create wherever I am."}
+  },
+  scorpio:{
+    "new-moon":{intention:"Your Scorpio depths are perfectly, powerfully matched to the New Moon's sacred darkness — what you plant here will transform everything.",journaling:"What truth about yourself or your life have you been afraid to look at directly? Give it words right now, on this page.",meditation:"A deep well with no visible bottom — breathe slowly and let yourself descend, completely trusting the sacred dark.",action:"Write your deepest, most hidden desire on paper — then with full intention, decide what you want to do with it.",affirmation:"I transform darkness into power. I am completely, fearlessly unafraid of my own depth."},
+    "waxing-crescent":{intention:"The Waxing Crescent asks your Scorpio intensity to channel its formidable power into one focused, magnetic, purposeful pursuit.",journaling:"What single transformation are you most committed to right now? What small step carries the most charge and aliveness?",meditation:"A serpent beginning its purposeful movement — feel the coiled, intelligent power beginning to extend with absolute certainty.",action:"Take one brave, real step toward what you desire most but have been approaching with careful, strategic patience.",affirmation:"My desire is a compass. What I want deeply is drawn to me with magnetic, undeniable force."},
+    "first-quarter":{intention:"The First Quarter Moon meets your Scorpio willpower at its peak — your capacity for profound transformation is absolutely unstoppable now.",journaling:"What resistance are you encountering on your path, and what does it honestly reveal about your true level of commitment?",meditation:"A phoenix halfway through its own transforming fire — feel the absolute, bone-deep certainty that what is burning is not you.",action:"Face head-on today one challenge that requires you to dig beneath every surface layer to find your real answer.",affirmation:"I am forged in transformation. What tests me only proves what I am already made of."},
+    "waxing-gibbous":{intention:"Your Scorpio perceptiveness reaches through the Waxing Gibbous to see exactly what this situation is truly, deeply requiring of you.",journaling:"What are you sensing beneath the surface of a current situation that others simply are not seeing or won't admit?",meditation:"An eagle hovering silently above deep water — looking through the surface with clear eyes to what moves invisibly below.",action:"Trust your powerful instincts completely and make one important move based on what you deeply sense, not what appears on the surface.",affirmation:"My perception cuts through illusion. I see what is real and act with precision and truth."},
+    "full-moon":{intention:"The Full Moon and your Scorpio soul create the most powerful release night of your entire year — let what must die, finally die.",journaling:"What are you genuinely, completely ready to release — a wound, a story, a pattern that has consumed enough of your precious energy?",meditation:"Stand at the edge of dark, still water and release something precious into the deep — feel the enormous, real freedom.",action:"Perform a release ritual: write what you are releasing, burn or bury the paper ceremonially, and breathe completely freely.",affirmation:"I release with power what no longer serves me. My endings are the most transformative beginnings."},
+    "waning-gibbous":{intention:"Your Scorpio wisdom becomes a profound gift to others under the Waning Gibbous — what you have survived and transformed can genuinely heal.",journaling:"What hard-won wisdom from your own deepest transformation could meaningfully help someone else right now?",meditation:"A sword that has been through fire — feel the real, tested strength that only genuine suffering can earn you.",action:"Share your honest truth or lived experience with someone who needs exactly what your darkness has taught you.",affirmation:"My wounds are also wisdom. What I have survived gives me a power worth sharing."},
+    "last-quarter":{intention:"The Last Quarter Moon meets your Scorpio mastery of endings — this release is both powerful and absolutely necessary for your next becoming.",journaling:"What obsession, old grudge, or deep attachment still holds quiet power over you that you are ready to finally, fully dissolve?",meditation:"A snake shedding its entire skin — feel the old layer releasing completely and fully without a single backward glance.",action:"Cut one energetic or physical tie to the past today: unfollow, delete, return, or ceremonially and consciously release it.",affirmation:"I shed what I have outgrown without grief. My transformations are my greatest source of power."},
+    "waning-crescent":{intention:"Your Scorpio spirit finds its true power in the sacred dark of the Waning Crescent — profound rest is your next and most important transformation.",journaling:"What would it mean to surrender fully and rest without vigilance or guilt? What, honestly, stops you from going there?",meditation:"The absolute floor of the deep ocean — complete stillness, immense pressure, the most profound and absolute peace.",action:"Spend this evening in complete darkness and near silence, meditating or sleeping early with clear, specific intention.",affirmation:"I surrender deeply and I am completely restored. In darkness, I find my most essential, enduring self."}
+  },
+  sagittarius:{
+    "new-moon":{intention:"Your Sagittarius arrow finds its true and highest aim under the New Moon — set your sight on the horizon that most ignites your soul.",journaling:"What adventure, philosophy, or expansion is genuinely calling to you right now? Let yourself dream with absolutely no limits.",meditation:"An archer releasing an arrow into the vast dark sky — feel the clean, certain flight before the distant, perfect landing.",action:"Research or begin planning one experience that would genuinely expand your world: a journey, a course, a new practice or teacher.",affirmation:"I am free. My truth is my compass and my greatest, most enduring gift to the world."},
+    "waxing-crescent":{intention:"The Waxing Crescent asks your Sagittarius spirit to begin the journey — even one small, brave step in the right direction is everything.",journaling:"What first step toward your biggest adventure would feel both thrillingly terrifying and utterly, unmistakably right?",meditation:"A traveler setting out joyfully at first light of dawn — feel the road opening endlessly before you, not the destination closing behind.",action:"Book something, register for something, or commit to one genuinely expansive experience before this cycle ends.",affirmation:"I begin without needing to see the full path. My faith in the journey is my navigation."},
+    "first-quarter":{intention:"The First Quarter Moon fires your Sagittarius optimism into real, visible action — your unshakeable belief in the possible is your superpower.",journaling:"Where is your optimism genuinely warranted, and where might it be conveniently avoiding a truth that quietly needs acknowledging?",meditation:"A wildfire spreading freely across open ground — feel the unstoppable, exhilarating forward momentum alive in your chest.",action:"Take your biggest current goal, expand your vision of it by 20%, and then take the very next real, concrete step toward it.",affirmation:"My optimism is not naivety — it is the most radical and powerful act I know."},
+    "waxing-gibbous":{intention:"Your Sagittarius vision sharpens and focuses under the Waxing Gibbous — from the beautiful big picture to the specific, meaningful detail.",journaling:"What does your grand, luminous vision actually look like in your real daily life, in honest, specific, concrete terms?",meditation:"A powerful telescope bringing distant stars thrillingly close — feel the fine detail of what you have been seeing from far away.",action:"Map out the practical details of your vision this week: what does today, tomorrow, this week specifically look like?",affirmation:"I honor both the vision and the path. Details are just freedom wearing practical shoes."},
+    "full-moon":{intention:"The Full Moon beneath your Sagittarius sky is a ceremony of truth and freedom — speak what you know with full conviction and joy.",journaling:"What personal philosophy or hard-won truth have you arrived at through your own living experience that deserves to be spoken now?",meditation:"A bonfire blazing on an open, starlit plain — feel the warmth, the light, the honest invitation to gather and truly share.",action:"Share one of your hard-won truths with the world today: write it, post it, say it to exactly the person who most needs it.",affirmation:"My truth is a torch. What I have learned through living is medicine for others who need it."},
+    "waning-gibbous":{intention:"Your Sagittarius generosity and the Waning Gibbous align beautifully — teach freely what you know with your characteristic joy and enthusiasm.",journaling:"What have you learned on your journey that others around you have been quietly, deeply hungry to understand?",meditation:"A great river spreading into a wide, nourishing delta — feel your knowledge branching out and sustaining new, unexpected ground.",action:"Teach, mentor, or guide someone through something you have genuinely mastered — freely, joyfully, and without reservation.",affirmation:"I teach what I know and learn from everyone I meet. Wisdom shared doubles itself."},
+    "last-quarter":{intention:"The Last Quarter Moon asks your Sagittarius spirit to bravely release dogma and outdated beliefs that have quietly become gilded cages.",journaling:"What belief or 'truth' are you holding that may have genuinely grown too small for the person you are becoming?",meditation:"An arrow loosed from a broken bow — feel the unexpected, profound relief of releasing what no longer launches you forward.",action:"Write down one belief you are consciously, deliberately letting go of and one new, expansive one stepping in to take its place.",affirmation:"I outgrow my beliefs the way I outgrow shoes — gratefully, naturally, and always finding a better fit."},
+    "waning-crescent":{intention:"Your Sagittarius flame banks into warm, glowing coals under the Waning Crescent — rest and reflect before the next great journey begins.",journaling:"Where has this whole cycle taken you? What have you genuinely learned, and where does your inner compass point you next?",meditation:"A campfire dying slowly to ember — feel the deep satisfaction of a beautiful fire, a good story lived, a night well spent.",action:"Sit quietly with a map, an open journal, or a book that speaks to your next chapter — just be with pure, open possibility.",affirmation:"Rest is preparation. Every fire needs to breathe before it can burn its most brilliant."}
+  },
+  capricorn:{
+    "new-moon":{intention:"Your Capricorn determination and the New Moon's darkness combine to lay the foundation for something that will genuinely last generations.",journaling:"What legacy are you building with your life right now? What will this intention honestly mean five full years from now?",meditation:"A great mountain at midnight — still, immovable, absolutely certain of what it is and has always been.",action:"Write one clear, specific, measurable goal with a real deadline and your first three concrete action steps mapped out in order.",affirmation:"I build what lasts. My ambition is always matched by my integrity and my patience."},
+    "waxing-crescent":{intention:"The Waxing Crescent supports your Capricorn discipline and long-term vision — each small, consistent action builds the cathedral stone by stone.",journaling:"What daily practice, however small and unglamorous, would bring you measurably, meaningfully closer to your most important goal?",meditation:"A great tower rising stone by patient stone — feel the quiet, deep satisfaction of each single brick laid with perfect care.",action:"Begin or genuinely strengthen one discipline today that your future self will be quietly, profoundly grateful for.",affirmation:"Consistency is my most reliable form of genius. I show up every day and build something real."},
+    "first-quarter":{intention:"The First Quarter Moon meets your Capricorn ambition at the climb — the view from here demands real effort, and you have always welcomed that.",journaling:"What obstacle on your path is honestly testing the quality and depth of your commitment right now? What do you choose?",meditation:"A climber finding each foothold on a sheer, cold face — completely calm, fully present, absolutely and quietly determined.",action:"Tackle the most challenging, highest-stakes task on your list today — without delay, without complaint.",affirmation:"I climb because the summit matters. Difficulty is evidence that I am on exactly the right path."},
+    "waxing-gibbous":{intention:"Your Capricorn mastery and the Waxing Gibbous combine — you are approaching the summit and your work is genuinely, quietly extraordinary.",journaling:"What refinements would make your current work truly excellent in the eyes of the mentor you most deeply respect?",meditation:"A master architect reviewing plans with a practiced, uncompromising eye — feel the precision, the honest pride, the exacting care.",action:"Spend time today genuinely elevating the quality of your most important work to the highest standard you are capable of.",affirmation:"Excellence is my standard. I do not accept good enough when I know I can give extraordinary."},
+    "full-moon":{intention:"The Full Moon shines brilliantly on your Capricorn achievement — what you have built with such devotion deserves to be fully seen and celebrated.",journaling:"What have you accomplished this cycle that you have not yet permitted yourself to truly, fully acknowledge?",meditation:"The summit of a great mountain bathed in full moonlight — feel the vast perspective, the real achievement, the stunning, earned view.",action:"Celebrate one professional or personal win today in a way that honestly honors the real work and sacrifice it took.",affirmation:"I honor what I have earned. Celebrating my achievements is not vanity — it is honest accounting."},
+    "waning-gibbous":{intention:"Your Capricorn leadership becomes an act of genuine generosity under the Waning Gibbous — mentor those climbing the path behind you.",journaling:"Who specifically needs your expertise, your hard-won mentorship, or the example of what you have already built?",meditation:"A lighthouse standing firm on a high cliff — feel your accumulated wisdom casting useful, reliable light for others on the dark water.",action:"Offer practical advice, direct feedback, or real mentorship to someone working toward what you have already achieved.",affirmation:"What I have built becomes a foundation for others. My success is most meaningful when it is shared."},
+    "last-quarter":{intention:"The Last Quarter Moon calls your Capricorn ambition to release structures, habits, or goals that have become hollow obligations rather than genuine callings.",journaling:"What are you working toward out of pure obligation, image management, or habit rather than genuine, living desire?",meditation:"An old structure gracefully, carefully dismantled — each stone returned to earth, making honest space for new, better architecture.",action:"Remove one commitment from your schedule that has become hollow and say no to it with grace, firmness, and finality.",affirmation:"I release what no longer serves my truest ambition. Space is not emptiness — it is potential."},
+    "waning-crescent":{intention:"Your Capricorn endurance finds its deepest reward in genuine rest under the Waning Crescent — you have climbed enough for now.",journaling:"When was the last time you were fully, unapologetically unproductive? What does your body honestly say when you allow yourself to stop?",meditation:"The mountain in deep winter, resting peacefully under heavy snow — feel the profound honor of doing absolutely nothing.",action:"Take a full day off with no productivity goals and no apology — rest as your most radical, revolutionary act.",affirmation:"Rest is not failure — it is wisdom. I recharge so that I can build what truly lasts."}
+  },
+  aquarius:{
+    "new-moon":{intention:"Your Aquarius vision and the New Moon's infinite potential align to plant seeds that will change not just your life, but your entire world.",journaling:"What problem in the world do you feel uniquely, specifically equipped to help solve? Where do you honestly want to begin?",meditation:"A lightning bolt in the moment just before it strikes — feel the electric charge of a truly world-changing idea.",action:"Write your clear vision for a better world and one specific, concrete role you can genuinely play in helping build it.",affirmation:"I am a visionary. My uniqueness is not an eccentricity — it is my single greatest contribution."},
+    "waxing-crescent":{intention:"The Waxing Crescent and your Aquarius originality combine — the strange idea, the unconventional path, is exactly the right one.",journaling:"What unusual or genuinely radical approach to your current challenge keeps presenting itself? Why haven't you tried it yet?",meditation:"A radio antenna finely tuned to a frequency that only it can receive — feel what is specifically and uniquely moving through you.",action:"Try the unconventional approach today — do it exactly the way that makes the most sense to you and no one else.",affirmation:"My originality is a gift, not a flaw. The world needs what only I can see and do."},
+    "first-quarter":{intention:"The First Quarter Moon fires your Aquarius revolutionary spirit — this is the exact moment to challenge the status quo with real, visible action.",journaling:"What system, outdated rule, or unexamined assumption are you ready to actively, specifically challenge or change? What is your first move?",meditation:"An electrical circuit completing — feel the sudden, satisfying rush of an idea finding its full, powerful expression.",action:"Challenge one norm or convention in your daily life or work that has always seemed unnecessarily, arbitrarily limiting.",affirmation:"I question what others accept. My disruption creates space for something genuinely better."},
+    "waxing-gibbous":{intention:"Your Aquarius innovation reaches its most useful form under the Waxing Gibbous — refine the idea until it becomes undeniably useful to others.",journaling:"How does your current vision serve a real community beyond yourself? What specific refinements would increase its genuine impact?",meditation:"A blueprint being reviewed by the thoughtful people of the future — feel what they see, what they value, what they need from you.",action:"Test or share your idea with someone who will give you the most honest, most challenging, most useful feedback possible.",affirmation:"My ideas become powerful when they serve others. Innovation in service is my highest purpose."},
+    "full-moon":{intention:"The Full Moon illuminates your Aquarius community — you are part of a constellation of brilliant minds, not a solitary and lonely star.",journaling:"Who are your true people? Who sees you fully and what would it genuinely mean to show up more completely for them?",meditation:"A luminous star network — feel yourself as one bright, necessary, irreplaceable point in an interconnected field of light.",action:"Show up fully for your community today: attend, organize, contribute, or simply be present with real intention and care.",affirmation:"I am connected to brilliant minds who need what I uniquely offer. Together, we change things."},
+    "waning-gibbous":{intention:"Your Aquarius idealism becomes practical, generous giving under the Waning Gibbous — the world genuinely needs what you know and see.",journaling:"What knowledge, skill, or perspective do you carry that could meaningfully benefit a wider group of people right now?",meditation:"Electricity flowing freely and powerfully through an open network — feel what happens when your gifts move through the world.",action:"Contribute something concrete and meaningful to a community, cause, or collective that genuinely aligns with your values.",affirmation:"I give my gifts freely and trust that they will find exactly who needs them most."},
+    "last-quarter":{intention:"The Last Quarter Moon asks your freedom-seeking Aquarius nature to release attachments that have quietly caged your original spirit.",journaling:"What expectation — your own or someone else's — is genuinely preventing you from being your most electric, authentic self?",meditation:"A cage door swinging open in a warm breeze — feel the air on your wings and the sky as vast and open as thought itself.",action:"Do one thing this week that is entirely outside how anyone who knows you would expect you to behave — and delight in it.",affirmation:"I live outside the lines by design. My freedom to be different is my greatest contribution."},
+    "waning-crescent":{intention:"Your Aquarius mind needs genuine refuge under the Waning Crescent — step away from the collective and return tenderly to your individual self.",journaling:"When did you last do something purely for yourself, with no social framework, cause, or mission attached to it at all?",meditation:"A single pure frequency humming in absolute silence — feel yourself as an individual human being, not a movement or a function.",action:"Spend time alone today doing something that has nothing at all to do with your bigger mission — just be beautifully, ordinarily human.",affirmation:"I am more than my ideas. In my humanness, I find the source of all my vision."}
+  },
+  pisces:{
+    "new-moon":{intention:"Your Pisces imagination and the New Moon's boundless dark create the most visionary, luminous canvas in the entire zodiac.",journaling:"If all limitations dissolved completely, what dream would your soul most urgently, lovingly want to bring into the world?",meditation:"The bottom of the ocean before the very first light — feel the infinite, formless, sacred potential that surrounds you completely.",action:"Create something today — write, draw, record, or compose — and let it emerge freely, without any judgment at all.",affirmation:"I am connected to all that is. My dreams are doorways that lead to real, living truth."},
+    "waxing-crescent":{intention:"The Waxing Crescent asks your Pisces spirit to give one beautiful dream a single, loving, concrete thread back to waking reality.",journaling:"Which of your dreams, if you took just one small step toward it, would begin to feel genuinely possible and real?",meditation:"A lantern lit gently at the threshold of the open sea — small, warm, real, guiding the dreamers tenderly home.",action:"Take one practical, grounding step toward a dream today — not to diminish it, but to honor it fully with real action.",affirmation:"My dreams deserve to be real. I honor them with both vision and the courage to act."},
+    "first-quarter":{intention:"The First Quarter Moon asks your Pisces intuition to trust itself enough to act, even without the certainty you naturally crave.",journaling:"Where are you waiting for complete, perfect clarity before moving? What would you honestly do if you simply trusted yourself right now?",meditation:"A swimmer in open, deep water — feeling the invisible current and choosing to move with it, not pointlessly against it.",action:"Make one important decision today guided entirely by intuition and commit to it fully for this entire week.",affirmation:"My intuition is more reliable than my doubts. I trust the current that carries me."},
+    "waxing-gibbous":{intention:"Your Pisces creative vision reaches its most soulful expression under the Waxing Gibbous — let deep feeling guide every final, loving flourish.",journaling:"What creative or spiritual work is approaching its completion? What would make it feel like it truly came from your deepest soul?",meditation:"A painter adding the final, decisive color to a canvas — feel that unmistakable, sacred moment when something becomes completely itself.",action:"Finish one piece of creative work: write the final line, paint the final stroke, send the final version with your blessing.",affirmation:"I complete what I begin. My finished work is a gift I give to myself and to the world."},
+    "full-moon":{intention:"The Full Moon and your Pisces soul merge into the mystical and the true — tonight you have access to your most essential, deepest knowing.",journaling:"What does your soul most urgently want to tell you right now, if all fear and all logic completely stepped aside?",meditation:"Float weightlessly in warm, open water under a full moon — feel the salt holding you effortlessly, the light completely surrounding you.",action:"Engage in a spiritual practice that feels genuinely sacred to you tonight: pray, meditate, dance, write in beautiful darkness.",affirmation:"I am a vessel for something greater than myself. My sensitivity is holy and I honor it completely."},
+    "waning-gibbous":{intention:"Your Pisces compassion flows most freely and beautifully under the Waning Gibbous — your empathy is a profound gift when wisely channeled.",journaling:"Who in your life needs to feel genuinely, completely understood right now? What would it mean to truly, fully offer that?",meditation:"A river meeting the sea with perfect ease — feel the relief of releasing into something far larger and more generous than yourself.",action:"Offer a compassionate, unhurried presence to someone who needs to be heard without advice, judgment, or any fixing at all.",affirmation:"My compassion is a gift I give freely and without losing myself. Love flows through me endlessly."},
+    "last-quarter":{intention:"The Last Quarter Moon helps your Pisces spirit release the sorrow it has quietly absorbed from others that was never yours to carry.",journaling:"What pain, sadness, or worry have you taken on from someone else? What would it honestly feel like to gently return it to its true source?",meditation:"A soft sponge being tenderly wrung in clear, clean water — feel what was never yours releasing completely and gratefully.",action:"Take a salt bath or a long shower with the conscious intention of clearing all energy you have absorbed that doesn't belong to you.",affirmation:"I feel deeply and I remain whole. I release what is not mine with love and clear intention."},
+    "waning-crescent":{intention:"Your Pisces soul is in its most natural, sacred habitat under the Waning Crescent — surrender, dream, dissolve, and be fully replenished.",journaling:"What does it genuinely feel like to need nothing, want nothing, and simply, beautifully exist? Can you write entirely from that place?",meditation:"A small boat without oars on a perfectly still sea at midnight — feel the absolute, wordless peace of releasing all direction.",action:"Fall asleep tonight with one sincere question in your heart and invite the answer to arrive gently in a dream.",affirmation:"I surrender to the mystery and I am held. In the deep rest, I am made whole and new again."}
+  }
+};
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let selectedSign = '';
+let selectedMoon = '';
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+(function init() {
+  // Date
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  // Stars
+  const layer = document.getElementById('stars-layer');
+  for (let i = 0; i < 130; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.2 + 0.4;
+    s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--dur:${(Math.random()*4+2).toFixed(1)}s;--del:${(Math.random()*6).toFixed(1)}s;`;
+    layer.appendChild(s);
+  }
+
+  // Moon grid
+  const grid = document.getElementById('moon-grid');
+  const phases = Object.entries(MOON_PHASES);
+  phases.forEach(([key, p]) => {
+    const btn = document.createElement('button');
+    btn.className = 'moon-btn';
+    btn.dataset.key = key;
+    btn.innerHTML = `<span class="moon-emoji">${p.emoji}</span><span class="moon-label">${p.name}</span>`;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.moon-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedMoon = key;
+      document.getElementById('moon-next-btn').disabled = false;
+    });
+    grid.appendChild(btn);
+  });
+})();
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + screenId);
+  el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function onSignChange() {
+  selectedSign = document.getElementById('sign-select').value;
+  document.getElementById('sign-next-btn').disabled = !selectedSign;
+}
+
+function revealRitual() {
+  if (!selectedSign || !selectedMoon) return;
+  renderRitual();
+  goTo('ritual');
+}
+
+function resetAll() {
+  selectedSign = '';
+  selectedMoon = '';
+  document.getElementById('sign-select').value = '';
+  document.getElementById('sign-next-btn').disabled = true;
+  document.getElementById('moon-next-btn').disabled = true;
+  document.querySelectorAll('.moon-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('copy-btn').textContent = 'Copy my ritual';
+  goTo('welcome');
+}
+
+// ── Render ritual ─────────────────────────────────────────────────────────────
+function renderRitual() {
+  const phase = MOON_PHASES[selectedMoon];
+  const ritual = R[selectedSign][selectedMoon];
+  const signName = SIGN_NAMES[selectedSign];
+  const signSym  = SIGN_SYMBOLS[selectedSign];
+
+  document.getElementById('ritual-card').innerHTML = `
+    <div class="card-header">
+      <div class="card-phase-emoji">${phase.emoji}</div>
+      <div class="card-phase-name">${phase.name}</div>
+      <div class="card-sign-label">${signSym} ${signName}</div>
+      <div class="gold-line"></div>
+    </div>
+
+    <p class="card-meaning">${phase.meaning}</p>
+
+    <div class="gold-line-sm"></div>
+
+    <div class="section-label">Your Intention for Today</div>
+    <p class="section-body" style="margin-bottom:.25rem">${ritual.intention}</p>
+
+    <div class="gold-line-sm"></div>
+
+    <div class="section-label">Your Ritual in 3 Steps</div>
+    <div class="ritual-steps">
+      <div class="ritual-step">
+        <div class="step-icon">✍️</div>
+        <div class="step-content">
+          <div class="step-content-label">Journaling</div>
+          <div class="step-content-text">${ritual.journaling}</div>
+        </div>
+      </div>
+      <div class="ritual-step">
+        <div class="step-icon">🧘</div>
+        <div class="step-content">
+          <div class="step-content-label">Meditation Focus</div>
+          <div class="step-content-text">${ritual.meditation}</div>
+        </div>
+      </div>
+      <div class="ritual-step">
+        <div class="step-icon">🌿</div>
+        <div class="step-content">
+          <div class="step-content-label">Grounded Action</div>
+          <div class="step-content-text">${ritual.action}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gold-line-sm"></div>
+
+    <div class="section-label">Your Affirmation</div>
+    <div class="affirmation-block">
+      <p class="affirmation-text">"${ritual.affirmation}"</p>
+    </div>
+
+    <div class="card-footer-text">The Cozy Cosmic Company — Cozy Astrology</div>
+  `;
+}
+
+// ── Copy ──────────────────────────────────────────────────────────────────────
+function copyRitual() {
+  const phase = MOON_PHASES[selectedMoon];
+  const ritual = R[selectedSign][selectedMoon];
+  const signName = SIGN_NAMES[selectedSign];
+  const signSym  = SIGN_SYMBOLS[selectedSign];
+  const date = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  const text = [
+    `My Lunar Ritual — ${date}`,
+    `${phase.emoji} ${phase.name} · ${signSym} ${signName}`,
+    '',
+    `${phase.name}: ${phase.meaning}`,
+    '',
+    'Your Intention',
+    ritual.intention,
+    '',
+    'Your Ritual in 3 Steps',
+    `✍️  Journaling: ${ritual.journaling}`,
+    `🧘  Meditation: ${ritual.meditation}`,
+    `🌿  Grounded Action: ${ritual.action}`,
+    '',
+    'Your Affirmation',
+    `"${ritual.affirmation}"`,
+    '',
+    '— The Cozy Cosmic Company · Cozy Astro'
+  ].join('\n');
+
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copy-flash');
+    setTimeout(() => {
+      btn.textContent = 'Copy my ritual';
+      btn.classList.remove('copy-flash');
+    }, 2200);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mon Rituel Lunaire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #1A2744;
+  --navy-light: #243260;
+  --gold: #C4A35A;
+  --gold-light: #D9BF80;
+  --cream: #F5F0EA;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'Lato', sans-serif;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--navy);
+  color: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Stars background ── */
+.stars-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(196,163,90,.05) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(36,50,96,.8) 0%, transparent 60%),
+    #1A2744;
+}
+.stars-bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%, rgba(245,240,234,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 20% 40%, rgba(245,240,234,.5) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 30% 10%, rgba(245,240,234,.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 40% 60%, rgba(245,240,234,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 50% 25%, rgba(245,240,234,.6) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 60% 70%, rgba(245,240,234,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 5%, rgba(245,240,234,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 45%, rgba(245,240,234,.6) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 90% 20%, rgba(245,240,234,.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 15% 75%, rgba(245,240,234,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 55%, rgba(245,240,234,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 35% 85%, rgba(245,240,234,.3) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 45% 35%, rgba(245,240,234,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 90%, rgba(245,240,234,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 65% 50%, rgba(245,240,234,.5) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 75% 30%, rgba(245,240,234,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85% 65%, rgba(245,240,234,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 95% 80%, rgba(245,240,234,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 5% 50%, rgba(245,240,234,.3) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 92% 10%, rgba(196,163,90,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 8% 90%, rgba(196,163,90,.4) 0%, transparent 100%);
+}
+
+/* ── Layout ── */
+#app {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px 16px 48px;
+}
+.inner { width: 100%; max-width: 600px; }
+
+/* ── Cards ── */
+.card {
+  border: 1px solid rgba(196,163,90,.4);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(36,50,96,.7) 0%, rgba(26,39,68,.9) 100%);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 40px rgba(196,163,90,.1), 0 4px 24px rgba(0,0,0,.4);
+}
+.card-inner {
+  border: 1px solid rgba(196,163,90,.2);
+  border-radius: 8px;
+  background: rgba(26,39,68,.5);
+}
+
+/* ── Typography helpers ── */
+.serif { font-family: var(--serif); }
+.sans  { font-family: var(--sans);  }
+.gold  { color: var(--gold); }
+.cream { color: var(--cream); }
+.muted { color: rgba(245,240,234,.55); }
+.label {
+  font-family: var(--sans);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+/* ── Divider ── */
+.divider {
+  border: none; height: 1px; margin: 1.5rem 0;
+  background: linear-gradient(to right, transparent, rgba(196,163,90,.6), transparent);
+}
+
+/* ── Select ── */
+.lunar-select {
+  background: rgba(36,50,96,.8);
+  border: 1px solid rgba(196,163,90,.4);
+  border-radius: 8px;
+  color: var(--cream);
+  padding: 14px 42px 14px 18px;
+  font-family: var(--sans); font-size: 15px;
+  width: 100%; appearance: none; cursor: pointer;
+  transition: border-color .2s, box-shadow .2s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C4A35A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 16px center;
+}
+.lunar-select:focus { outline: none; border-color: rgba(196,163,90,.8); box-shadow: 0 0 0 3px rgba(196,163,90,.15); }
+.lunar-select option { background: #1A2744; color: var(--cream); }
+
+/* ── Buttons ── */
+.btn-primary {
+  background: linear-gradient(135deg, #C4A35A 0%, #D9BF80 50%, #C4A35A 100%);
+  color: #1A2744; font-family: var(--serif); font-weight: 600; font-size: 16px;
+  letter-spacing: .05em; border: none; border-radius: 8px; padding: 16px 40px;
+  cursor: pointer; transition: opacity .2s, transform .15s, box-shadow .2s;
+  box-shadow: 0 4px 20px rgba(196,163,90,.35);
+}
+.btn-primary:hover { opacity: .92; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(196,163,90,.45); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+.btn-secondary {
+  background: transparent; color: var(--gold); font-family: var(--sans); font-size: 13px;
+  letter-spacing: .08em; border: 1px solid rgba(196,163,90,.4); border-radius: 6px;
+  padding: 10px 20px; cursor: pointer; transition: all .2s; text-transform: uppercase;
+}
+.btn-secondary:hover { background: rgba(196,163,90,.1); border-color: rgba(196,163,90,.7); }
+
+.btn-ghost {
+  background: transparent; color: rgba(245,240,234,.5); font-family: var(--sans); font-size: 13px;
+  border: none; padding: 8px 16px; cursor: pointer; transition: color .2s;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.btn-ghost:hover { color: rgba(245,240,234,.8); }
+
+/* ── Moon phase badge ── */
+.phase-badge {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(196,163,90,.12); border: 1px solid rgba(196,163,90,.35);
+  border-radius: 40px; padding: 10px 20px; margin-bottom: 36px;
+}
+.phase-badge-mini {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(196,163,90,.1); border: 1px solid rgba(196,163,90,.25);
+  border-radius: 30px; padding: 6px 14px; margin-bottom: 20px;
+}
+
+/* ── Affirmation block ── */
+.affirmation-block {
+  background: linear-gradient(135deg, rgba(196,163,90,.12) 0%, rgba(196,163,90,.05) 100%);
+  border: 1px solid rgba(196,163,90,.3); border-radius: 10px;
+  padding: 20px 24px; text-align: center;
+}
+
+/* ── Ritual row ── */
+.ritual-row { display: flex; gap: 14px; align-items: flex-start; }
+.ritual-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+
+/* ── Footer ── */
+.footer { text-align: center; color: rgba(245,240,234,.25); font-size: 11px; letter-spacing: .1em; margin-top: 48px; }
+.footer-result { text-align: center; color: rgba(245,240,234,.3); font-size: 12px; letter-spacing: .12em; margin-top: 28px; }
+
+/* ── Animations ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in     { animation: fadeInUp .5s ease forwards; }
+.fade-in-d1  { animation: fadeInUp .5s .1s ease forwards; opacity: 0; }
+.fade-in-d2  { animation: fadeInUp .5s .2s ease forwards; opacity: 0; }
+
+/* ── Copy toast ── */
+#toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: rgba(196,163,90,.95); color: #1A2744; padding: 10px 24px;
+  border-radius: 30px; font-family: var(--sans); font-size: 13px; font-weight: 700;
+  opacity: 0; transition: all .3s; pointer-events: none; z-index: 100;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Step display ── */
+.step { display: none; }
+.step.active { display: block; }
+
+/* ── Responsive ── */
+.btn-row { display: flex; gap: 12px; margin-top: 24px; justify-content: center; flex-wrap: wrap; }
+.center { text-align: center; }
+</style>
+</head>
+<body>
+<div class="stars-bg"></div>
+<div id="app">
+  <div class="inner">
+
+    <!-- STEP: WELCOME -->
+    <div id="step-welcome" class="step active">
+      <div class="fade-in center">
+        <div id="welcome-icon" style="font-size:64px;margin-bottom:24px;filter:drop-shadow(0 0 20px rgba(196,163,90,.5))"></div>
+        <h1 class="serif" style="font-size:clamp(28px,6vw,42px);font-weight:600;color:var(--cream);margin-bottom:12px;line-height:1.2;letter-spacing:.02em;">
+          Mon Rituel Lunaire<br><span class="gold">du Jour</span>
+        </h1>
+        <p id="date-display" class="sans" style="color:rgba(245,240,234,.6);font-size:13px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px;"></p>
+        <p class="serif" style="color:rgba(245,240,234,.75);font-size:17px;font-style:italic;margin-bottom:32px;">Un rituel aligné sur votre énergie unique</p>
+        <div class="phase-badge">
+          <span id="badge-icon" style="font-size:20px;"></span>
+          <div style="text-align:left;">
+            <p class="sans" style="color:var(--gold);font-size:11px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:2px;">Phase du jour</p>
+            <p id="badge-text" class="serif" style="color:var(--cream);font-size:15px;font-weight:500;"></p>
+          </div>
+        </div>
+        <br>
+        <button class="btn-primary" onclick="goToSign()">Générer mon rituel</button>
+      </div>
+      <p class="footer sans">Astrologie &amp; Compagnie</p>
+    </div>
+
+    <!-- STEP: SIGN -->
+    <div id="step-sign" class="step">
+      <div class="fade-in">
+        <div class="center" style="margin-bottom:32px;">
+          <div class="phase-badge-mini">
+            <span id="sign-phase-icon"></span>
+            <span class="sans gold" id="sign-phase-name" style="font-size:12px;letter-spacing:.1em;"></span>
+          </div>
+          <h2 class="serif" style="font-size:26px;font-weight:500;color:var(--cream);">Quel est votre signe lunaire&nbsp;?</h2>
+        </div>
+        <div class="card" style="padding:28px;">
+          <select id="sign-select" class="lunar-select" onchange="checkSignBtn()">
+            <option value="">— Choisissez votre signe —</option>
+            <option>Bélier</option><option>Taureau</option><option>Gémeaux</option>
+            <option>Cancer</option><option>Lion</option><option>Vierge</option>
+            <option>Balance</option><option>Scorpion</option><option>Sagittaire</option>
+            <option>Capricorne</option><option>Verseau</option><option>Poissons</option>
+          </select>
+          <div class="btn-row">
+            <button class="btn-ghost" onclick="goTo('step-welcome')">← Retour</button>
+            <button id="btn-reveal" class="btn-primary" onclick="showResult()" disabled>Révéler mon rituel ✨</button>
+          </div>
+        </div>
+      </div>
+      <p class="footer sans">Astrologie &amp; Compagnie</p>
+    </div>
+
+    <!-- STEP: RESULT -->
+    <div id="step-result" class="step">
+      <div>
+        <div class="fade-in center" style="margin-bottom:28px;">
+          <div id="res-phase-icon" style="font-size:48px;margin-bottom:8px;"></div>
+          <h2 id="res-phase-name" class="serif gold" style="font-size:22px;font-weight:600;margin-bottom:4px;"></h2>
+          <p id="res-subtitle" class="sans muted" style="font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px;"></p>
+          <p id="res-lunar-info" class="sans" style="color:rgba(196,163,90,.6);font-size:12px;letter-spacing:.08em;"></p>
+        </div>
+        <div class="card fade-in-d1" style="padding:28px 28px 24px;">
+          <!-- Energy -->
+          <div style="margin-bottom:24px;">
+            <p class="label">Énergie de la phase</p>
+            <p id="res-meaning" class="serif" style="color:rgba(245,240,234,.85);font-size:15px;line-height:1.7;font-style:italic;"></p>
+          </div>
+          <hr class="divider">
+          <!-- Intention -->
+          <div style="margin-bottom:24px;">
+            <p class="label">💫 Votre intention du jour</p>
+            <p id="res-intention" class="serif" style="color:var(--cream);font-size:17px;line-height:1.65;font-weight:500;"></p>
+          </div>
+          <hr class="divider">
+          <!-- 3 times -->
+          <div style="margin-bottom:24px;">
+            <p class="label">Votre rituel en 3 temps</p>
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <div class="card-inner" style="padding:16px 18px;">
+                <div class="ritual-row">
+                  <span class="ritual-icon">✍️</span>
+                  <div>
+                    <p class="label" style="margin-bottom:6px;">Journaling</p>
+                    <p id="res-journaling" class="sans" style="color:rgba(245,240,234,.85);font-size:14px;line-height:1.65;"></p>
+                  </div>
+                </div>
+              </div>
+              <div class="card-inner" style="padding:16px 18px;">
+                <div class="ritual-row">
+                  <span class="ritual-icon">🧘</span>
+                  <div>
+                    <p class="label" style="margin-bottom:6px;">Focus de méditation</p>
+                    <p id="res-meditation" class="sans" style="color:rgba(245,240,234,.85);font-size:14px;line-height:1.65;"></p>
+                  </div>
+                </div>
+              </div>
+              <div class="card-inner" style="padding:16px 18px;">
+                <div class="ritual-row">
+                  <span class="ritual-icon">🌿</span>
+                  <div>
+                    <p class="label" style="margin-bottom:6px;">Action concrète</p>
+                    <p id="res-action" class="sans" style="color:rgba(245,240,234,.85);font-size:14px;line-height:1.65;"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr class="divider">
+          <!-- Affirmation -->
+          <div class="affirmation-block">
+            <p class="label">🌟 Affirmation du jour</p>
+            <p id="res-affirmation" class="serif" style="color:var(--cream);font-size:16px;line-height:1.7;font-style:italic;font-weight:600;"></p>
+          </div>
+          <div class="btn-row">
+            <button id="btn-copy" class="btn-secondary" onclick="copyRitual()">Copier mon rituel</button>
+            <button class="btn-ghost" onclick="resetApp()">Nouveau rituel</button>
+          </div>
+        </div>
+        <p class="footer-result sans fade-in-d2">Astrologie &amp; Compagnie</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div id="toast">✓ Rituel copié dans le presse-papier</div>
+
+<script>
+// ─────────────────────────────────────────────
+// MOON PHASE CALCULATOR
+// ─────────────────────────────────────────────
+const LUNAR_CYCLE = 29.530588853;
+const KNOWN_NEW_MOON_JD = 2451550.259; // Jan 6, 2000 18:14 UTC
+
+function toJulianDate(d) {
+  return d.getTime() / 86400000 + 2440587.5;
+}
+function getMoonAge(d = new Date()) {
+  const jd = toJulianDate(d);
+  const days = jd - KNOWN_NEW_MOON_JD;
+  return ((days % LUNAR_CYCLE) + LUNAR_CYCLE) % LUNAR_CYCLE;
+}
+function getMoonIllumination(d = new Date()) {
+  const age = getMoonAge(d);
+  const angle = (age / LUNAR_CYCLE) * 2 * Math.PI;
+  return Math.round(((1 - Math.cos(angle)) / 2) * 100);
+}
+function getMoonPhaseKey(d = new Date()) {
+  const age = getMoonAge(d);
+  const seg = LUNAR_CYCLE / 8;
+  if (age < seg)     return 'nouvelle-lune';
+  if (age < seg * 2) return 'croissant-montant';
+  if (age < seg * 3) return 'premier-quartier';
+  if (age < seg * 4) return 'gibbeuse-montante';
+  if (age < seg * 5) return 'pleine-lune';
+  if (age < seg * 6) return 'gibbeuse-decroissante';
+  if (age < seg * 7) return 'dernier-quartier';
+  return 'croissant-decroissant';
+}
+
+// ─────────────────────────────────────────────
+// PHASES METADATA
+// ─────────────────────────────────────────────
+const PHASES = {
+  'nouvelle-lune':          { name: 'Nouvelle Lune',          icon: '🌑', meaning: 'La Nouvelle Lune marque un seuil sacré, un instant de renaissance totale où l\'obscurité recèle toutes les possibilités. C\'est le moment de planter les graines de vos désirs les plus profonds et de poser l\'intention qui guidera votre prochain cycle.' },
+  'croissant-montant':      { name: 'Croissant Montant',      icon: '🌒', meaning: 'Le Croissant Montant porte en lui l\'élan du début, une énergie jeune et curieuse qui invite à prendre les premières actions concrètes. La lumière revient peu à peu, encourageant le mouvement vers ce que vous avez commencé à créer.' },
+  'premier-quartier':       { name: 'Premier Quartier',       icon: '🌓', meaning: 'Le Premier Quartier est la phase des décisions et des ajustements courageux, où les premiers obstacles testent la solidité de vos intentions. Elle vous invite à persévérer avec discernement, à adapter sans abandonner.' },
+  'gibbeuse-montante':      { name: 'Gibbeuse Montante',      icon: '🌔', meaning: 'La Gibbeuse Montante est une phase de maturation intense, de raffinement et de préparation à l\'accomplissement. L\'énergie s\'accumule, la vision se précise, et il est temps d\'affiner ce que vous construisez avec soin.' },
+  'pleine-lune':            { name: 'Pleine Lune',            icon: '🌕', meaning: 'La Pleine Lune est le sommet du cycle, un moment de révélation lumineuse où les émotions sont amplifiées et la vérité se manifeste. Elle invite à la célébration, à la gratitude et à la libération consciente de ce qui n\'est plus nécessaire.' },
+  'gibbeuse-decroissante':  { name: 'Gibbeuse Décroissante',  icon: '🌖', meaning: 'La Gibbeuse Décroissante est un temps de partage, de gratitude et d\'intégration des leçons du cycle. La lumière décline doucement, invitant à redistribuer ce que vous avez récolté et à reconnaître vos progrès.' },
+  'dernier-quartier':       { name: 'Dernier Quartier',       icon: '🌗', meaning: 'Le Dernier Quartier est une phase de lâcher-prise et de purification intérieure, où il s\'agit de dissoudre ce qui entrave votre croissance. C\'est le moment de pardonner, de libérer et de créer l\'espace pour un nouveau commencement.' },
+  'croissant-decroissant':  { name: 'Croissant Décroissant',  icon: '🌘', meaning: 'Le Croissant Décroissant est la dernière respiration du cycle, un temps de repos, de réflexion et de reddition douce à l\'obscurité bienveillante. Il invite à se nourrir intérieurement, à honorer le silence et à se préparer à renaître.' },
+};
+
+// ─────────────────────────────────────────────
+// RITUAL DATA — 96 COMBINATIONS (12 signs × 8 phases)
+// ─────────────────────────────────────────────
+const RITUALS = {
+  'nouvelle-lune': {
+    'Bélier':      { intention: "Aujourd'hui, je plante la graine d'un courage nouveau, celui qui agit avant de penser et qui ose là où d'autres hésitent.", journaling: "Quelle est cette aspiration sauvage que j'ai repoussée par peur d'échouer — et si elle était ma prochaine grande aventure ?", meditation: "Ancrez votre attention sur la flamme du désir au creux du ventre, sentez sa chaleur sans la nommer, laissez-la simplement exister.", action: "Écrivez sur papier une intention audacieuse, pliez-la et glissez-la sous une bougie allumée pendant dix minutes.", affirmation: "Je suis le feu qui commence, et tout nouveau cycle me trouve plus courageux que le précédent." },
+    'Taureau':     { intention: "Aujourd'hui, j'ensemence la terre de mon âme avec la vision d'une abondance durable, construite pierre par pierre.", journaling: "Quelle forme de sécurité véritable ai-je besoin de créer pour que mon corps se sente enfin chez lui dans ma propre vie ?", meditation: "Posez les pieds à plat au sol, imaginez des racines profondes qui s'enfoncent dans la terre, respirez par ces racines.", action: "Choisissez un geste symbolique d'investissement en vous — achetez une plante, une graine ou un objet qui représente la croissance.", affirmation: "Je suis ancré dans ma valeur, et l'abondance fleurit naturellement là où je pose mes mains avec intention." },
+    'Gémeaux':     { intention: "Aujourd'hui, j'accueille une idée neuve, sans la juger ni l'étiqueter, et je lui laisse de l'espace pour se révéler.", journaling: "Parmi toutes les directions possibles qui m'appellent en ce moment, laquelle illumine mon esprit d'une façon que les autres ne font pas ?", meditation: "Observez vos pensées passer comme des oiseaux dans le ciel — nommez-en une, soufflez dessus, laissez-la partir.", action: "Ouvrez un carnet vierge et notez sans censure pendant cinq minutes toutes les idées qui surgissent, même les plus extravagantes.", affirmation: "Mon esprit est un jardin fertile où les meilleures idées germent quand je leur offre le silence de l'aube." },
+    'Cancer':      { intention: "Aujourd'hui, je pose l'intention d'un foyer intérieur plus doux, un espace émotionnel où je me sens pleinement accueilli.", journaling: "Quel besoin affectif non exprimé me pèse depuis trop longtemps, et comment puis-je commencer à le nourrir moi-même ?", meditation: "Imaginez une lumière dorée et tiède qui enveloppe votre cœur comme une couverture, respirez-la à chaque inspiration.", action: "Créez un petit autel de Nouvelle Lune avec un verre d'eau, une bougie et un objet cher à votre cœur.", affirmation: "Je suis mon propre refuge, et je me porte avec la douceur que j'offre si facilement aux autres." },
+    'Lion':        { intention: "Aujourd'hui, j'ensemence la vision de ma plus belle expression créatrice, celle qui rayonne sans chercher l'approbation.", journaling: "Si je n'avais aucune peur du regard des autres, quelle création audacieuse est-ce que j'offrirais au monde en ce moment ?", meditation: "Portez l'attention sur votre poitrine, sentez la chaleur de votre propre lumière, respirez en l'amplifiant à chaque souffle.", action: "Dessinez, chantez ou créez quelque chose d'imparfait pour vos yeux seuls — juste pour le plaisir pur de créer.", affirmation: "Ma lumière intérieure n'a besoin d'aucune scène pour briller — elle rayonne dès l'instant où je l'autorise." },
+    'Vierge':      { intention: "Aujourd'hui, je pose l'intention d'une nouvelle discipline douce, un rituel quotidien qui honore mon corps et mon esprit.", journaling: "Quelle habitude simple, si je l'adoptais vraiment, transformerait silencieusement la qualité de chacune de mes journées ?", meditation: "Concentrez-vous sur votre respiration, comptez chaque expiration jusqu'à dix, recommencez — la précision est votre ancre.", action: "Écrivez votre nouvelle habitude et placez cette note dans un endroit que vous verrez chaque matin au réveil.", affirmation: "Je suis capable de discipline avec amour, et chaque petit geste juste construit la vie que je mérite." },
+    'Balance':     { intention: "Aujourd'hui, je plante la graine d'une harmonie authentique dans mes relations, fondée sur ma vérité plutôt que sur la complaisance.", journaling: "Dans quelle relation est-ce que je me perds pour maintenir la paix, et qu'est-ce que mon cœur voudrait enfin exprimer ?", meditation: "Visualisez une balance intérieure entre donner et recevoir — observez quel plateau est alourdi, respirez pour équilibrer.", action: "Rédigez une lettre honnête que vous n'enverrez peut-être pas, mais qui dit ce que vous avez besoin d'exprimer.", affirmation: "Mon équilibre véritable naît de l'honnêteté, et je peux être en paix avec moi-même tout en honorant les autres." },
+    'Scorpion':    { intention: "Aujourd'hui, j'initie une transformation profonde en osant regarder en face ce que j'ai longtemps évité.", journaling: "Quelle vérité inconfortable, si je l'acceptais pleinement, changerait la trajectoire de ma vie en ce moment même ?", meditation: "Plongez dans l'obscurité derrière vos paupières fermées sans résistance — laissez le silence vous révéler quelque chose.", action: "Brûlez sur un papier un mot qui représente ce que vous êtes prêt à transformer en vous — regardez la flamme consumer ce vieux schéma.", affirmation: "Je ne fuis plus ma propre profondeur, car c'est là que réside ma plus grande puissance de transformation." },
+    'Sagittaire':  { intention: "Aujourd'hui, je plante la graine d'une vision expansive, un horizon qui me donne envie de me lever chaque matin.", journaling: "Quelle aventure — intérieure ou extérieure — ai-je repoussée au nom de la raison, alors qu'elle nourrit mon âme ?", meditation: "Imaginez-vous au sommet d'une montagne, regardez vers l'horizon infini, laissez votre vision s'élargir à chaque souffle.", action: "Marquez sur une carte le lieu rêvé ou la prochaine étape de votre voyage personnel — donnez-lui une date symbolique.", affirmation: "Je suis l'archer qui vise loin, et chaque nouveau cycle lunaire me rapproche de ma prochaine grande destination." },
+    'Capricorne':  { intention: "Aujourd'hui, je pose la première pierre d'un édifice qui durera bien au-delà de ce qui est visible.", journaling: "Quelle ambition secrète ai-je mis de côté parce qu'elle semblait trop grande, et quel serait le tout premier pas concret ?", meditation: "Ancrez votre conscience dans votre colonne vertébrale — sentez-la solide et droite comme un pilier de pierre, imperturbable.", action: "Rédigez un plan en trois étapes pour un objectif important — même imparfait, c'est un vrai commencement.", affirmation: "Je construis avec patience et intention, et ma persévérance transforme les rêves en réalisations durables." },
+    'Verseau':     { intention: "Aujourd'hui, j'ensemence une vision de ce que je veux apporter d'unique et de différent au monde qui m'entoure.", journaling: "Quelle idée vraiment originale ai-je en moi qui pourrait changer les choses, si j'osais la porter avec conviction ?", meditation: "Visualisez un ciel étoilé au-dessus de vous — vous êtes une étoile parmi d'autres, distincte et pourtant partie de l'ensemble.", action: "Rejoignez ou créez un espace — en ligne ou en personne — autour d'une vision qui vous tient à cœur.", affirmation: "Mon originalité n'est pas un défaut mais mon don le plus précieux, et le monde a besoin de ce que moi seul peut offrir." },
+    'Poissons':    { intention: "Aujourd'hui, je pose l'intention d'une connexion plus profonde avec mon monde intérieur, cet océan de sagesse toujours présent.", journaling: "Quel rêve ou quelle image m'habite en ce moment, et qu'est-ce qu'il révèle sur ce que mon âme cherche à exprimer ?", meditation: "Imaginez que vous flottiez sans effort à la surface d'un lac calme — laissez l'eau vous soutenir, abandonnez le contrôle.", action: "Consacrez dix minutes à une création sans but — dessin automatique, écriture libre, ou musique improvisée.", affirmation: "Je me fais confiance pour naviguer dans les eaux profondes de mon âme, car c'est là que réside ma lumière la plus pure." },
+  },
+  'croissant-montant': {
+    'Bélier':      { intention: "Aujourd'hui, je traduis mon élan en action décisive, sans attendre la permission ni la perfection.", journaling: "Quelle action concrète ai-je retardée par peur de mal faire, et quelle serait la conséquence si je la faisais imparfaitement ?", meditation: "Sentez l'énergie monter de vos pieds jusqu'au sommet de votre crâne à chaque inspiration — comme une marée qui monte.", action: "Faites aujourd'hui une chose que vous avez repoussée — envoyez ce message, passez cet appel, prenez cette décision.", affirmation: "Mon action imparfaite vaut infiniment mieux que mon inaction parfaite, et je commence maintenant." },
+    'Taureau':     { intention: "Aujourd'hui, j'avance vers mon abondance avec la constance tranquille d'une rivière qui creuse la roche.", journaling: "Quel premier pas concret vers mon objectif financier ou matériel puis-je faire aujourd'hui, et ai-je vraiment besoin de plus pour commencer ?", meditation: "Posez les mains sur vos cuisses, sentez la solidité sous vos paumes, respirez lentement et ancrez-vous dans le présent.", action: "Rangez ou organisez un espace matériel dans votre vie — votre bureau, votre sac, votre cuisine — comme métaphore de clarté intérieure.", affirmation: "Je progresse à mon rythme naturel, avec la certitude tranquille que tout ce que je construis avec soin durera." },
+    'Gémeaux':     { intention: "Aujourd'hui, je laisse mes idées prendre leur première forme concrète, sans les peaufiner à l'infini.", journaling: "Parmi toutes mes idées en cours, laquelle mérite que je lui consacre une heure entière aujourd'hui, sans distraction ?", meditation: "Concentrez-vous sur un seul souffle à la fois — inspirez en comptant jusqu'à quatre, expirez en comptant jusqu'à six.", action: "Choisissez une idée et partagez-la avec quelqu'un en qui vous avez confiance — un message, un appel, un café.", affirmation: "Mon esprit est vif et fécond, et quand je choisis un fil à suivre, je tisse quelque chose de véritablement beau." },
+    'Cancer':      { intention: "Aujourd'hui, j'ose nourrir mon projet avec la même tendresse que j'offre aux personnes que j'aime.", journaling: "Comment est-ce que je peux prendre soin de moi aujourd'hui de façon concrète, sans culpabilité ni justification ?", meditation: "Placez une main sur votre cœur et une sur votre ventre — respirez en sentant vos deux mains se soulever doucement.", action: "Cuisinez ou préparez quelque chose de nourrissant pour vous-même avec intention — un repas, une tisane, un bain.", affirmation: "Je suis digne d'être choyé, et prendre soin de moi est le socle sur lequel tout le reste peut prospérer." },
+    'Lion':        { intention: "Aujourd'hui, je fais un pas vers l'avant en portant ma lumière avec assurance, sans attendre d'être prêt.", journaling: "Dans quel domaine de ma vie est-ce que je me cache encore derrière la modestie, alors que je mériterais de prendre ma place ?", meditation: "Sentez le soleil — imaginaire ou réel — sur votre visage, laissez sa chaleur vous rappeler que vous êtes fait de lumière.", action: "Partagez quelque chose de personnel sur vos réseaux ou avec un proche — une création, une réflexion, une fierté.", affirmation: "Je n'attends plus la permission de briller — ma lumière est un cadeau que j'offre sans réserve au monde." },
+    'Vierge':      { intention: "Aujourd'hui, j'avance dans mon projet avec méthode et discernement, en faisant une chose bien plutôt que dix choses à moitié.", journaling: "Quelle tâche concrète, si elle était accomplie aujourd'hui, me donnerait un sentiment réel de progression et de satisfaction ?", meditation: "Concentrez-vous sur la sensation de vos pieds sur le sol, comptez cinq détails physiques de votre environnement.", action: "Accomplissez une tâche administrative ou pratique que vous aviez repoussée — clarté extérieure crée clarté intérieure.", affirmation: "Mon attention aux détails n'est pas de la rigidité mais une forme d'amour — chaque geste précis construit mon excellence." },
+    'Balance':     { intention: "Aujourd'hui, j'avance vers plus d'harmonie en prenant une décision que j'avais peur de trancher.", journaling: "Face à cette situation que j'évite de résoudre par peur de décevoir, quelle est la réponse qui me respecte moi autant que l'autre ?", meditation: "Imaginez-vous assis entre deux personnes que vous aimez — sentez l'équilibre de votre présence entre eux, sans vous perdre.", action: "Prenez une décision que vous avez suspendue et communiquez-la, même si elle est imparfaite.", affirmation: "Ma capacité à décider avec grâce est une force, et je peux choisir en respectant à la fois les autres et moi-même." },
+    'Scorpion':    { intention: "Aujourd'hui, j'agis depuis ma profondeur plutôt que depuis la surface, en alignant mes actions avec ma vérité intérieure.", journaling: "Quelle vieille stratégie de protection m'empêche d'agir avec authenticité dans une situation importante de ma vie ?", meditation: "Plongez votre attention dans le centre de votre poitrine — qu'y sentez-vous réellement, sans le nommer ni l'analyser ?", action: "Faites un geste concret vers quelque chose que vous désirez profondément mais que vous avez tu par prudence.", affirmation: "Ma profondeur est ma boussole la plus fiable, et quand j'agis depuis elle, je ne peux pas me tromper de direction." },
+    'Sagittaire':  { intention: "Aujourd'hui, je fais un pas vers ma liberté en osant agir sans garantie de résultat.", journaling: "Quelle aventure ou exploration — même modeste — me donnerait aujourd'hui la sensation d'être vraiment vivant ?", meditation: "Imaginez-vous sur un chemin de montagne au lever du soleil — chaque pas est un choix, et l'horizon s'ouvre devant vous.", action: "Réservez une activité nouvelle ou inscrivez-vous à quelque chose qui vous sort de votre zone habituelle.", affirmation: "Je suis né pour explorer, et chaque nouveau pas vers l'inconnu me révèle une version plus libre de moi-même." },
+    'Capricorne':  { intention: "Aujourd'hui, j'accomplis une action concrète vers mon objectif, avec la patience de celui qui sait que les grandes choses se construisent dans le temps.", journaling: "Quelle étape de mon plan ai-je remise à plus tard parce qu'elle me semblait peu spectaculaire, et comment puis-je la réaliser aujourd'hui ?", meditation: "Ancrez-vous dans la sensation de vos deux pieds solides sur le sol et respirez lentement, comme la montagne respire.", action: "Consacrez trente minutes concentrées à votre projet le plus important — éteignez le téléphone, fermez les onglets.", affirmation: "Ma constance est ma superforce, et chaque effort discret que je fournis aujourd'hui construit mon succès de demain." },
+    'Verseau':     { intention: "Aujourd'hui, je pose un acte en accord avec mes valeurs profondes, même si cela sort des sentiers battus.", journaling: "Quelle cause ou quelle idée me tient suffisamment à cœur pour que j'y consacre mon énergie de façon tangible ?", meditation: "Imaginez-vous connecté à tous les innovateurs et visionnaires qui ont osé penser différemment — vous faites partie de cette lignée.", action: "Envoyez un message ou un article inspirant à quelqu'un qui gagnerait à le recevoir aujourd'hui.", affirmation: "Mes idées marginales d'aujourd'hui sont les évidences de demain, et j'ose les porter sans attendre le consensus." },
+    'Poissons':    { intention: "Aujourd'hui, je laisse mon intuition guider mes premiers pas plutôt que d'attendre une logique qui ne viendra peut-être pas.", journaling: "Quelle douce impulsion ressentie depuis quelques jours ai-je ignorée, et que se passerait-il si je lui faisais confiance ?", meditation: "Laissez votre corps se détendre entièrement — imaginez-vous dissoudre dans une lumière apaisante, sans frontière.", action: "Créez ou écoutez quelque chose de beau — une playlist, un poème, une promenade — et notez ce que cela éveille en vous.", affirmation: "Mon intuition est une sagesse plus ancienne que mes peurs, et quand je lui fais confiance, elle m'ouvre des passages inattendus." },
+  },
+  'premier-quartier': {
+    'Bélier':      { intention: "Aujourd'hui, je tiens bon face à l'obstacle, sachant qu'il est là pour révéler la trempe de mon intention.", journaling: "Face à la résistance que je rencontre en ce moment, est-ce un signal pour m'adapter ou pour persévérer avec plus d'ardeur ?", meditation: "Sentez la chaleur dans vos mains, serrez légèrement les poings, puis relâchez — c'est ainsi que le courage fonctionne.", action: "Identifiez l'obstacle principal et accomplissez une seule action pour le contourner ou le traverser directement.", affirmation: "Je ne recule pas face au défi — il m'enseigne quelque chose d'essentiel sur ce que je suis capable d'accomplir." },
+    'Taureau':     { intention: "Aujourd'hui, j'ajuste mon approche avec souplesse tout en restant ancré dans ma direction fondamentale.", journaling: "Où est-ce que j'ai tendance à m'accrocher à une façon de faire même quand elle ne fonctionne plus, et quelle alternative puis-je explorer ?", meditation: "Respirez profondément et imaginez vos racines s'approfondissant — ancré, vous pouvez vous plier sans vous briser.", action: "Discutez avec quelqu'un de confiance d'un défi actuel pour bénéficier d'un point de vue extérieur frais.", affirmation: "Ma stabilité n'est pas de la rigidité — je peux m'adapter avec grâce tout en restant fidèle à ce qui compte vraiment." },
+    'Gémeaux':     { intention: "Aujourd'hui, je fais un choix et j'y reste, sachant que l'engagement est lui-même une forme de liberté.", journaling: "Dans quelle situation est-ce que je maintiens volontairement mes options ouvertes alors que décider me permettrait enfin d'avancer ?", meditation: "Choisissez un point fixe dans votre champ visuel et maintenez votre regard dessus pendant deux minutes — la concentration est un muscle.", action: "Faites une liste de vos priorités du moment et rayez tout sauf les deux premières.", affirmation: "Choisir n'est pas perdre — c'est libérer mon énergie pour ce qui compte vraiment, et je peux le faire maintenant." },
+    'Cancer':      { intention: "Aujourd'hui, je protège mon énergie émotionnelle sans me refermer, en posant une limite avec douceur et clarté.", journaling: "Quelle situation ou quelle personne me draine en ce moment, et comment puis-je poser une limite qui prend soin de moi et de la relation ?", meditation: "Imaginez une sphère de lumière dorée autour de vous — elle vous protège sans vous isoler, laissant passer la chaleur et l'amour.", action: "Dites non à une demande qui ne vous convient pas — poliment, simplement, sans explication excessive.", affirmation: "Poser des limites est un acte d'amour envers moi-même, et cela me rend disponible pour ce qui compte vraiment." },
+    'Lion':        { intention: "Aujourd'hui, je persévère dans ma création même quand le doute frappe, car la grandeur naît de la continuité.", journaling: "Quand la critique intérieure ou extérieure doute de ma valeur, quelle preuve concrète de ma compétence puis-je me rappeler ?", meditation: "Visualisez un lion au repos — puissant, détendu, sans rien à prouver — laissez cette image vous habiter.", action: "Reprenez un projet ou une création que vous avez mis de côté par découragement et faites-y avancer ne serait-ce qu'un peu.", affirmation: "Mon talent se révèle dans la persévérance, pas dans l'inspiration seule — je continue et je m'étonne de ce que je crée." },
+    'Vierge':      { intention: "Aujourd'hui, je fais confiance à mon discernement pour distinguer l'essentiel de l'accessoire et j'agis en conséquence.", journaling: "Où est-ce que je me perds dans les détails alors que la vue d'ensemble réclame mon attention ?", meditation: "Observez votre respiration sans vouloir la changer — cette acceptation de l'imperfection est elle-même une forme de sagesse.", action: "Choisissez une tâche importante mais non urgente et consacrez-lui une heure sans interruption.", affirmation: "Mon discernement est un don précieux, et quand je l'applique avec bienveillance, je crée de la clarté là où il y avait du chaos." },
+    'Balance':     { intention: "Aujourd'hui, je fais face à une tension relationnelle avec la clarté de quelqu'un qui sait que la vraie harmonie demande parfois un désaccord.", journaling: "Dans cette situation délicate, qu'est-ce que l'équité — pour moi et pour l'autre — me demanderait de faire ou de dire ?", meditation: "Imaginez-vous debout, stable, dans un vent fort — vous ne vous laissez pas emporter, mais vous ne résistez pas inutilement non plus.", action: "Engagez une conversation difficile ou envoyez ce message que vous reportez — avec douceur mais avec clarté.", affirmation: "La vraie harmonie n'est pas l'absence de conflit mais la capacité à le traverser avec grâce et vérité." },
+    'Scorpion':    { intention: "Aujourd'hui, je fais face à ce qui me met mal à l'aise avec la puissance de quelqu'un qui n'a plus peur de sa propre ombre.", journaling: "Quelle situation ou émotion que j'évite en ce moment me demande d'être regardée en face pour enfin perdre son pouvoir sur moi ?", meditation: "Permettez-vous de sentir une émotion difficile sans la fuir ni la noyer — juste l'observer respirer en vous.", action: "Écrivez les mots que vous n'osez pas dire dans une lettre que vous brûlerez ou garderez — l'expression libère.", affirmation: "Je ne suis pas défini par mes blessures mais par la façon dont je les traverse — et je les traverse avec une profondeur rare." },
+    'Sagittaire':  { intention: "Aujourd'hui, je reste fidèle à ma vision d'ensemble même si le chemin actuel est plus sinueux que prévu.", journaling: "Comment puis-je transformer l'obstacle actuel en opportunité d'apprentissage ou de réorientation, plutôt qu'en preuve d'échec ?", meditation: "Imaginez-vous comme un archer — vous ajustez votre visée, vous ne changez pas votre cible.", action: "Révisez votre plan avec un esprit ouvert et notez trois façons créatives d'atteindre votre objectif.", affirmation: "Les détours ne m'éloignent pas de ma destination — ils m'enseignent des chemins que la ligne droite ne m'aurait jamais montrés." },
+    'Capricorne':  { intention: "Aujourd'hui, je tiens bon avec la patience du bâtisseur, sachant que les fondations solides demandent du temps.", journaling: "Face à ce défi, est-ce que je manque de persévérance ou est-ce que je m'accroche à une stratégie qui mériterait d'être revue ?", meditation: "Visualisez une montagne face à vous — elle ne s'inquiète pas des nuages, elle est simplement là, permanente.", action: "Demandez l'aide ou le conseil d'un mentor ou d'un pair plus expérimenté sur votre défi actuel.", affirmation: "Je construis dans la durée, et chaque obstacle traversé renforce les fondations de ce que je bâtis pour longtemps." },
+    'Verseau':     { intention: "Aujourd'hui, je défends ma vision originale face au conformisme ambiant, avec calme mais sans compromis.", journaling: "Où est-ce que je laisse l'opinion de la majorité diluer une conviction qui est pourtant juste et importante pour moi ?", meditation: "Imaginez-vous comme un phare dans l'obscurité — votre lumière ne dépend pas du nombre de bateaux qui la voient.", action: "Exprimez clairement votre point de vue divergent dans une conversation ou un contexte où vous vous taisez habituellement.", affirmation: "Ma pensée indépendante est précieuse même — et surtout — quand elle va à contre-courant." },
+    'Poissons':    { intention: "Aujourd'hui, je fais confiance aux signaux subtils que reçoit mon âme, même si ma raison ne les comprend pas encore.", journaling: "Quelle sensation persistante — inconfort, attrait, malaise — est-ce que je n'ai pas encore écoutée, et que cherche-t-elle à me dire ?", meditation: "Fermez les yeux et écoutez les sons lointains — laissez votre conscience s'élargir au-delà de votre corps.", action: "Suivez une impulsion douce qui surgit aujourd'hui, sans la rationaliser — une promenade, un appel, une pause.", affirmation: "Mon intuition me protège et me guide vers ce qui est vrai, et j'apprends à l'honorer davantage chaque jour." },
+  },
+  'gibbeuse-montante': {
+    'Bélier':      { intention: "Aujourd'hui, j'affine mon approche avec la précision de l'archer qui sait que le dernier ajustement avant le tir est décisif.", journaling: "Qu'est-ce qui manque encore à mon projet ou à mon intention pour qu'il soit vraiment prêt à se manifester pleinement ?", meditation: "Sentez l'énergie concentrée au sommet de votre crâne — précise, lumineuse, prête à agir.", action: "Identifiez le dernier ajustement nécessaire dans un projet et accomplissez-le avec soin aujourd'hui.", affirmation: "Je raffine avec intensité car je sais que le soin que j'apporte maintenant détermine la qualité de ce qui naîtra." },
+    'Taureau':     { intention: "Aujourd'hui, j'affine et je perfectionne ce que je construis, avec la patience artisanale de quelqu'un qui connaît la valeur du beau travail.", journaling: "Qu'est-ce que je peux améliorer concrètement dans un projet ou une relation pour qu'il reflète davantage ce que je veux vraiment créer ?", meditation: "Portez l'attention sur vos sens — goût, toucher, odeur — laissez-vous ancrer dans la richesse du moment présent.", action: "Retravaillez ou embellissez quelque chose que vous aviez créé — ajoutez le soin supplémentaire qui fait la différence.", affirmation: "Mon attention à la qualité n'est pas de l'exigence mais de l'amour — je crée avec mes mains ce que je porte dans mon cœur." },
+    'Gémeaux':     { intention: "Aujourd'hui, j'approfondis ma réflexion plutôt que de l'élargir, en creusant là où j'ai commencé à trouver quelque chose de vrai.", journaling: "Parmi toutes les pistes que j'explore, quelle est celle qui, si je m'y plongeais vraiment, pourrait me révéler quelque chose d'important ?", meditation: "Concentrez-vous sur une seule idée comme si c'était la seule au monde — explorez-en tous les recoins en silence.", action: "Lisez en profondeur sur un sujet qui vous passionne — pas pour survoler mais pour vraiment comprendre.", affirmation: "Ma curiosité est un don, et quand je lui donne de la profondeur, elle devient une source de vraie connaissance." },
+    'Cancer':      { intention: "Aujourd'hui, je cultive mes relations avec l'attention d'un jardinier qui sait que les plantes les plus précieuses demandent un soin constant.", journaling: "Quelle personne dans ma vie mériterait que je lui consacre plus d'attention et comment puis-je le lui montrer concrètement ?", meditation: "Pensez à quelqu'un que vous aimez — laissez cette pensée réchauffer votre cœur et respirez dans cette chaleur.", action: "Envoyez un message sincère ou passez du temps de qualité avec quelqu'un qui compte pour vous.", affirmation: "Les liens que je nourris avec amour et présence deviennent les racines les plus profondes de ma vie." },
+    'Lion':        { intention: "Aujourd'hui, je peaufine ma création avec le souci du maître artiste qui sait que l'excellence est dans les détails.", journaling: "Qu'est-ce que je peux améliorer dans ma façon de me présenter ou de partager mon travail pour que ma vraie valeur soit visible ?", meditation: "Visualisez votre œuvre ou votre projet dans son état le plus accompli — observez tous ses détails avec fierté.", action: "Retravaillez quelque chose que vous avez créé en y ajoutant une couche de soin, de beauté ou de personnalité.", affirmation: "Je m'engage envers l'excellence non pas par peur du jugement mais par amour de mon propre processus créatif." },
+    'Vierge':      { intention: "Aujourd'hui, j'affine mes systèmes et mes habitudes pour qu'ils servent vraiment ma santé et mon bien-être quotidien.", journaling: "Quelle habitude ou quelle routine mérite d'être ajustée pour qu'elle soit plus efficace, plus douce et plus durable ?", meditation: "Observez votre corps comme un instrument précieux — notez sans jugement là où il porte de la tension.", action: "Faites un bilan santé simple — eau, sommeil, mouvement — et ajustez un seul paramètre pour aujourd'hui.", affirmation: "Prendre soin de mon corps avec intelligence n'est pas un luxe mais le fondement de tout le reste que je veux accomplir." },
+    'Balance':     { intention: "Aujourd'hui, j'affine l'équilibre dans ma vie en identifiant ce qui est en excès et ce qui manque.", journaling: "Où est-ce que j'ai l'impression que ma vie est déséquilibrée, et qu'est-ce qu'un simple ajustement pourrait changer ?", meditation: "Imaginez une balance intérieure — ajustez-la doucement avec votre souffle jusqu'à ce qu'elle soit parfaitement en équilibre.", action: "Réservez du temps pour une activité qui vous ressource et que vous avez négligée ces derniers temps.", affirmation: "Je suis le gardien de mon propre équilibre, et je peux le recréer chaque fois que je m'y consacre avec conscience." },
+    'Scorpion':    { intention: "Aujourd'hui, j'affine ma compréhension d'une situation complexe en acceptant d'en voir les nuances que j'avais évitées.", journaling: "Dans une situation difficile, quelle vérité supplémentaire suis-je prêt à voir aujourd'hui que je refusais de regarder ?", meditation: "Plongez dans un silence profond et laissez surgir une image ou un mot — ne le forcez pas, laissez-le venir à vous.", action: "Recherchez une information ou engagez une conversation qui vous donnera une perspective plus complète sur un défi actuel.", affirmation: "Plus je vois clairement, plus je peux agir avec puissance et précision dans les situations qui comptent." },
+    'Sagittaire':  { intention: "Aujourd'hui, j'approfondis ma philosophie personnelle en intégrant les leçons des semaines passées dans ma vision.", journaling: "Qu'ai-je appris sur moi-même depuis le début de ce cycle lunaire, et comment cela enrichit-il ma vision de l'avenir ?", meditation: "Imaginez-vous assis autour d'un feu avec des sages du monde entier — quel conseil chercheriez-vous à recevoir ?", action: "Écrivez un paragraphe de vos convictions actuelles sur ce qui compte vraiment dans votre vie.", affirmation: "Chaque expérience me donne de la sagesse, et ma philosophie de vie s'approfondit et s'enrichit à chaque cycle." },
+    'Capricorne':  { intention: "Aujourd'hui, j'évalue mes progrès avec honnêteté et j'ajuste ma stratégie pour les prochaines étapes.", journaling: "Qu'est-ce que j'ai accompli depuis le début de ce cycle et qu'est-ce qui mérite encore un effort concentré ?", meditation: "Visualisez le sommet de votre montagne — vous êtes plus proche que vous ne le croyez, un pas à la fois.", action: "Tenez un compte-rendu écrit de vos progrès sur un objectif important — être honnête avec soi-même est un acte de courage.", affirmation: "Je mesure ma progression non pas contre les autres mais contre la version d'hier de moi-même, et je progresse." },
+    'Verseau':     { intention: "Aujourd'hui, j'affine mes idées en les soumettant à la réalité concrète, pour qu'elles deviennent réellement utiles.", journaling: "Quelle de mes idées pourrait avoir un impact réel si je la traduisais en un projet concret, même petit ?", meditation: "Imaginez votre idée prendre forme dans le monde réel — visualisez qui elle aide, comment elle change les choses.", action: "Faites un prototype ou un plan d'action simple pour une idée qui vous tient à cœur.", affirmation: "Mes idées ont de la valeur, et quand je les ancre dans le concret, elles deviennent des forces de changement réel." },
+    'Poissons':    { intention: "Aujourd'hui, j'affine ma pratique spirituelle ou créative en lui consacrant un temps et un espace vraiment sacrés.", journaling: "Qu'est-ce qui nourrit vraiment mon âme — pas ce que je devrais faire, mais ce qui me fait sentir vivant et relié à quelque chose de plus grand ?", meditation: "Laissez votre imagination vous emmener dans un endroit de beauté parfaite — un lieu qui n'existe que pour vous.", action: "Créez un petit rituel quotidien sacré — méditation, journal, promenade consciente — et engagez-vous à le tenir une semaine.", affirmation: "Ma vie intérieure est aussi réelle et importante que ma vie extérieure, et je lui offre le soin qu'elle mérite." },
+  },
+  'pleine-lune': {
+    'Bélier':      { intention: "Aujourd'hui, je célèbre mon courage et je libère la colère ou l'impatience qui ne me sert plus.", journaling: "Qu'est-ce que j'ai accompli avec audace ce cycle dont je suis fier, et quelle frustration est-il temps d'abandonner ?", meditation: "Sentez la pleine lune sur votre visage — laissez sa lumière révéler tout ce que vous portez et dissoudre ce qui est trop lourd.", action: "Dansez, courez ou faites une activité physique intense pour honorer et libérer l'énergie accumulée.", affirmation: "Je célèbre ma force avec gratitude et je libère ce qui ne m'appartient plus — je suis libre et je brûle de vie." },
+    'Taureau':     { intention: "Aujourd'hui, je célèbre l'abondance présente dans ma vie et je relâche l'attachement à ce qui bloque ma croissance.", journaling: "Quelles richesses — visibles et invisibles — puis-je reconnaître dans ma vie en ce moment, et à quoi dois-je dire merci ?", meditation: "Faites un scan de votre corps — où stockez-vous de la tension liée à la peur du manque ? Respirez-y pour l'alléger.", action: "Offrez quelque chose — un cadeau, votre temps, un repas — comme acte de confiance dans l'abondance.", affirmation: "Je suis entouré de richesse sous toutes ses formes, et ma gratitude ouvre la porte à encore plus de beauté." },
+    'Gémeaux':     { intention: "Aujourd'hui, je reconnais les connexions et les conversations qui m'ont enrichi, et je libère celles qui m'éparpillent.", journaling: "Quelles conversations ou idées de ce cycle m'ont véritablement nourri, et lesquelles m'ont vidé ou distrait ?", meditation: "Imaginez chaque pensée comme une bulle de savon — regardez-les briller dans la lumière de la pleine lune et s'envoler.", action: "Appelez ou écrivez à quelqu'un que vous avez pensé souvent ce cycle et que vous n'avez pas encore contacté.", affirmation: "Mes connexions les plus profondes sont celles où je peux être moi-même sans filtre, et c'est cela que je cultive." },
+    'Cancer':      { intention: "Aujourd'hui, j'honore mes émotions comme des messagers sacrés et je libère ce que je portais pour les autres.", journaling: "Quel poids émotionnel ai-je porté ce cycle pour quelqu'un d'autre, et comment puis-je le poser en douceur sans trahir personne ?", meditation: "Laissez les émotions monter librement — ne les jugez pas, ne les analysez pas — laissez-les passer comme des vagues.", action: "Prenez un bain ou une douche consciente et imaginez l'eau emporter tout ce que vous portez qui ne vous appartient pas.", affirmation: "Je suis profond comme l'océan et résilient comme la marée — mes émotions me traversent mais ne me définissent pas." },
+    'Lion':        { intention: "Aujourd'hui, je célèbre ma lumière et je libère le besoin d'être reconnu pour ce que je ne suis pas.", journaling: "Quelle reconnaissance ai-je cherchée ce cycle que je pourrais maintenant me donner à moi-même ?", meditation: "Imaginez un projecteur de lumière dorée braqué sur vous — vous êtes vu, connu, célébré. Laissez cela vous toucher.", action: "Célébrez votre réussite de ce cycle en vous offrant quelque chose qui vous fait vous sentir royalement bien.", affirmation: "Je me reconnais, je me célèbre et je m'aime — et cette lumière intérieure n'a besoin d'aucune validation externe." },
+    'Vierge':      { intention: "Aujourd'hui, je célèbre mon service et je libère le perfectionnisme qui m'empêche de me reposer.", journaling: "Comment puis-je reconnaître et honorer tout le soin invisible que j'ai apporté ce cycle, sans le minimiser ?", meditation: "Placez une main sur votre cœur et dites mentalement : 'J'ai fait de mon mieux, et c'est suffisant.' Respirez dans cette vérité.", action: "Accordez-vous une vraie pause — sans productivity guilt. Lisez, dormez, ne faites rien d'utile.", affirmation: "Mon service est précieux mais je ne suis pas que mon utilité — je mérite de me reposer et d'être simplement." },
+    'Balance':     { intention: "Aujourd'hui, je célèbre les liens beaux que j'ai cultivés et je libère les dynamiques qui ne sont plus équilibrées.", journaling: "Quelles relations m'ont apporté de la joie et de l'équilibre ce cycle, et lesquelles m'ont déséquilibré ?", meditation: "Visualisez un fil doré qui vous relie aux personnes que vous aimez — sentez sa chaleur et sa douceur.", action: "Organisez un moment de connexion — un dîner, un café, une soirée — avec quelqu'un qui vous fait du bien.", affirmation: "Je mérite des relations qui me nourrissent autant que celles que je nourris, et j'attire ce dont j'ai besoin." },
+    'Scorpion':    { intention: "Aujourd'hui, je célèbre ma profondeur et je libère une blessure ancienne qui a longtemps pris trop de place.", journaling: "Quelle transformation s'est opérée en moi ce cycle, même si elle était invisible ou douloureuse ?", meditation: "Visualisez une chrysalide qui s'ouvre sous la lumière de la pleine lune — vous en êtes l'habitant, et vous émergez transformé.", action: "Brûlez ou déchirez quelque chose qui symbolise une ancienne blessure dont vous choisissez de vous libérer.", affirmation: "Je me transforme constamment, et chaque mort intérieure précède une renaissance plus lumineuse." },
+    'Sagittaire':  { intention: "Aujourd'hui, je célèbre ma liberté et je libère la peur qui me retient encore dans ce qui me rétrécit.", journaling: "Quelles vérités sur moi-même ou sur le monde ont émergé ce cycle, et comment changent-elles ma vision de l'avenir ?", meditation: "Imaginez-vous voler au-dessus des nuages sous la pleine lune — regardez votre vie en miniature, belle et complète.", action: "Écrivez vos grandes leçons du cycle sur papier et lisez-les à voix haute, comme un enseignement que vous offrez à vous-même.", affirmation: "Chaque cycle me rend plus sage, plus libre et plus aligné avec la vérité la plus profonde de qui je suis." },
+    'Capricorne':  { intention: "Aujourd'hui, je reconnais mes accomplissements avec fierté et je libère la pression de ne jamais faire assez.", journaling: "Quels progrès concrets puis-je célébrer ce cycle, même imparfaits, et qu'est-ce que cela dit de mon engagement ?", meditation: "Imaginez-vous au sommet de votre montagne personnelle — regardez le chemin parcouru avec gratitude et fierté.", action: "Écrivez une liste de vos réussites de ce cycle — grandes et petites — et gardez-la comme preuve de votre progression.", affirmation: "J'en fais toujours assez — mon effort constant est déjà remarquable, et je peux le reconnaître sans fausse modestie." },
+    'Verseau':     { intention: "Aujourd'hui, je célèbre ma contribution à quelque chose de plus grand que moi et je libère ce qui m'isole.", journaling: "Comment ai-je contribué au bien commun ce cycle, même de façon modeste, et qu'est-ce que cela m'a appris sur mon rôle ?", meditation: "Imaginez-vous relié à tous les humains sous la même pleine lune — une toile lumineuse d'humanité partagée.", action: "Faites un geste altruiste spontané — un don, un service, une heure de bénévolat — offert simplement.", affirmation: "Je suis à la fois unique et profondément connecté à l'humanité, et ma contribution compte, même invisible." },
+    'Poissons':    { intention: "Aujourd'hui, je célèbre la beauté de mon monde intérieur et je libère les illusions qui m'ont empêché de voir clairement.", journaling: "Quelles illusions ou faux espoirs ai-je enfin pu abandonner ce cycle, et quelle clarté lumineuse leur a succédé ?", meditation: "Laissez votre conscience se fondre dans la lumière de la pleine lune — vous êtes pure conscience, sans limites.", action: "Créez quelque chose de beau ce soir — dessinez, cuisinez, chantez — comme offrande à la lune et à votre âme.", affirmation: "Je suis un pont entre les mondes visibles et invisibles, et ma sensibilité est une forme rare de sagesse." },
+  },
+  'gibbeuse-decroissante': {
+    'Bélier':      { intention: "Aujourd'hui, je partage ce que j'ai gagné en courage avec ceux qui en ont besoin, avec générosité et sans retenue.", journaling: "Quelle leçon de ce cycle puis-je partager avec une personne de mon entourage qui traverse un défi similaire ?", meditation: "Respirez profondément et à chaque expiration, imaginez que vous envoyez de la force et de la lumière autour de vous.", action: "Rendez un service concret à quelqu'un dans votre entourage — une aide pratique offerte sans attente de retour.", affirmation: "Ma force se multiplie quand je la partage, et donner généreusement nourrit mon âme autant que celle de l'autre." },
+    'Taureau':     { intention: "Aujourd'hui, j'exprime ma gratitude pour les ressources et les beautés qui ont enrichi mon cycle.", journaling: "Quels plaisirs simples — paysages, saveurs, textures, musiques — m'ont apporté une vraie joie ce cycle ?", meditation: "Concentrez-vous sur quelque chose de beau dans votre environnement immédiat et laissez cette beauté vous pénétrer pleinement.", action: "Préparez ou offrez quelque chose de délicieux — un repas, un gâteau, un bouquet — à quelqu'un ou à vous-même.", affirmation: "La beauté que je remarque et célèbre attire davantage de beauté dans ma vie — je suis un aimant pour le beau et le bon." },
+    'Gémeaux':     { intention: "Aujourd'hui, je partage les idées et les apprentissages de ce cycle avec générosité et enthousiasme.", journaling: "Quelle connaissance ou perspective nouvelle acquise ce cycle pourrait vraiment changer quelque chose pour quelqu'un d'autre ?", meditation: "Imaginez vos idées comme des graines que vous dispersez au vent — librement, sans vouloir contrôler où elles atterrissent.", action: "Écrivez un article, un post ou un email qui partage quelque chose que vous avez appris et qui pourrait aider quelqu'un.", affirmation: "Plus je partage ce que je sais, plus j'apprends, et cette générosité intellectuelle enrichit tout le monde, moi y compris." },
+    'Cancer':      { intention: "Aujourd'hui, j'exprime ma tendresse à ceux que j'aime, sans retenue ni calcul.", journaling: "À qui n'ai-je pas dit assez clairement combien je tiens à eux, et que voudrais-je leur exprimer maintenant ?", meditation: "Pensez à chaque personne qui vous aime — sentez cet amour vous envelopper comme une lumière chaude et dorée.", action: "Écrivez une lettre ou un message sincère à quelqu'un que vous aimez, juste pour lui dire qu'il compte pour vous.", affirmation: "L'amour que j'offre revient toujours à moi, transformé, amplifié, et plus beau qu'au moment de son départ." },
+    'Lion':        { intention: "Aujourd'hui, j'encourage et j'inspire ceux qui m'entourent avec la générosité du soleil qui brille pour tous.", journaling: "Comment puis-je utiliser mon énergie créatrice pour encourager quelqu'un qui doute de son propre talent ?", meditation: "Visualisez des rayons de lumière dorée émanant de votre cœur vers chaque personne de votre entourage.", action: "Encouragez sincèrement quelqu'un dans son projet ou sa création — un compliment spécifique, pas un vague 'bravo'.", affirmation: "Encourager les autres à briller ne diminue pas ma lumière — elle l'amplifie et crée un cercle de luminosité partagée." },
+    'Vierge':      { intention: "Aujourd'hui, j'intègre les leçons pratiques de ce cycle et je les transmets avec humilité.", journaling: "Quelle compétence ou sagesse pratique ai-je développée ce cycle dont quelqu'un d'autre dans mon entourage pourrait bénéficier ?", meditation: "Imaginez votre corps comme un outil parfait, chacun de ses systèmes fonctionnant avec harmonie et intelligence.", action: "Proposez votre aide concrète à quelqu'un — cuisiner, réparer, organiser — en mettant vos compétences au service d'un besoin réel.", affirmation: "Je suis utile non pas parce que je dois l'être mais parce que contribuer au bien des autres me remplit profondément." },
+    'Balance':     { intention: "Aujourd'hui, j'exprime ma gratitude pour les connexions qui ont enrichi ce cycle et je renforce les liens qui comptent.", journaling: "Quelle relation a été une vraie source de beauté, d'inspiration ou de soutien ce cycle, et comment puis-je lui rendre hommage ?", meditation: "Pensez à une relation précieuse — visualisez un fil d'or qui vous relie à cette personne, solide et lumineux.", action: "Faites un geste concret pour nourrir une relation importante — invitez, offrez, remerciez sincèrement.", affirmation: "Mes relations les plus belles sont celles que je nourris avec constance, et je mérite autant que je donne." },
+    'Scorpion':    { intention: "Aujourd'hui, je partage ma profondeur avec ceux qui sont prêts à la recevoir, sans retenue ni peur d'être trop intense.", journaling: "Quelle transformation personnelle de ce cycle pourrait aider quelqu'un d'autre à traverser sa propre obscurité ?", meditation: "Sentez votre propre profondeur comme une ressource — un puits intérieur inépuisable duquel vous puisez et offrez.", action: "Ayez une conversation profonde et authentique avec quelqu'un — pas de surface, pas de politesse vide.", affirmation: "Ma profondeur est un cadeau rare, et les personnes capables de la recevoir sont mes véritables alliés d'âme." },
+    'Sagittaire':  { intention: "Aujourd'hui, j'enseigne et j'inspire par l'exemple, en partageant ma vision avec ceux qui cherchent un horizon.", journaling: "Quelle sagesse ou expérience de ce cycle puis-je transformer en enseignement qui aiderait d'autres à avancer ?", meditation: "Imaginez-vous comme un guide sur un sentier de montagne — vous n'imposez pas la direction mais vous montrez le chemin.", action: "Partagez une histoire personnelle de dépassement — sur les réseaux, en conversation, dans un journal — comme inspiration réelle.", affirmation: "Mon chemin a de la valeur et mes expériences sont des enseignements qui peuvent allumer des feux dans d'autres cœurs." },
+    'Capricorne':  { intention: "Aujourd'hui, je transmets avec générosité la sagesse pratique que ce cycle m'a offerte.", journaling: "Quelle leçon sur la résilience, la discipline ou la stratégie ai-je apprise ce cycle et que je pourrais transmettre ?", meditation: "Visualisez votre héritage — non pas en termes de succès mais en termes de valeurs et de sagesse que vous transmettez.", action: "Mentorez ou conseillez quelqu'un dans son projet ou sa carrière — offrez votre expérience sans retenue.", affirmation: "Ma sagesse a de la valeur et transmettre ce que j'ai appris est une forme de générosité qui dépasse le temps." },
+    'Verseau':     { intention: "Aujourd'hui, je contribue à une vision collective plus grande que moi avec les ressources que ce cycle m'a données.", journaling: "Comment puis-je utiliser ce que j'ai appris ou reçu ce cycle pour servir une cause ou une communauté qui m'importe ?", meditation: "Imaginez-vous faisant partie d'un réseau lumineux de personnes partageant les mêmes valeurs — sentez la force collective.", action: "Contribuez à un projet collectif ou à une cause — même modestement — comme expression de votre vision du monde.", affirmation: "Mon engagement envers le bien commun est une forme de sagesse, et ma contribution, même petite, crée des ondes réelles." },
+    'Poissons':    { intention: "Aujourd'hui, j'offre ma compassion sans me perdre, en servant depuis un lieu de plénitude plutôt que de sacrifice.", journaling: "Comment puis-je exprimer ma compassion naturelle de façon qui me nourrit plutôt que de me vider ?", meditation: "Imaginez un lac serein au fond de vous — vous puisez dans cette paix pour l'offrir, sans jamais l'épuiser.", action: "Faites un geste d'empathie concrète — écoutez vraiment quelqu'un, accompagnez quelqu'un en difficulté.", affirmation: "Je suis une source inépuisable de compassion quand je prends soin de me ressourcer — donner et me nourrir vont ensemble." },
+  },
+  'dernier-quartier': {
+    'Bélier':      { intention: "Aujourd'hui, je libère la colère ou le ressentiment que je porte encore, avec la grâce du guerrier qui choisit la paix.", journaling: "Contre quoi ou qui est-ce que je me bats encore intérieurement alors que la bataille est peut-être terminée depuis longtemps ?", meditation: "À chaque expiration, imaginez relâcher une tension physique ou émotionnelle — votre corps sait comment lâcher prise.", action: "Faites un exercice physique libérateur — courir, boxer un coussin, crier dans la nature — pour exprimer ce qui s'évacue.", affirmation: "Je n'ai plus besoin de porter cette bataille — je la pose, je me libère et je me prépare à un nouveau chapitre." },
+    'Taureau':     { intention: "Aujourd'hui, je relâche l'attachement à ce qui est terminé et je fais de la place pour quelque chose de plus beau.", journaling: "À quoi m'accroche-je encore — une relation, une situation, une façon de faire — qui ne me sert plus et que je pourrais enfin laisser partir ?", meditation: "Imaginez vos mains tenant quelque chose de lourd — ouvrez-les doucement et laissez-le tomber en douceur.", action: "Faites un tri dans votre espace physique — donnez ou jetez des objets qui appartiennent au passé.", affirmation: "Laisser partir n'est pas une perte mais une libération — je fais de la place pour ce qui correspond à qui je deviens." },
+    'Gémeaux':     { intention: "Aujourd'hui, je libère les informations et les conversations qui m'ont alourdi, et je m'offre un espace de silence.", journaling: "Quelles conversations ou pensées en boucle puis-je enfin mettre au repos pour retrouver la clarté mentale ?", meditation: "Imaginez votre esprit comme un ciel encombré de nuages — regardez-les se dissoudre un par un dans la lumière.", action: "Déconnectez-vous de vos écrans pendant au moins deux heures aujourd'hui — un vrai jeûne numérique réparateur.", affirmation: "Le silence est aussi riche que les mots, et dans le vide que je crée, mes meilleures idées ont enfin la place de naître." },
+    'Cancer':      { intention: "Aujourd'hui, je me pardonne de ne pas avoir su ou pu faire mieux, et j'offre cette même compassion à ceux que j'ai aimés.", journaling: "À qui dois-je offrir le pardon — y compris à moi-même — pour libérer un poids émotionnel qui m'alourdit depuis trop longtemps ?", meditation: "Imaginez envelopper votre cœur blessé d'une lumière douce et apaisante — sans exiger qu'il guérisse immédiatement.", action: "Écrivez une lettre de pardon — à vous-même ou à quelqu'un d'autre — que vous n'enverrez peut-être pas.", affirmation: "Le pardon est le plus grand cadeau que je me fasse à moi-même — il me libère d'une prison que j'avais construite." },
+    'Lion':        { intention: "Aujourd'hui, je libère ma dépendance à la validation externe et je retrouve ma lumière intrinsèque.", journaling: "Dans quelles situations est-ce que je cède mon propre jugement à l'approbation des autres, et comment puis-je me faire confiance davantage ?", meditation: "Fermez les yeux et sentez votre propre présence — indépendamment du regard des autres. C'est cela, votre lumière.", action: "Faites quelque chose qui vous fait plaisir uniquement à vous — sans partage, sans photo, sans témoin.", affirmation: "Mon rayonnement est intrinsèque — il existe et il brille que quelqu'un le voie ou non, et c'est suffisant." },
+    'Vierge':      { intention: "Aujourd'hui, je libère le perfectionnisme et la critique intérieure qui m'ont empêché de me reposer en paix.", journaling: "Quelle exigence envers moi-même pourrait être assouplie pour que je puisse me sentir enfin en paix avec ce que je suis ?", meditation: "Répétez mentalement : 'J'ai fait de mon mieux. C'est suffisant.' Respirez dans chaque syllabe jusqu'à ce qu'elle soit vraie.", action: "Laissez quelque chose d'imparfait en l'état — une tâche non terminée, une maison en désordre — et choisissez le repos.", affirmation: "Je ne suis pas défini par ma productivité — ma valeur est intrinsèque et ne dépend d'aucune performance." },
+    'Balance':     { intention: "Aujourd'hui, je libère les relations ou les dynamiques qui ne sont plus équilibrées, avec douceur et clarté.", journaling: "Quelle relation ou engagement ne me convient plus et mérite d'être transformé ou relâché avec bienveillance ?", meditation: "Imaginez couper en douceur un fil énergétique qui vous retient à quelque chose ou quelqu'un — avec amour, sans violence.", action: "Prenez une décision relationnelle que vous repoussez — une conversation, une frontière, un au revoir nécessaire.", affirmation: "Relâcher ce qui ne nous convient plus est un acte de respect envers soi-même et envers l'autre — c'est une forme d'amour." },
+    'Scorpion':    { intention: "Aujourd'hui, je libère une ombre qui me suivait depuis longtemps — avec courage et sans me perdre dans elle.", journaling: "Quelle vieille blessure, quel fantôme du passé ou quel secret non dit est prêt à être enfin relâché ?", meditation: "Descendez dans votre obscurité intérieure comme dans une cave — trouvez ce qui s'y cache, reconnaissez-le, remerciez-le.", action: "Faites une cérémonie personnelle de libération — eau, feu, terre — pour marquer symboliquement ce que vous déposez.", affirmation: "Je suis capable de regarder mon ombre en face et de la transformer — c'est là ma plus grande puissance." },
+    'Sagittaire':  { intention: "Aujourd'hui, je libère les croyances limitantes qui ont rétréci mon horizon, et j'ouvre de l'espace pour de nouvelles vérités.", journaling: "Quelle croyance sur moi-même ou sur le monde ai-je portée comme une vérité absolue alors qu'elle n'est peut-être qu'un vieux récit ?", meditation: "Imaginez un arc-en-ciel après l'orage — après chaque libération vient une nouvelle expansion de couleur et de lumière.", action: "Identifiez une croyance limitante et écrivez trois preuves qu'elle est fausse — la vérité est souvent plus généreuse.", affirmation: "Je me libère des récits qui m'ont retenu et j'embrasse une vision du monde plus vaste, plus juste et plus lumineuse." },
+    'Capricorne':  { intention: "Aujourd'hui, je relâche le contrôle et la rigidité, en me rappelant que la vraie force sait aussi se reposer.", journaling: "Où est-ce que je m'accroche au contrôle parce que j'ai peur de l'imprévu, et quel serait le pire scénario réel si je lâchais prise ?", meditation: "Imaginez poser un fardeau lourd au sol — sentez vos épaules s'alléger, votre souffle s'approfondir.", action: "Déléguez quelque chose que vous gardez habituellement pour vous seul — faites confiance à quelqu'un d'autre.", affirmation: "Lâcher prise n'est pas échouer — c'est la sagesse de savoir quand l'effort doit céder la place à la confiance." },
+    'Verseau':     { intention: "Aujourd'hui, je libère le cynisme ou la distance émotionnelle qui me protège mais m'isole.", journaling: "Où est-ce que j'utilise l'analyse intellectuelle pour éviter de vraiment ressentir, et que trouverais-je si je m'autorisais à sentir ?", meditation: "Laissez votre cœur s'ouvrir légèrement — pas une inondation mais juste une fissure qui laisse passer la lumière.", action: "Admettez une vulnérabilité à quelqu'un de confiance — non pour être sauvé mais pour vous permettre d'être humain.", affirmation: "Ma vulnérabilité n'est pas une faiblesse — c'est le courage de vivre pleinement, connecté à moi-même et aux autres." },
+    'Poissons':    { intention: "Aujourd'hui, je libère les illusions et les espoirs non réalistes qui m'ont éloigné de ma propre réalité.", journaling: "Quelle situation ai-je idéalisée au point de ne plus la voir telle qu'elle est, et quelle est la vérité bienveillante que je peux accepter ?", meditation: "Imaginez-vous sortir doucement d'un rêve pour entrer dans une lumière douce et réelle — là où vous appartenez vraiment.", action: "Écrivez la réalité d'une situation telle qu'elle est — pas telle que vous l'espérez — puis choisissez comment vous y répondre.", affirmation: "La réalité, quand je la vois avec clarté et compassion, est plus belle que n'importe quelle illusion que j'aurais pu me raconter." },
+  },
+  'croissant-decroissant': {
+    'Bélier':      { intention: "Aujourd'hui, je m'accorde la permission de ne rien conquérir et de simplement exister, dans le silence avant la prochaine tempête.", journaling: "Qu'est-ce que le repos révèle sur ce que je veux vraiment, quand l'action ne peut plus distraire ma vérité intérieure ?", meditation: "Laissez votre corps devenir lourd, comme s'il s'enfonçait doucement dans la terre — vous êtes en sécurité pour vous reposer.", action: "Éteignez vos alertes et passez une heure en dehors de toute ambition — juste être, sans projet, sans but.", affirmation: "Mon repos est aussi sacré que mon action, et c'est dans le silence que mon prochain grand élan trouve sa source." },
+    'Taureau':     { intention: "Aujourd'hui, je m'ancre dans le plaisir simple de l'instant, sans chercher à le rendre productif.", journaling: "Quand est la dernière fois où j'ai vraiment savouré quelque chose sans le documenter, le partager ou l'optimiser ?", meditation: "Mangez une petite chose délicieuse très lentement — un carré de chocolat, une fraise — avec toute votre attention.", action: "Offrez-vous un moment de plaisir sensoriel pur — un bain chaud, une promenade dans la nature, une sieste.", affirmation: "Je mérite le plaisir sans justification, et ma capacité à savourer est elle-même une forme de sagesse." },
+    'Gémeaux':     { intention: "Aujourd'hui, je laisse mon esprit se reposer de lui-même, sans chercher à stimuler ni à produire.", journaling: "Que se passe-t-il dans mon esprit quand je l'arrête vraiment — quels désirs ou craintes émergent du silence ?", meditation: "Posez vos mains et fermez les yeux — résistez à l'envie de penser à quoi que ce soit. Restez dans le vide.", action: "Lisez de la poésie ou de la fiction pure — quelque chose qui n'a pas besoin d'être 'utile' pour avoir de la valeur.", affirmation: "Mon esprit me sert le mieux quand je lui offre parfois le silence absolu où rien n'est attendu de lui." },
+    'Cancer':      { intention: "Aujourd'hui, je me réfugie dans ma propre douceur et je me nourris de l'intérieur, loin de toute attente.", journaling: "De quoi mon âme a-t-elle besoin pour se sentir pleinement en sécurité et en paix en ce moment précis ?", meditation: "Imaginez-vous dans un cocon de lumière dorée — personne ne peut vous atteindre, vous êtes entièrement en sécurité.", action: "Créez un espace douillet — lumières tamisées, couverture chaude, tisane — et restez-y sans obligation de rien.", affirmation: "Je suis mon propre refuge et ma propre maison — partout où je vais, je peux trouver ce havre en moi." },
+    'Lion':        { intention: "Aujourd'hui, je me retire de la scène pour me reconnecter à la source de ma lumière, loin du regard des autres.", journaling: "Qui suis-je quand personne ne me regarde — quelle partie de moi s'exprime librement dans la solitude ?", meditation: "Imaginez-vous dans un jardin secret qu'il n'y a que vous à connaître — restez-y, savourez la paix de n'être vu par personne.", action: "Passez une soirée seul, sans écrans, à faire quelque chose que vous aimez uniquement pour votre propre plaisir.", affirmation: "Ma lumière ne s'éteint pas dans la solitude — elle s'y recharge, prête à briller encore plus fort quand je reviens." },
+    'Vierge':      { intention: "Aujourd'hui, je pose mes listes et mes tâches et je m'autorise à ne rien accomplir — comme pratique intentionnelle.", journaling: "Quelle peur se cache derrière mon besoin de toujours faire quelque chose, et que cherche cette agitation à éviter ?", meditation: "Laissez votre corps vous guider — où veut-il s'étirer, se poser, se réchauffer ? Suivez-le sans question.", action: "Annulez ou reportez une obligation non essentielle et utilisez ce temps pour ne rien faire d'utile.", affirmation: "Mon être vaut infiniment plus que ma productivité, et je le prouve en me reposant sans culpabilité." },
+    'Balance':     { intention: "Aujourd'hui, je m'offre la douceur d'une solitude choisie, sans avoir besoin de la justifier à quiconque.", journaling: "De quoi ai-je besoin en ce moment pour me ressourcer vraiment — quelles relations, quels engagements puis-je mettre en pause ?", meditation: "Respirez dans la douceur du moment présent — vous n'avez rien à résoudre, rien à équilibrer, juste à être.", action: "Accordez-vous une journée de cocooning consciente — pas de décisions importantes, juste de la douceur.", affirmation: "Je n'ai pas besoin de plaire ou d'équilibrer quoi que ce soit aujourd'hui — exister en paix est ma seule tâche." },
+    'Scorpion':    { intention: "Aujourd'hui, je descends dans le silence le plus profond pour écouter ce que seule l'obscurité peut révéler.", journaling: "Dans ce moment de transition, quelle vérité intérieure la plus profonde attend patiemment d'être entendue ?", meditation: "Plongez dans l'obscurité derrière vos paupières fermées — accueillez le rien comme une présence, pas comme une absence.", action: "Passez un moment à écrire dans le noir ou à la bougie — laissez l'obscurité informer ce qui émerge.", affirmation: "Je ne crains plus le silence ni l'obscurité — c'est là que ma vérité la plus profonde attend d'être découverte." },
+    'Sagittaire':  { intention: "Aujourd'hui, je me laisse simplement être, sans philosophie à défendre ni horizon à viser.", journaling: "Qu'est-ce que ce cycle m'a appris sur ma propre nature, indépendamment de toute quête ou de tout idéal ?", meditation: "Imaginez-vous assis au bord d'une rivière — regardez les pensées passer comme l'eau, sans les suivre.", action: "Passez du temps dans la nature sans objectif — pas de chemin tracé, juste la présence.", affirmation: "Je suis déjà arrivé — chaque moment de présence consciente est la destination que je cherchais." },
+    'Capricorne':  { intention: "Aujourd'hui, je me permets de ne pas construire, de ne pas avancer, de simplement laisser le sol se reposer.", journaling: "Qu'est-ce que je veux laisser derrière moi au prochain cycle, et qu'est-ce que je veux porter en avant ?", meditation: "Imaginez-vous comme une graine dans la terre en hiver — tout est calme en surface, mais la puissance se prépare en vous.", action: "Prenez note des leçons de ce cycle dans un journal et accordez-vous la permission de ne pas planifier ce soir.", affirmation: "Je me régénère dans le repos comme la terre en hiver — et ce silence est la source de ma prochaine grande récolte." },
+    'Verseau':     { intention: "Aujourd'hui, je me déconnecte des idées, des projets et du collectif pour retrouver ma singularité la plus pure.", journaling: "Qui suis-je en dehors de mes idéaux, de mes causes et de mes projets — qu'est-ce qui reste quand tout cela s'arrête ?", meditation: "Imaginez l'espace infini entre les étoiles — vous êtes là, dans ce silence vaste, sans définition ni rôle.", action: "Faites quelque chose de profondément solitaire et non productif — regarder les nuages, dessiner au hasard.", affirmation: "Je n'ai pas besoin d'être utile pour avoir de la valeur — mon existence elle-même est complète et suffisante." },
+    'Poissons':    { intention: "Aujourd'hui, je me laisse couler dans le mystère sans chercher à le comprendre, et je fais confiance à l'obscurité bienveillante.", journaling: "Quelle partie de moi cherche à contrôler ou à comprendre au lieu de simplement se laisser porter par la vie ?", meditation: "Imaginez-vous comme une goutte d'eau qui retrouve l'océan — vous vous dissolvez dans quelque chose de vaste et de beau.", action: "Dormez plus que d'habitude, méditez, ou allongez-vous simplement en laissant votre conscience errer librement.", affirmation: "Je me confie à l'océan de la vie — je n'ai pas besoin de tout comprendre pour être en paix avec tout ce qui est." },
+  },
+};
+
+// ─────────────────────────────────────────────
+// APP STATE & LOGIC
+// ─────────────────────────────────────────────
+const today = new Date();
+const todayPhaseKey = getMoonPhaseKey(today);
+const todayPhase = PHASES[todayPhaseKey];
+const moonAge = getMoonAge(today);
+const illumination = getMoonIllumination(today);
+
+function formatDateFr(d) {
+  return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function goTo(stepId) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById(stepId).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToSign() { goTo('step-sign'); }
+
+function checkSignBtn() {
+  const val = document.getElementById('sign-select').value;
+  document.getElementById('btn-reveal').disabled = !val;
+}
+
+function showResult() {
+  const sign = document.getElementById('sign-select').value;
+  if (!sign) return;
+  const ritual = RITUALS[todayPhaseKey][sign];
+  if (!ritual) return;
+
+  document.getElementById('res-phase-icon').textContent = todayPhase.icon;
+  document.getElementById('res-phase-name').textContent = todayPhase.name;
+  document.getElementById('res-subtitle').textContent = sign + ' · ' + formatDateFr(today);
+  document.getElementById('res-lunar-info').textContent = 'Jour ' + Math.floor(moonAge) + ' du cycle · ' + illumination + '% illuminée';
+  document.getElementById('res-meaning').textContent = todayPhase.meaning;
+  document.getElementById('res-intention').textContent = ritual.intention;
+  document.getElementById('res-journaling').textContent = ritual.journaling;
+  document.getElementById('res-meditation').textContent = ritual.meditation;
+  document.getElementById('res-action').textContent = ritual.action;
+  document.getElementById('res-affirmation').textContent = '\u201c' + ritual.affirmation + '\u201d';
+  goTo('step-result');
+}
+
+function resetApp() {
+  document.getElementById('sign-select').value = '';
+  document.getElementById('btn-reveal').disabled = true;
+  goTo('step-welcome');
+}
+
+function copyRitual() {
+  const sign = document.getElementById('sign-select').value;
+  const ritual = RITUALS[todayPhaseKey][sign];
+  const text = [
+    '✨ Mon Rituel Lunaire — ' + formatDateFr(today),
+    '',
+    todayPhase.icon + ' ' + todayPhase.name + ' | ' + sign,
+    'Lune à ' + illumination + '% d\'illumination · Jour ' + Math.floor(moonAge) + ' du cycle',
+    '',
+    '🌙 Énergie de la phase',
+    todayPhase.meaning,
+    '',
+    '💫 Votre intention du jour',
+    ritual.intention,
+    '',
+    '📖 Votre rituel en 3 temps',
+    '',
+    '✍️ Journaling',
+    ritual.journaling,
+    '',
+    '🧘 Focus de méditation',
+    ritual.meditation,
+    '',
+    '🌿 Action concrète',
+    ritual.action,
+    '',
+    '🌟 Affirmation du jour',
+    ritual.affirmation,
+    '',
+    '— Astrologie & Compagnie',
+  ].join('\n');
+
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = '✓ Copié !';
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => { btn.textContent = 'Copier mon rituel'; toast.classList.remove('show'); }, 2500);
+  }).catch(() => {
+    // fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  });
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+document.getElementById('welcome-icon').textContent = todayPhase.icon;
+document.getElementById('date-display').textContent = formatDateFr(today);
+document.getElementById('badge-icon').textContent = todayPhase.icon;
+document.getElementById('badge-text').textContent = todayPhase.name + ' · ' + illumination + '% illuminée';
+document.getElementById('sign-phase-icon').textContent = todayPhase.icon;
+document.getElementById('sign-phase-name').textContent = todayPhase.name;
+</script>
+</body>
+</html>

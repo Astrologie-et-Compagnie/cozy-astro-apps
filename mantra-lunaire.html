@@ -1,0 +1,165 @@
+import { useState, useEffect } from "react";
+import { parseICS, getActiveEvents, type AstroEvent } from "@/lib/icsParser";
+import { getDailyMantra } from "@/lib/mantras";
+import owlImg from "@/assets/owl.png";
+import goldenMoonImg from "@/assets/golden-moon.png";
+import crystalSingleImg from "@/assets/crystal-single.png";
+import moonCrystalsImg from "@/assets/moon-crystals.png";
+import crystalsFlowersImg from "@/assets/crystals-flowers.png";
+import crescentMoonImg from "@/assets/crescent-moon.png";
+import plumMoonImg from "@/assets/plum-moon.png";
+
+const frenchMonths = [
+  "janvier",
+  "février",
+  "mars",
+  "avril",
+  "mai",
+  "juin",
+  "juillet",
+  "août",
+  "septembre",
+  "octobre",
+  "novembre",
+  "décembre",
+];
+
+const frenchDays = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
+
+function formatDateFR(date: Date): string {
+  const day = frenchDays[date.getDay()];
+  const num = date.getDate();
+  const month = frenchMonths[date.getMonth()];
+  const year = date.getFullYear();
+  return `${day} ${num} ${month} ${year}`;
+}
+
+// Decorative images to cycle through
+const decorativeImages = [
+  goldenMoonImg,
+  crystalSingleImg,
+  moonCrystalsImg,
+  crystalsFlowersImg,
+  crescentMoonImg,
+  plumMoonImg,
+];
+
+const Index = () => {
+  const [allEvents, setAllEvents] = useState<AstroEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/data/astro-transits.ics").then((r) => r.text()),
+      fetch("/data/lunar-transits.ics").then((r) => r.text()),
+    ])
+      .then(([astroRaw, lunarRaw]) => {
+        const astroEvents = parseICS(astroRaw);
+        const lunarEvents = parseICS(lunarRaw);
+        setAllEvents([...astroEvents, ...lunarEvents]);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const activeEvents = getActiveEvents(allEvents, selectedDate);
+  const summaries = activeEvents.map((e) => e.summary);
+  const { mantra } = getDailyMantra(summaries, selectedDate);
+
+  const dayOfYear = Math.floor(
+    (selectedDate.getTime() - new Date(selectedDate.getFullYear(), 0, 0).getTime()) / 86400000,
+  );
+  const decorImg = decorativeImages[dayOfYear % decorativeImages.length];
+
+  const goToDay = (offset: number) => {
+    const d = new Date(selectedDate);
+    d.setDate(d.getDate() + offset);
+    setSelectedDate(d);
+  };
+
+  return (
+    <div className="min-h-screen gradient-mystical relative overflow-hidden">
+      {/* Subtle background glow */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div
+          className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10"
+          style={{ background: "radial-gradient(circle, hsl(40 55% 65% / 0.3), transparent)" }}
+        />
+        <div
+          className="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-10"
+          style={{ background: "radial-gradient(circle, hsl(270 20% 70% / 0.3), transparent)" }}
+        />
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center min-h-screen px-4 py-8">
+        {/* Header */}
+        <header className="text-center mb-8 animate-fade-in">
+          <img src={owlImg} alt="Chouette mystique" className="w-20 h-20 mx-auto mb-4 object-contain animate-float" />
+          <h1 className="text-3xl md:text-4xl font-display font-light tracking-wide text-gold-light">
+            Astrologie & Compagnie
+          </h1>
+          <p className="text-muted-foreground font-body text-sm mt-2 tracking-widest uppercase">
+            Votre affirmation quotidienne
+          </p>
+        </header>
+
+        {/* Date Navigation */}
+        <div className="flex items-center gap-6 mb-10 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <button
+            onClick={() => goToDay(-1)}
+            className="text-muted-foreground hover:text-gold transition-colors text-2xl font-display"
+            aria-label="Jour précédent"
+          >
+            ‹
+          </button>
+          <div className="text-center">
+            <p className="text-gold font-display text-lg capitalize">{formatDateFR(selectedDate)}</p>
+          </div>
+          <button
+            onClick={() => goToDay(1)}
+            className="text-muted-foreground hover:text-gold transition-colors text-2xl font-display"
+            aria-label="Jour suivant"
+          >
+            ›
+          </button>
+        </div>
+
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : (
+          <>
+            {/* Mantra Card */}
+            <div className="max-w-lg w-full animate-fade-in" style={{ animationDelay: "0.4s" }}>
+              <div className="relative bg-card/60 backdrop-blur-sm rounded-2xl p-8 md:p-10 border border-gold glow-gold">
+                {/* Decorative image */}
+                <div className="flex justify-center mb-6">
+                  <img src={decorImg} alt="Illustration céleste" className="w-32 h-32 object-contain opacity-90" />
+                </div>
+
+                <p className="text-center font-display text-xl md:text-2xl leading-relaxed text-foreground italic">
+                  « {mantra} »
+                </p>
+
+                <div className="mt-6 flex justify-center">
+                  <div className="w-16 h-px bg-gold/30" />
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Footer */}
+        <footer className="mt-auto pt-12 pb-6 text-center animate-fade-in" style={{ animationDelay: "0.8s" }}>
+          <p className="text-muted-foreground text-xs font-body">
+            © {new Date().getFullYear()} Astrologie & Compagnie · Données astrologiques Moonsight™
+          </p>
+        </footer>
+      </div>
+    </div>
+  );
+};
+
+export default Index;
